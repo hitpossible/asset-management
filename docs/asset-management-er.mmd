@@ -1,0 +1,410 @@
+erDiagram
+    %% Logical ER derived from the React mockup and AGENTS.md sections 28 and 29; reviewed 2026-10-08.
+    %% Confirmed requirements take precedence over conflicting implemented mockup branches.
+    %% MIS entities represent external document references, not Asset-owned workflows.
+    %% PO_ITEM_ALLOCATION is a proposed flexible bridge; final cardinality is unconfirmed.
+    %% Multiple GRs per PO are supported provisionally, not a confirmed business rule.
+
+    PROJECT o|--o{ ASSET : project_reference
+    PROJECT o|--o{ MIS_PROPOSAL : project_reference
+    MIS_PART o|--o{ MIS_PROPOSAL : part_reference
+    ADMIN_USER ||--o{ USER_ROLE : assigned
+    ADMIN_ROLE ||--o{ USER_ROLE : membership
+    ADMIN_ROLE ||--o{ ROLE_MENU_PERMISSION : granted
+    APP_MENU ||--o{ ROLE_MENU_PERMISSION : permitted
+    APP_MENU o|--o{ APP_MENU : parent_menu
+    ASSET ||--o{ ASSET_NUMBER_RESERVATION : main_asset_sequence
+    ASSET ||--o{ ASSET_ISSUE : reported_issue
+    ASSET_TYPE ||--o{ ASSET : classifies
+    ASSET o|--o{ ASSET : parentAssetId
+    ASSET o|--o{ ASSET : sourceAssetId
+    ASSET ||--o{ PROPOSAL_ITEM : selected_target
+    ASSET o|--o{ PROPOSAL_ITEM : resulting_asset
+    MIS_PROPOSAL ||--|{ PROPOSAL_ITEM : contains
+    PROPOSAL_ITEM ||--o{ ITEM_COST : scoped_costs
+    MIS_PROPOSAL ||--o{ MIS_PR : referenced_by
+    MIS_PR ||--|{ PR_ITEM : contains
+    PROPOSAL_ITEM ||--o{ PR_ITEM : requested_as
+    MIS_PR o|--o{ MIS_PO : referenced_by
+    MIS_PO ||--|{ PO_ITEM : contains
+    PR_ITEM o|--o{ PO_ITEM : ordered_as
+    PROPOSAL_ITEM ||--o{ PO_ITEM_ALLOCATION : allocated_to
+    PO_ITEM ||--o{ PO_ITEM_ALLOCATION : allocates
+    MIS_PO ||--o{ MIS_INVOICE : invoice_references
+    MIS_INVOICE ||--o{ INVOICE_ITEM : reported_delivery
+    PO_ITEM ||--o{ INVOICE_ITEM : referenced_line
+    MIS_PO ||--o{ MIS_GR : receipt_references
+    MIS_INVOICE o|--o{ MIS_GR : invoiceReference
+    MIS_GR ||--|{ GR_ITEM : contains
+    PO_ITEM ||--o{ GR_ITEM : received_as
+    PO_ITEM_ALLOCATION ||--o{ RECEIVING_VALIDATION : checked_by
+    MIS_GR ||--o{ VALIDATION_GR : included_in
+    RECEIVING_VALIDATION ||--o{ VALIDATION_GR : checks_receipts
+    MIS_INVOICE ||--o{ VALIDATION_INVOICE : included_in
+    RECEIVING_VALIDATION ||--o{ VALIDATION_INVOICE : checks_invoices
+    ASSET ||--o{ ASSET_VERIFICATION : verified_in
+    ASSET_VERIFICATION ||--o{ VERIFICATION_PHOTO : photographs
+    ASSET_VERIFICATION ||--o| ASSET_CONTROL_SHEET : reviewed_snapshot
+    ASSET ||--o| DEPRECIATION_PROFILE : company_only_metadata
+    ASSET ||--o{ ASSET_APPROVAL : approval_history
+    ASSET ||--o{ LIFECYCLE_EVENT : work_target
+    ASSET o|--o{ LIFECYCLE_EVENT : main_asset_rollup
+    ASSET o|--o{ LIFECYCLE_EVENT : generated_sub_asset
+    PROPOSAL_ITEM o|--o| LIFECYCLE_EVENT : work_origin
+    LIFECYCLE_EVENT ||--o| TRANSFER_DETAIL : transfer_data
+    TRANSFER_DETAIL ||--|{ TRANSFER_ASSIGNMENT : from_to_snapshots
+    LIFECYCLE_EVENT ||--o{ LIFECYCLE_APPROVAL : approval_history
+    LIFECYCLE_EVENT ||--o| SPARE_PART_USAGE : mis_issue_data
+
+    ASSET_TYPE {
+        string assetTypeId PK
+        string code UK
+        string name
+        decimal usefulLifeYears
+        boolean active
+    }
+    ASSET {
+        string assetId PK
+        string parentAssetId FK "Nullable - Main Asset only"
+        string sourceAssetId FK "Nullable - original work target"
+        string assetTypeId FK "Proposed explicit key for assetClass"
+        string ownershipType "company default or customer"
+        string customerName "Required for Customer Asset"
+        string projectCode FK "Nullable reference - free text allowed in mockup"
+        string projectName "Snapshot"
+        string draftOrigin "Nullable - implemented standalone draft origin"
+        string workType "Nullable - original work type"
+        string proposalItemId FK "Nullable - child acquisition origin"
+        datetime activatedAt
+        string name
+        string model
+        string custodian
+        string department
+        string plant
+        string location
+        string line
+        string power
+        string area
+        date targetSop
+        string status
+        decimal acquisitionValue
+        date depreciationStartDate "Company only - null for Customer Asset"
+    }
+    MIS_PROPOSAL {
+        string proposalId PK
+        string ownershipType "company or customer - no mixed ownership"
+        string proposalName
+        string proposalType "Buy or Sales - mock form field"
+        string projectCode FK "Nullable logical reference - free text allowed"
+        string projectName
+        string department
+        string section
+        string accountCode
+        string factory
+        string location
+        string budgetType
+        decimal inBudget
+        decimal outOfBudget
+        string productionLine
+        string relatedDepartment
+        string investmentPlanNo
+        string partNo FK "Nullable external mock part reference"
+        string partModel "Snapshot"
+        decimal budget
+        date periodStart
+        date periodEnd
+        string comment
+        string attachmentName
+        string status
+        datetime savedAt
+    }
+    PROPOSAL_ITEM {
+        string itemId PK "Logical globally unique key"
+        string proposalId FK
+        string sourceAssetId FK "Selected Draft or Active Asset"
+        string resultingAssetId FK "Draft or generated child - null for Expense"
+        string assetMode "new or existing"
+        string workType "subAsset modification maintenance"
+        string workName
+        string description
+        string model
+        string power
+        date targetSop
+        decimal assetAmount
+        string accountCode
+        string ownershipType "Document-time ownership snapshot"
+        string customerName "Document-time customer snapshot"
+        boolean workOnExistingAsset "Implementation flag - conflicts with section 28"
+        string costTreatment "New Asset Capitalized Expense"
+    }
+    ITEM_COST {
+        string costId PK "Proposed key for nested costs"
+        string itemId FK
+        string type
+        string accountCode
+        string description
+        decimal amount
+    }
+    MIS_PR {
+        string prNo PK
+        string proposalId FK
+        string requestTitle
+        date requestedDate
+        string reason
+        string status
+        datetime createdAt
+    }
+    PR_ITEM {
+        string prItemId PK "Proposed key for copied assetItems"
+        string prNo FK
+        string proposalItemId FK
+        decimal amountSnapshot
+        json costsSnapshot "Document-time scoped costs"
+    }
+    MIS_PO {
+        string poNo PK
+        string prNo FK "Nullable for imported demo references"
+        string vendor
+        date orderDate
+        date expectedDelivery
+        string shipTo
+        string comment
+        string status
+        datetime createdAt
+    }
+    PO_ITEM {
+        string poItemId PK "Proposed key - unique poNo plus itemNo"
+        string poNo FK
+        string prItemId FK "Nullable for imported references"
+        string itemNo
+        decimal orderedQuantity
+        string unitOfMeasure
+        decimal assetAmountSnapshot
+        json costsSnapshot "Document-time scoped costs"
+        string costTreatmentSnapshot
+    }
+    PO_ITEM_ALLOCATION {
+        string allocationId PK "Proposed bridge key"
+        string poItemId FK
+        string proposalItemId FK
+        decimal allocatedQuantity "Proposed - allocation semantics to confirm"
+        decimal allocatedValue "Proposed - allocation semantics to confirm"
+    }
+    MIS_INVOICE {
+        string invoiceId PK "Proposed key - do not assume invoiceNo globally unique"
+        string poNo FK
+        string invoiceNo "Current invoice reference"
+        date invoiceDate
+        string documentName "Current upload metadata - not stored document bytes"
+        string roundId "Vendor submission batch"
+        datetime submittedAt
+        decimal amount "Reference only under confirmed receiving rules"
+    }
+    MIS_GR {
+        string grNo PK
+        string poNo FK
+        string invoiceId FK "Current GR has one invoiceReference"
+        date receivedDate
+        boolean goodsChecked "Purchasing and Asset Owner acceptance"
+        string comment
+        string status
+        datetime createdAt
+    }
+    GR_ITEM {
+        string grItemId PK "Proposed key for nested assetItems"
+        string grNo FK
+        string poItemId FK
+        decimal receivedQuantity
+        string unitOfMeasure
+    }
+    RECEIVING_VALIDATION {
+        string validationId PK "Proposed separate receiving entity"
+        string allocationId FK
+        boolean poValid
+        boolean invoiceValid
+        boolean grValid
+        boolean accepted
+        decimal receivedQuantity "Cumulative for the allocation"
+        string status
+        string remark
+        datetime validatedAt
+    }
+    VALIDATION_GR {
+        string validationId PK, FK
+        string grNo PK, FK
+    }
+    VALIDATION_INVOICE {
+        string validationId PK, FK
+        string invoiceId PK, FK
+    }
+    ASSET_VERIFICATION {
+        string verificationId PK "Proposed Asset-centric verification record"
+        string assetId FK
+        string poNo FK "Current wizard context - conceptual verification remains Asset-centric"
+        string status "Draft or Submitted - proposed normalized state"
+        date confirmedSop
+        string maker
+        string serialNo
+        string investmentNo
+        date manufacturingDate
+        date registrationDate
+        string specialControl
+        string condition
+        boolean specialPlateNotApplicable
+        string result "Complete or Mismatch"
+        string remark
+        boolean identityConfirmed
+        boolean classConfirmed
+        boolean modelConfirmed
+        boolean custodianConfirmed
+        boolean locationConfirmed
+        boolean informationComplete
+        string actor
+        datetime verifiedAt
+    }
+    ASSET_APPROVAL {
+        string approvalId PK "Proposed key for approvalHistory"
+        string assetId FK
+        string stage
+        string action
+        string actor
+        string remark
+        string result "Proposed explicit decision result"
+        datetime actedAt
+    }
+    LIFECYCLE_EVENT {
+        string transactionNo PK
+        string assetId FK "Selected work target - same as sourceAssetId"
+        string mainAssetId FK "Nullable - rollup root"
+        string subAssetId FK "Nullable - generated child only"
+        string proposalItemId FK "Nullable for Transfer and spare part issue"
+        string type "Original work type or transfer or sparePartUsage"
+        string title
+        string description
+        decimal cost
+        string costTreatment
+        boolean workOnExistingAsset "Current receiving-only branch - requirement gap"
+        string status
+        date occurredOn
+        datetime createdAt
+        datetime completedAt
+        string remark
+    }
+    TRANSFER_DETAIL {
+        string transactionNo PK, FK
+        date requestedTransferDate
+        int currentApprovalStep
+        json approvalSteps "Configurable ordered stages"
+    }
+    TRANSFER_ASSIGNMENT {
+        string transactionNo PK, FK
+        string direction PK "Exactly FROM and TO"
+        string department
+        string custodian
+        string plant
+        string location
+        string line
+        string area
+    }
+    LIFECYCLE_APPROVAL {
+        string approvalId PK "Proposed key for lifecycle approvalHistory"
+        string transactionNo FK
+        string stage
+        string action
+        string actor
+        string remark
+        string result
+        datetime actedAt
+    }
+    SPARE_PART_USAGE {
+        string transactionNo PK, FK
+        string sparePart
+        decimal quantity
+        string unit
+        decimal cost "Total issued cost - not unit price"
+        date issueDate
+        string misReference
+    }
+
+    PROJECT {
+        string projectCode PK
+        string projectName
+        string detail
+        date projectDate "Current field date"
+    }
+    MIS_PART {
+        string partNo PK
+        string name
+        string model
+    }
+    ASSET_NUMBER_RESERVATION {
+        string assetNo PK "Proposed durable number registry"
+        string mainAssetId FK
+        int suffix "Unique within Main Asset"
+        datetime reservedAt
+        string state "Reserved Used Cancelled - never reuse"
+    }
+    INVOICE_ITEM {
+        string invoiceItemId PK "Proposed key for vendor invoice items"
+        string invoiceId FK
+        string poItemId FK "Resolve items.key within invoice PO"
+        decimal reportedQuantity "Delivery information - not Invoice validation criterion"
+    }
+    VERIFICATION_PHOTO {
+        string photoId PK "Proposed key for nested photos"
+        string verificationId FK
+        string category "machine assetPlate machinePlate specialPlate"
+        string name
+        string imageReference "Current photo.url is a data URL"
+        int displayOrder
+    }
+    ASSET_CONTROL_SHEET {
+        string controlSheetId PK "Proposed identity for reviewed snapshot"
+        string verificationId FK
+        json documentAssetSnapshot "Includes ownership and document reference arrays"
+        json purchaseOrderSnapshot
+        json formSnapshot
+        datetime reviewedAt
+    }
+    DEPRECIATION_PROFILE {
+        string assetId PK, FK "Company Assets only"
+        string method
+        decimal usefulLifeYearsSnapshot "Metadata only - calculations read ASSET_TYPE"
+        decimal annualRatePercentSnapshot "Derived metadata stored by DP editor"
+    }
+    ADMIN_USER {
+        string userId PK
+        string name
+        string email
+        string department
+        boolean active
+    }
+    ADMIN_ROLE {
+        string roleId PK
+        string name
+        string description
+        boolean active
+    }
+    USER_ROLE {
+        string userId PK, FK
+        string roleId PK, FK
+    }
+    APP_MENU {
+        string menuId PK
+        string parentMenuId FK "Nullable - current parentId"
+        string name
+        string route
+        boolean active
+    }
+    ROLE_MENU_PERMISSION {
+        string roleId PK, FK
+        string menuId PK, FK
+    }
+
+    ASSET_ISSUE {
+        string issueId PK "Proposed key - current records have no ID"
+        string assetId FK
+        string description
+        datetime reportedAt
+        string status "Reported - no confirmed resolution workflow"
+    }

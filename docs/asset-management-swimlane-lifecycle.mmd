@@ -1,0 +1,43 @@
+flowchart LR
+    %% Independent lifecycle branches for Active Company Assets only.
+    %% Transfer stages reflect AGENTS.md, not the current three-stage mockup.
+    subgraph LIFE_OWNER["Requestor / Asset Owner - Asset System"]
+        direction TB
+        L_ACTIVE(["Active Company Asset"])
+        L_CHOICE{"Choose independent lifecycle event"}
+        L_WORK["Proposal-driven existing work<br/>See existing-work swimlane"]
+        L_TRANSFER["Create Transfer Request<br/>Capture FROM and TO assignment snapshots"]
+    end
+    subgraph LIFE_AREA["Area Owner - Asset System"]
+        direction TB
+        L_AREA["Area Owner Approval"]
+    end
+    subgraph LIFE_SOURCE["Source Department Leader - Asset System"]
+        direction TB
+        L_SOURCE["Source Department Leader Approval"]
+    end
+    subgraph LIFE_DEST["Destination Department Leader - Asset System"]
+        direction TB
+        L_DEST["Destination Department Leader Approval"]
+    end
+    subgraph LIFE_TEAM["Asset Team - Asset System"]
+        direction TB
+        L_ACK["Asset Team Acknowledgement"]
+    end
+    subgraph LIFE_MIS["MIS User / MIS - external spare part issue"]
+        direction TB
+        L_ISSUE["Issue spare part in MIS<br/>Select Company Asset used for the part"]
+        L_MIS_DONE["Complete MIS issue transaction<br/>Provide issue reference, date, quantity and cost"]
+    end
+    subgraph LIFE_SYSTEM["Asset System - assignment and history"]
+        direction TB
+        L_MOVE_DONE["Transfer Complete<br/>Update applicable custodian, department,<br/>plant, location, line and area"]
+        L_FROM_TO["Retain original FROM / TO<br/>and all approval decisions"]
+        L_PARTS["Store / display Spare Part Usage History<br/>Quantity, cost, issue date and MIS reference"]
+        L_HISTORY(["Complete digital Asset history<br/>Lifecycle status separate from master status"])
+    end
+    L_ACTIVE --> L_CHOICE
+    L_CHOICE -->|Addition / Modification / Maintenance| L_WORK
+    L_CHOICE -->|Transfer| L_TRANSFER --> L_AREA --> L_SOURCE --> L_DEST --> L_ACK
+    L_ACK --> L_MOVE_DONE --> L_FROM_TO --> L_HISTORY
+    L_CHOICE -->|Spare Part Usage| L_ISSUE --> L_MIS_DONE --> L_PARTS --> L_HISTORY

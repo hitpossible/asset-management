@@ -1,0 +1,55 @@
+flowchart LR
+    %% Confirmed existing-asset work. This deliberately differs from current conflicting code.
+    subgraph WORK_USER["MIS User - external MIS"]
+        direction TB
+        W_START(["Existing Company Asset work"])
+        W_SELECT["Create Proposal (MIS)<br/>Choose Company ownership<br/>Select Active Main Asset or Sub Asset"]
+        W_TYPE["Select Addition Sub-Asset, Modification or Maintenance<br/>Keep original work type and selected sourceAssetId"]
+        W_COST["Enter item base amount + scoped additional costs<br/>Collect component name / model / power / Target SOP"]
+        W_SAVE["Save Proposal successfully"]
+        W_PR["Create PR (MIS)"]
+        W_PO["Create PO (MIS)<br/>Keep PO / PO Item references flexible"]
+        W_CORRECT["Correct references or delivery / work acceptance"]
+    end
+    subgraph WORK_SYSTEM["Asset System - classification, records and history"]
+        direction TB
+        W_TOTAL{"Item total greater than 50,000 THB?"}
+        W_CHILD["Capitalized: create Sub Asset on Proposal save<br/>Use next unused Main Asset suffix<br/>Target Sub Asset creates sibling under Main"]
+        W_CHILD_INFO["Child starts Proposal Processing<br/>Copy work target classification / assignment<br/>Own value, documents, approvals and depreciation<br/>Parent stays Active"]
+        W_EXPENSE["Expense: no Asset record<br/>Keep cost and work type on selected Asset<br/>Do not increase Parent depreciation value"]
+        W_VALIDATE{"Same-PO references valid<br/>and PU + Owner accepted?"}
+        W_PARTIAL{"Required goods / work fully received?"}
+        W_WAIT["GR Received<br/>Wait for remaining accepted receipt"]
+        W_HOLD["Hold / Correction Required"]
+        W_FINISH["Completed automatically on valid GR save<br/>Record completion date, cost and document references"]
+        W_HISTORY(["Selected Asset history retained<br/>Main history includes work on Sub Assets"])
+    end
+    subgraph WORK_APPROVER["MIS Approver - external MIS"]
+        direction TB
+        W_APPROVE["Approve Proposal in MIS"]
+        W_PR_APPROVE["Approve PR in MIS"]
+        W_PO_APPROVE["Approve PO in MIS"]
+    end
+    subgraph WORK_VENDOR["Vendor - delivery"]
+        direction TB
+        W_DELIVERY["Deliver goods / perform work<br/>Provide Invoice document(s) for same PO"]
+    end
+    subgraph WORK_PU["Purchasing + Asset Owner - receiving / external MIS"]
+        direction TB
+        W_ACCEPT["Confirm delivered goods or completed work<br/>Save GR in MIS with PO / Invoice references"]
+    end
+    subgraph WORK_ACTIVATION["Asset Team / Leader / Accounting - Asset System"]
+        direction TB
+        W_ACQUIRE["Capitalized child: follow acquisition swimlane<br/>Receiving → Asset verification → Leader<br/>→ Accounting review + DP date → Final approval"]
+        W_ACTIVE["Child Active<br/>Complete originating lifecycle event<br/>Parent remains Active"]
+    end
+    W_START --> W_SELECT --> W_TYPE --> W_COST --> W_SAVE --> W_TOTAL
+    W_TOTAL -->|Yes| W_CHILD --> W_CHILD_INFO --> W_APPROVE
+    W_TOTAL -->|No - includes exactly 50,000| W_EXPENSE --> W_APPROVE
+    W_APPROVE --> W_PR --> W_PR_APPROVE --> W_PO --> W_PO_APPROVE --> W_DELIVERY --> W_ACCEPT
+    W_ACCEPT -->|Capitalized child| W_ACQUIRE --> W_ACTIVE --> W_HISTORY
+    W_ACCEPT -->|Expense| W_VALIDATE
+    W_VALIDATE -->|No| W_HOLD --> W_CORRECT --> W_ACCEPT
+    W_VALIDATE -->|Yes| W_PARTIAL
+    W_PARTIAL -->|No| W_WAIT --> W_DELIVERY
+    W_PARTIAL -->|Yes| W_FINISH --> W_HISTORY

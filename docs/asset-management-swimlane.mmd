@@ -1,0 +1,88 @@
+flowchart LR
+    %% Confirmed acquisition flow, AGENTS.md sections 28-29, reviewed 2026-10-08.
+    %% Lanes express responsibility; Mermaid arranges cross-lane links automatically.
+    subgraph OWNER["Requestor / Asset Owner - Asset System"]
+        direction TB
+        A_START(["New Asset request"])
+        A_DRAFT["Create / edit Draft<br/>Core Asset fields + ownership<br/>Customer name required for Customer Asset"]
+        A_FIX["Correct requested Asset information"]
+    end
+    subgraph MIS_USER["MIS User - external MIS"]
+        direction TB
+        A_PROPOSAL["Choose Company or Customer ownership<br/>Create Proposal with available matching Draft Assets<br/>Scope base amount and additional costs per item"]
+        A_PR["Create PR (MIS)"]
+        A_PO["Create PO (MIS)<br/>Keep PO / PO Item links flexible"]
+        A_DOCFIX["Correct purchasing document references"]
+    end
+    subgraph MIS_APPROVER["MIS Approver - external MIS"]
+        direction TB
+        A_PROP_OK{"Proposal approved?"}
+        A_PR_OK{"PR approved?"}
+        A_PO_OK{"PO approved?"}
+    end
+    subgraph VENDOR["Vendor - delivery / Vendor Delivery mockup"]
+        direction TB
+        A_DELIVER["Deliver goods<br/>Provide / scan / attach Invoice documents<br/>One PO may have multiple Invoices"]
+    end
+    subgraph PU["Purchasing + Asset Owner - receiving / external MIS"]
+        direction TB
+        A_REFS{"PO valid for receiving?<br/>Invoice exists and references same PO?"}
+        A_ACCEPT{"Goods / work accepted<br/>by PU + Asset Owner?"}
+        A_GR["Create GR in MIS<br/>Record accepted received quantities"]
+        A_GR_OK{"GR exists and references same PO?"}
+        A_HOLD["Hold / Correction Required<br/>Correct references or acceptance issue"]
+    end
+    subgraph SYSTEM["Asset System - status and history"]
+        direction TB
+        A_RECEIVED["Receiving Validation Complete<br/>Ready for Verification"]
+        A_ACTIVE["Active<br/>Retain documents and approval history"]
+        A_OWNERSHIP{"Ownership?"}
+        A_COMPANY(["Company: independent lifecycle choices<br/>See existing-work and lifecycle swimlanes"])
+        A_CUSTOMER(["Customer: acquisition history available<br/>No depreciation or lifecycle events"])
+    end
+    subgraph TEAM["Asset Team - Asset System"]
+        direction TB
+        A_VERIFY["Verify Asset identity, class, model,<br/>custodian, location and required information<br/>Record Confirmed SOP, Complete / Mismatch and remark"]
+        A_CONTROL["Mockup: photographs + identification plates<br/>Preview and review Asset Control Sheet"]
+        A_READY{"Receiving complete + result Complete<br/>+ required Asset information complete?"}
+        A_RETURN["Return for Correction<br/>Record reason and retain history"]
+        A_SUBMIT["Submit for Approval"]
+    end
+    subgraph LEADER["Asset Team Leader - Asset System"]
+        direction TB
+        A_LEADER{"Approve Asset?"}
+    end
+    subgraph ACCOUNTING["Accounting - Asset System"]
+        direction TB
+        A_ACCOUNT["Review Asset and acquisition information"]
+        A_DP{"Company Asset?"}
+        A_DP_DATE["Set Depreciation Start Date<br/>Useful Life from Asset Type"]
+        A_NO_DP["Customer Asset review<br/>No depreciation date / DP calculation"]
+        A_FINAL{"Final approval?"}
+    end
+    A_START --> A_DRAFT --> A_PROPOSAL --> A_PROP_OK
+    A_PROP_OK -->|Yes| A_PR --> A_PR_OK
+    A_PROP_OK -->|Correction| A_PROPOSAL
+    A_PR_OK -->|Yes| A_PO --> A_PO_OK
+    A_PR_OK -->|Correction| A_PR
+    A_PO_OK -->|Yes| A_DELIVER --> A_REFS
+    A_PO_OK -->|Correction| A_PO
+    A_REFS -->|Valid| A_ACCEPT
+    A_REFS -->|Invalid| A_HOLD
+    A_ACCEPT -->|Yes| A_GR --> A_GR_OK
+    A_ACCEPT -->|No| A_HOLD
+    A_GR_OK -->|Valid| A_RECEIVED --> A_VERIFY --> A_CONTROL --> A_READY
+    A_GR_OK -->|Invalid| A_HOLD
+    A_HOLD -->|Document issue| A_DOCFIX --> A_REFS
+    A_HOLD -->|Delivery issue| A_DELIVER
+    A_READY -->|Yes| A_SUBMIT --> A_LEADER
+    A_READY -->|No| A_RETURN
+    A_LEADER -->|Approve| A_ACCOUNT --> A_DP
+    A_LEADER -->|Return| A_RETURN
+    A_DP -->|Yes| A_DP_DATE --> A_FINAL
+    A_DP -->|No| A_NO_DP --> A_FINAL
+    A_FINAL -->|Approve| A_ACTIVE --> A_OWNERSHIP
+    A_FINAL -->|Return| A_RETURN
+    A_RETURN --> A_FIX --> A_VERIFY
+    A_OWNERSHIP -->|Company| A_COMPANY
+    A_OWNERSHIP -->|Customer| A_CUSTOMER
