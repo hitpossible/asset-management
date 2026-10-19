@@ -6,6 +6,7 @@ import StatusBadge from '../components/StatusBadge.jsx'
 import { PageHeading } from '../components/common.jsx'
 import { getAssetReferences } from '../utils/misReferenceUtils.js'
 import { getProposalItemTotal } from '../utils/proposalAssetUtils.js'
+import { isPendingActivation } from '../utils/activationApprovalUtils.js'
 
 const ASSET_VALIDATION_STATUSES = new Set([
   'Waiting Delivery',
@@ -39,7 +40,7 @@ function getLineAmount(item) {
   return { amount: (amount + costs) * quantity, hasAmount: hasAssetAmount || item.referenceAmount != null || item.amount != null || costs > 0 }
 }
 
-function buildValidationRows(assets, purchaseOrders, goodsReceipts, proposals) {
+function buildValidationRows(assets, purchaseOrders, goodsReceipts, proposals, vendorInvoices) {
   const assetsById = new Map(assets.map((asset) => [asset.assetId, asset]))
 
   return assets.flatMap((asset) => {
@@ -203,8 +204,6 @@ function buildValidationRows(assets, purchaseOrders, goodsReceipts, proposals) {
         { label: 'Unit Price', money: true, cells: [{ value: approvedItem ? getProposalItemTotal(approvedItem) / (Number(approvedItem.quantity ?? approvedItem.orderedQuantity) || 1) : null }, { value: assetPOAmount != null ? assetPOAmount / assetLine.orderedQuantity : null }, { value: hasGoodsReceipt && assetPOAmount != null ? assetPOAmount / assetLine.orderedQuantity : null, reference: 'PO item rate' }] },
         { label: 'Total Amount', money: true, cells: [{ value: approvedProposalAmount }, { value: assetPOAmount }, { value: hasGoodsReceipt ? assetGRAmount : null, reference: 'Received Qty × PO rate' }] },
         { label: 'Vendor', cells: [{ value: approvedItem?.vendor || approvedProposal?.vendor || null }, { value: po?.vendor || null }, grCell('vendor', po?.vendor, 'PO reference')] },
-        { label: 'Plant', cells: [documentCell(approvedItem, 'plant', asset.plant), documentCell(poItem, 'plant', asset.plant), grCell('plant', asset.plant)] },
-        { label: 'Location / Line', cells: [documentCell(approvedItem, 'location', asset.location ? `${asset.location} / ${asset.line}` : asset.line), documentCell(poItem, 'location', asset.location ? `${asset.location} / ${asset.line}` : asset.line), grCell('location', asset.location ? `${asset.location} / ${asset.line}` : asset.line)] },
       ]
       const matchSummary = {
         comparison,
@@ -248,6 +247,7 @@ function buildValidationRows(assets, purchaseOrders, goodsReceipts, proposals) {
         itemNumbers: unique(references.purchaseOrderReferences.filter((item) => item.poNo === poNo).map((item) => item.itemNo)).join(', '),
         invoiceReferences,
         invoiceDocuments,
+        invoiceCatalog: vendorInvoices,
         goodsReceiptReferences,
         receiptDocuments: receiptDocumentsWithTotals,
         hasPurchaseOrder,
@@ -273,13 +273,13 @@ function ReferenceList({ values, emptyText }) {
   return values.length ? <div className="mis-validation-references">{values.map((value) => <span key={value}>{value}</span>)}</div> : <span className="mis-validation-empty-ref">{emptyText}</span>
 }
 
-export default function AssetValidationPage({ assets, proposals = [], purchaseOrders, goodsReceipts, onComplete, onCreateGR, onAssets, onSaveDraft }) {
+export default function AssetValidationPage({ activationWorkflow, activationWorkflowError, assets, proposals = [], vendorInvoices = [], purchaseOrders, goodsReceipts, onComplete, onCreateGR, onAssets, onSaveDraft }) {
   const [filter, setFilter] = useState('All')
   const [query, setQuery] = useState('')
   const [pagination, setPagination] = useState({ page: 1, size: 8, context: '' })
-  const rows = useMemo(() => buildValidationRows(assets, purchaseOrders, goodsReceipts, proposals), [assets, purchaseOrders, goodsReceipts, proposals])
+  const rows = useMemo(() => buildValidationRows(assets, purchaseOrders, goodsReceipts, proposals, vendorInvoices), [assets, purchaseOrders, goodsReceipts, proposals, vendorInvoices])
   const pendingCount = rows.filter((row) => row.status === 'Ready to Validate').length
-  const readyCount = assets.filter((asset) => asset.status === 'Pending Asset Team Leader Approval').length
+  const readyCount = assets.filter(isPendingActivation).length
   const attentionCount = rows.filter((row) => row.status === 'Waiting Invoice' || row.status === 'Waiting GR' || row.status === 'Hold / Correction Required').length
   const filteredRows = rows.filter((row) => {
     const matchesFilter = filter === 'All'
@@ -304,7 +304,7 @@ export default function AssetValidationPage({ assets, proposals = [], purchaseOr
   const metrics = [
     { label: 'All validation records', count: rows.length, icon: 'box', tone: 'red', hint: 'Assets and linked PO references', filter: 'All' },
     { label: 'Ready to submit', count: pendingCount, icon: 'check', tone: 'green', hint: 'Asset verification ready for approval', filter: 'Ready to submit' },
-    { label: 'In Asset Approval', count: readyCount, icon: 'file', tone: 'slate', hint: 'Waiting for Asset Team Leader' },
+    { label: 'In Asset Approval', count: readyCount, icon: 'file', tone: 'slate', hint: 'Waiting for assigned approvers' },
     { label: 'Waiting or on hold', count: attentionCount, icon: 'clock', tone: 'amber', hint: 'Receiving references need attention', filter: 'Waiting / hold' },
   ]
   const [selectedKey, setSelectedKey] = useState('')
@@ -325,14 +325,14 @@ export default function AssetValidationPage({ assets, proposals = [], purchaseOr
   }, [selectedRow])
 
   function completeSelectedValidation(row) {
-    onComplete(row)
+    if (onComplete(row) === false) return
     setSelectedKey('')
   }
 
   return (
     <>
       <div className="asset-list-workspace asset-validation-workspace">
-      <PageHeading eyebrow="Asset management" title="Asset Validation" description="Verify the received Asset and its references, then submit it to the Asset Team Leader." action={<button type="button" className="button button-primary" onClick={onCreateGR}><Icon name="file" size={16} />Create GR in MIS</button>} />
+      <PageHeading eyebrow="Asset management" title="Asset Validation" description="Verify the received Asset and its references, then submit it to the assigned approval workflow." action={<button type="button" className="button button-primary" onClick={onCreateGR}><Icon name="file" size={16} />Create GR in MIS</button>} />
 
       <div className="asset-list-metrics" aria-label="Asset validation summary">
         {metrics.map((metric) => {
@@ -396,7 +396,7 @@ export default function AssetValidationPage({ assets, proposals = [], purchaseOr
           if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus() }
           else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus() }
         }}>
-          <AssetValidationWizard key={selectedRow.key} row={selectedRow} onComplete={completeSelectedValidation} onSaveDraft={onSaveDraft} onClose={() => setSelectedKey('')} receivingDetails={<AssetReceivingDocuments row={selectedRow} relatedRows={rows.filter((row) => row.assetId === selectedRow.assetId)} />} />
+          <AssetValidationWizard activationWorkflow={activationWorkflow} activationWorkflowError={activationWorkflowError} key={selectedRow.key} row={selectedRow} onComplete={completeSelectedValidation} onSaveDraft={onSaveDraft} onClose={() => setSelectedKey('')} receivingDetails={<AssetReceivingDocuments row={selectedRow} relatedRows={rows.filter((row) => row.assetId === selectedRow.assetId)} />} />
         </section>
       </div> : null}
     </>

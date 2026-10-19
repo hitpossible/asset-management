@@ -27,14 +27,14 @@ export default function CreateSubAssetPage({ parentAsset, nextAssetId, draft, on
   }
 
   return <div className="create-asset-workspace">
-    <PageHeading eyebrow="Asset management" title="Create Sub Asset" description="Create a numbered Draft Sub Asset under the selected Main Asset." />
+    <PageHeading eyebrow="Asset management" title="Create Sub Asset" description="Create a Draft Sub Asset with a temporary reference under the selected Main Asset." />
     <form className="create-asset-form" onSubmit={submit}>
       <div className="form-main-column">
         <section className="panel form-section">
           <div className="form-section-heading"><span className="form-section-icon"><Icon name="box" size={18} /></span><div><h2>Parent Asset</h2><p>The main Asset stays Active. Classification and assignment are inherited from this Asset.</p></div></div>
           <div className="form-grid">
             <Field label="Parent Asset"><input value={`${parentAsset.assetId} · ${parentAsset.name}`} readOnly /></Field>
-            <Field label="Sub Asset No."><input value={nextAssetId || ''} readOnly /><small>Assigned when the draft is saved.</small></Field>
+            <Field label="Temporary reference"><input value={nextAssetId || ''} readOnly /><small>Real Sub Asset No. is assigned after Proposal approval.</small></Field>
             <Field label="Asset class"><input value={parentAsset.assetClass || ''} readOnly /></Field>
             <Field label="Custodian"><input value={parentAsset.custodian || ''} readOnly /></Field>
             <Field label="Location"><input value={[parentAsset.plant, parentAsset.location, parentAsset.line, parentAsset.area].filter(Boolean).join(' · ')} readOnly /></Field>
@@ -50,7 +50,7 @@ export default function CreateSubAssetPage({ parentAsset, nextAssetId, draft, on
             <Field label="Estimated base amount (THB)"><input type="number" min="0" step="0.01" name="amount" value={form.amount} onChange={update} placeholder="0.00" /></Field>
             <Field label="Notes"><input name="notes" value={form.notes} onChange={update} placeholder="Describe the component" maxLength={240} /></Field>
           </div>
-          <div className="mis-reference-note"><Icon name="info" size={14} />Save draft creates {nextAssetId || 'a numbered Sub Asset'} in the Asset list with Draft status. Continue through Create Proposal (MIS) using this record. A total over THB 50,000 capitalizes the Sub Asset; THB 50,000 or less completes as Expense and cancels the unused Draft, retaining its number in history.</div>
+          <div className="mis-reference-note"><Icon name="info" size={14} />Save draft creates {nextAssetId || 'a temporary reference'} in the Asset list with Draft status. Continue through Create Proposal (MIS) using this record. The real Parent-suffix number is assigned on Proposal approval. A total over THB 50,000 capitalizes the Sub Asset; THB 50,000 or less completes as Expense and cancels the unused Draft, retaining its temporary reference in history.</div>
         </section>
         {error ? <div className="form-error" role="alert">{error}</div> : null}
       </div>

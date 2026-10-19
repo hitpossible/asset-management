@@ -1,3 +1,4 @@
+import { remapAssetReferences } from '../utils/assetNumberUtils.js'
 import { useCallback, useEffect, useState } from 'react'
 
 const MIS_PURCHASING_STORAGE_KEY = 'tbkk-mis-purchasing-v1'
@@ -50,13 +51,15 @@ function readPurchasingDocuments() {
 
 export function useMISPurchasingStore() {
   const [documents, setDocuments] = useState(readPurchasingDocuments)
+  const [storageFailed, setStorageFailed] = useState(false)
   const { purchaseRequisitions, purchaseOrders, goodsReceipts, vendorInvoices } = documents
 
   useEffect(() => {
     try {
       window.localStorage.setItem(MIS_PURCHASING_STORAGE_KEY, JSON.stringify(documents))
+      setStorageFailed(false)
     } catch {
-      // Keep the current session usable if browser storage is unavailable.
+      setStorageFailed(true)
     }
   }, [documents])
 
@@ -66,6 +69,10 @@ export function useMISPurchasingStore() {
     }
     window.addEventListener('storage', syncDocuments)
     return () => window.removeEventListener('storage', syncDocuments)
+  }, [])
+
+  const remapAssetIds = useCallback((mapping) => {
+    setDocuments((current) => remapAssetReferences(current, mapping))
   }, [])
 
   const addPurchaseRequisition = useCallback((requisition) => {
@@ -97,5 +104,5 @@ export function useMISPurchasingStore() {
     setDocuments((current) => ({ ...current, purchaseOrders: current.purchaseOrders.map((po) => po.poNo === poNo && ['Created', 'Pending Approval'].includes(po.status) ? { ...po, status: 'Approved', approvedAt: new Date().toISOString() } : po) }))
   }, [])
 
-  return { vendorInvoices, addVendorInvoices, approvePurchaseOrder, purchaseRequisitions, purchaseOrders, goodsReceipts, addPurchaseRequisition, setPurchaseRequisitionStatus, addPurchaseOrder, addGoodsReceipt }
+  return { storageFailed, remapAssetIds, vendorInvoices, addVendorInvoices, approvePurchaseOrder, purchaseRequisitions, purchaseOrders, goodsReceipts, addPurchaseRequisition, setPurchaseRequisitionStatus, addPurchaseOrder, addGoodsReceipt }
 }

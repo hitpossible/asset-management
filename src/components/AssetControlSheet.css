@@ -1,0 +1,52 @@
+.control-sheet-pages .registration-page, .control-sheet-pages .invoice-appendix-page { display: flex; min-height: 1123px; flex-direction: column; padding: 36px 38px 28px; }
+.registration-page .registration-title { margin: 0 0 20px; font: 700 27px/1.25 Arial, sans-serif; text-align: center; }
+.registration-identity { margin: 0 0 8px; padding: 8px 0 12px; border-top: 2px solid #343a40; border-bottom: 2px solid #343a40; }
+.registration-identity > div, .registration-details > div { display: grid; grid-template-columns: 170px minmax(0, 1fr); gap: 14px; padding: 3px 0; }
+.registration-page dt { font-weight: 600; }
+.registration-page dd { min-width: 0; margin: 0; overflow-wrap: anywhere; }
+.registration-identity dd { font-size: 13px; }
+.registration-details { display: grid; gap: 1px; margin: 0 0 16px; }
+.registration-details > div { min-height: 23px; }
+.registration-page .registration-financial { max-width: 560px; margin-top: 4px; border: 1px solid #555; font-size: 11px; }
+.registration-page .registration-financial th, .registration-page .registration-financial td { padding: 6px 9px; border: 1px solid #777; }
+.registration-financial thead th { background: #ededed; font-weight: 600; }
+.registration-reference-note { margin: 12px 0; color: #68717d; font: 10px/1.6 Arial, sans-serif; }
+.registration-signatures { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 36px; margin-top: auto; padding-top: 24px; text-align: center; }
+.registration-signatures > div { display: grid; gap: 8px; }
+.registration-signatures span { height: 24px; border-bottom: 1px dashed #8a8f96; }
+.registration-signatures strong { font-size: 11px; font-weight: 500; }
+.registration-signatures small { font-size: 10px; color: #6a7078; }
+.registration-page footer { padding-top: 12px; border-top: 1px solid #e1e4e8; }
+.registration-page .register-form-title { margin: 0 0 20px; padding: 10px; border: 1px solid #555; background: #eee; text-align: center; font: 600 19px/1.4 Georgia, serif; }
+.register-form-layout { display: grid; grid-template-columns: minmax(0, 2.4fr) minmax(0, 1fr); gap: 14px; }
+.register-entry { border: 1px solid #777; }
+.register-entry > h3 { background: #f0f1f2; text-align: left; font-weight: 600; }
+.register-fields { margin: 0; padding: 8px; }
+.register-fields > div { display: grid; grid-template-columns: 122px minmax(0, 1fr); align-items: start; gap: 8px; margin: 5px 0; }
+.register-fields dt { padding-top: 4px; font-size: 10px; font-weight: 500; }
+.register-fields dd { min-height: 24px; padding: 4px 6px; border: 1px solid #c3c7ce; background: #fff; }
+.register-document-checks { padding: 10px; border: 1px dashed #777; }
+.register-document-checks h3 { padding: 0 0 8px; font-weight: 600; text-align: left; }
+.register-document-checks p { color: #68717d; font-size: 10px; }
+.register-document-checks dl { margin: 0; }
+.register-document-checks dl > div { padding: 9px 0; border-bottom: 1px solid #e1e4e8; }
+.register-document-checks dt { font-size: 10px; }
+.register-document-checks dd { margin-top: 5px; font-size: 10px; }
+.invoice-appendix-header { display: flex; flex-wrap: wrap; align-items: start; justify-content: space-between; gap: 12px; padding-bottom: 18px; border-bottom: 2px solid #343a40; }
+.invoice-appendix-header span { color: #68717d; font-size: 10px; }
+.invoice-appendix-header h2 { margin: 8px 0 0; font-size: 22px; overflow-wrap: anywhere; }
+.invoice-appendix-header > strong { padding-top: 21px; font-size: 14px; overflow-wrap: anywhere; }
+.invoice-appendix-meta { margin: 20px 0; }
+.invoice-appendix-meta > div { display: grid; grid-template-columns: 175px minmax(0, 1fr); gap: 16px; padding: 13px 0; border-bottom: 1px solid #e1e4e8; }
+.invoice-appendix-meta dt { color: #68717d; }
+.invoice-appendix-meta dd { margin: 0; overflow-wrap: anywhere; }
+.invoice-appendix-notice { padding: 18px; border: 1px dashed #bcc5d1; background: #f8fafc; color: #68717d; line-height: 1.7; }
+.invoice-appendix-page footer { margin-top: auto; padding-top: 24px; }
+.invoice-attachment-reference { color: #68717d; font-size: 11px; }
+.invoice-attachment-pdf { display: block; width: 100%; height: 890px; border: 1px solid #e1e4e8; }
+.invoice-attachment-image { display: block; width: 100%; max-height: 920px; object-fit: contain; }
+@media print {
+  .control-sheet-pages { display: block; padding: 0; margin: 0; background: #fff; overflow: visible; }
+  .control-sheet-page { min-width: 0; width: 100%; max-width: none; box-shadow: none; break-after: page; }
+  .control-sheet-page:last-child { break-after: auto; }
+}

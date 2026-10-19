@@ -1,0 +1,18 @@
+.activation-route { margin: 18px 0; padding: 20px; border: 1px solid #e1e7f0; border-radius: 8px; background: #f8fafc; }
+.activation-route-heading { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 16px; }
+.activation-route .activation-route-heading h3 { margin: 0; color: #203152; font-size: 15px; }
+.activation-route-heading > span { color: #6e7e95; font-size: 12px; }
+.activation-route ol { display: grid; grid-template-columns: repeat(var(--approval-step-count, 5), minmax(0, 1fr)); gap: 12px; margin: 0; padding: 0; list-style: none; }
+.activation-route li { display: flex; min-width: 0; align-items: flex-start; gap: 9px; padding: 12px; border: 1px solid #e1e7f0; border-radius: 6px; background: #fff; }
+.activation-route-number { display: grid; width: 25px; height: 25px; flex: none; place-items: center; border-radius: 50%; color: #63728a; background: #eef2f7; font-size: 12px; font-weight: 600; }
+.activation-route li > div { display: grid; min-width: 0; gap: 4px; }
+.activation-route li strong { color: #344764; font-size: 12px; }
+.activation-route li small { color: #63728a; font-size: 11px; overflow-wrap: anywhere; }
+.activation-route li div > span { color: #8993a8; font-size: 10px; }
+.activation-route li .activation-route-depreciation { display: flex; width: fit-content; align-items: center; gap: 4px; padding: 4px 6px; border-radius: 4px; color: #805700; background: #fff5dc; font-size: 10px; line-height: 1.3; }
+.activation-route-depreciation svg { flex: none; }
+.activation-route li.is-current { border-color: #e6b9bf; background: #fff8f8; }
+.activation-route li.is-current .activation-route-number { color: #fff; background: #d60012; }
+.activation-route li.is-current div > span { color: #bd0010; }
+.activation-route li.is-complete .activation-route-number { color: #00875a; background: #e6f6ee; }
+@media (max-width: 1000px) { .activation-route ol { grid-template-columns: 1fr; } .activation-route li { align-items: center; } .activation-route li > div { flex: 1; grid-template-columns: 1fr 1fr; } .activation-route li div > span { grid-column: 1 / -1; } }

@@ -1,0 +1,22 @@
+{
+  "file": "tbkk-asset-database.drawio",
+  "pages": 8,
+  "canonical_tables": 60,
+  "canonical_attributes": 787,
+  "relationship_edges_across_pages": 236,
+  "checks": [
+    "XML well-formed",
+    "Unique IDs per page",
+    "No dangling edge endpoints",
+    "No dangling cell parents",
+    "Positive table/row geometry",
+    "Each schema table has exactly one full table",
+    "All schema attributes match exactly",
+    "FK, default, ENUM and description metadata included",
+    "Opens on full System ER page",
+    "Square table borders and centered headers",
+    "Two visible columns only; bold underlined primary keys"
+  ],
+  "style": "Black-and-white two-column ER; underlined PK; no visible types",
+  "rendered_in_diagrams_net": false
+}

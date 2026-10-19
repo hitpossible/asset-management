@@ -1,10 +1,10 @@
-export const ADMIN_PAGES = { 'admin-users': 'Manage User', 'admin-roles': 'Manage Roles', 'admin-permissions': 'Manage Permission' }
+export const ADMIN_PAGES = { 'admin-users': 'Manage User', 'admin-roles': 'Manage Roles', 'admin-permissions': 'Manage Permission', 'activation-approval': 'Approval Management' }
 const groups = [
   ['dashboard', 'Dashboard', [['dashboard-page', 'Dashboard', 'dashboard']]],
   ['asset-management', 'Asset management', [['assets', 'Asset list'], ['create', 'Create asset'], ['asset-validation', 'Asset validation'], ['movement', 'Movement asset'], ['movements', 'Assets in movement']]],
   ['approval-menu', 'Approval', [['approval', 'My approvals']]],
   ['mis', 'MIS purchasing', [['mis-proposals', 'Proposal list'], ['mis-proposal', 'Create Proposal'], ['mis-prs', 'PR list'], ['mis-create-pr', 'Create PR'], ['mis-create-po', 'Create PO'], ['mis-create-gr', 'Create GR']]],
-  ['administrator', 'Administrator', [['master', 'Manage Asset Type'], ...Object.entries(ADMIN_PAGES)]]
+  ['administrator', 'Administrator', [['master', 'Manage Asset Type'], ['audit-log', 'Audit Log'], ...Object.entries(ADMIN_PAGES)]]
 ]
 const menus = groups.flatMap(([id, name, children]) => [{ id, name, parentId: '', route: '', active: true }, ...children.map(([key, label, route]) => ({ id: key, name: label, parentId: id, route: route || key, active: true }))])
 export const INITIAL_ADMIN_DATA = {

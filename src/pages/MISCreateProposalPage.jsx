@@ -2,7 +2,7 @@ import { getProposalEligibleAssets } from '../utils/assetOwnershipUtils.js'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import Icon from '../components/Icon.jsx'
 import { Field, PageHeading } from '../components/common.jsx'
-import { getMainAsset, getProposalTreatment, EXISTING_WORK_TYPES } from '../utils/proposalAssetUtils.js'
+import { getMainAsset, getProposalItemTotal, getProposalTreatment, EXISTING_WORK_TYPES } from '../utils/proposalAssetUtils.js'
 import { MOCK_PARTS } from '../data/mockParts.js'
 import { createMISReference } from '../utils/misReferenceUtils.js'
 
@@ -33,13 +33,15 @@ function createAssetRow(assetId = '', withSampleValues = false, assetMode = 'new
     id: `item-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
     assetId,
     assetMode,
+    budgetType: 'Capital expenditure',
+    accountCode: 'A',
     workType: 'modification',
     workName: '',
     description: '',
     model: '',
     power: '',
     targetSop: '',
-    amount: withSampleValues ? '1200000' : '',
+    amount: withSampleValues ? '1400000' : '',
     costs: withSampleValues ? [
       createCostRow('Installation', '150000', 'Installation'),
       createCostRow('Delivery', '50000', 'Delivery'),
@@ -75,7 +77,7 @@ function createInitialForm(assets, initialWorkRequest) {
     periodEnd: addOneYear(today),
     budget: initialWorkRequest ? String(initialWorkRequest.amount || '0') : eligibleAssets.length ? '1400000' : '0',
     budgetType: !initialWorkRequest || Number(initialWorkRequest.amount) > 50_000 ? 'Capital expenditure' : 'Expense',
-    assetItems: initialWorkRequest ? [{ ...createAssetRow(workTarget?.projectCode?.trim() ? workTarget.assetId : '', false, draftSubAsset ? 'new' : 'existing'), requestId: initialWorkRequest.requestId, workType: 'subAsset', workName: initialWorkRequest.name, description: initialWorkRequest.notes || '', model: initialWorkRequest.model, power: initialWorkRequest.power, targetSop: initialWorkRequest.targetSop, amount: initialWorkRequest.amount }] : [createAssetRow(initialAsset?.assetId || '', eligibleAssets.length > 0)],
+    assetItems: initialWorkRequest ? [{ ...createAssetRow(workTarget?.projectCode?.trim() ? workTarget.assetId : '', false, draftSubAsset ? 'new' : 'existing'), requestId: initialWorkRequest.requestId, workType: 'subAsset', workName: initialWorkRequest.name, description: initialWorkRequest.notes || '', model: initialWorkRequest.model, power: initialWorkRequest.power, targetSop: initialWorkRequest.targetSop, amount: initialWorkRequest.amount, budgetType: Number(initialWorkRequest.amount) > 50_000 ? 'Capital expenditure' : 'Expense' }] : [createAssetRow(initialAsset?.assetId || '', eligibleAssets.length > 0)],
   }
 }
 
@@ -95,16 +97,13 @@ export default function MISCreateProposalPage({ assets, proposals, initialWorkRe
   const eligibleAssets = useMemo(() => getProposalEligibleAssets(assets, form.ownershipType).filter((asset) => form.projectCode.trim() && asset.projectCode?.trim() === form.projectCode.trim() && (asset.status === 'Draft' || getMainAsset(asset, assets))), [assets, form.ownershipType, form.projectCode])
   const eligibleAssetsById = useMemo(() => new Map(eligibleAssets.map((asset) => [asset.assetId, asset])), [eligibleAssets])
   const budgetAmount = (Number(form.inBudget) || 0) + (Number(form.outOfBudget) || 0)
-  const assetTotal = budgetAmount + form.assetItems[0].costs.reduce((total, cost) => total + (Number(cost.amount) || 0), 0)
+  const proposalTotal = form.assetItems.reduce((total, item) => total + Math.round(getProposalItemTotal(item) * 100), 0) / 100
+  const baseTotal = form.assetItems.reduce((total, item) => total + Math.round((Number(item.amount) || 0) * 100), 0) / 100
+  const additionalTotal = Math.round((proposalTotal - baseTotal) * 100) / 100
   const selectedPart = MOCK_PARTS.find((part) => part.partNo === form.partNo)
   const matchingParts = MOCK_PARTS.filter((part) => `${part.partNo} ${part.name} ${part.model}`.toLowerCase().includes(browseQuery.toLowerCase()))
-  const primaryAsset = eligibleAssetsById.get(form.assetItems[0]?.assetId)
   const departmentBudget = 5000000
   const departmentUsed = proposals.filter((proposal) => proposal.department === form.department).reduce((total, proposal) => total + (Number(proposal.budget) || 0), 0)
-  const item = { ...form.assetItems[0], amount: budgetAmount }
-  const isDraftSubAsset = primaryAsset?.draftOrigin === 'Create Sub Asset'
-  const treatment = getProposalTreatment(isDraftSubAsset ? { ...item, assetMode: 'existing' } : item)
-  const selectableAssets = eligibleAssets
 
   function setField(name, value) {
     setForm((current) => ({
@@ -113,7 +112,7 @@ export default function MISCreateProposalPage({ assets, proposals, initialWorkRe
       ...(name === 'ownershipType' ? { assetItems: [createAssetRow()] } : {}),
       ...(name === 'projectCode' && value.trim() !== current.projectCode.trim() ? {
         projectName: projects.find((project) => project.projectCode === value)?.projectName || '',
-        assetItems: current.assetItems.map((item) => ({ ...item, assetId: '', assetMode: 'new', requestId: undefined, workName: '', description: '', model: '', power: '', targetSop: '' })),
+        assetItems: [createAssetRow()],
       } : {}),
     }))
     if (error) setError('')
@@ -139,8 +138,12 @@ export default function MISCreateProposalPage({ assets, proposals, initialWorkRe
       setError('Period End must be the same as or later than Period Start.')
       return
     }
-    if (form.assetItems.length !== 1) {
-      setError('Select exactly one Asset for this Proposal.')
+    if (!form.assetItems.length) {
+      setError('Select at least one Asset for this Proposal.')
+      return
+    }
+    if (new Set(form.assetItems.map((item) => item.assetId)).size !== form.assetItems.length) {
+      setError('Select each Asset only once in this Proposal.')
       return
     }
     const missingAsset = form.assetItems.some((item) => {
@@ -151,7 +154,7 @@ export default function MISCreateProposalPage({ assets, proposals, initialWorkRe
       setError('Select an available Draft or Active Asset linked to this Project Code and matching the Proposal ownership.')
       return
     }
-    if (item.assetMode === 'existing' && !EXISTING_WORK_TYPES.some((type) => type.id === item.workType)) {
+    if (form.assetItems.some((item) => item.assetMode === 'existing' && !EXISTING_WORK_TYPES.some((type) => type.id === item.workType))) {
       setError('Select Modification or Maintenance for the Active Asset.')
       return
     }
@@ -159,7 +162,8 @@ export default function MISCreateProposalPage({ assets, proposals, initialWorkRe
     const proposal = {
       ...form,
       proposalId: form.proposalId,
-      budget: budgetAmount,
+      budget: proposalTotal,
+      budgetType: new Set(form.assetItems.map((item) => item.budgetType)).size === 1 ? form.assetItems[0].budgetType : 'Mixed',
       partModel: selectedPart?.model || '',
       proposalName: form.proposalName.trim(),
       inBudget: Number(form.inBudget) || 0,
@@ -170,15 +174,16 @@ export default function MISCreateProposalPage({ assets, proposals, initialWorkRe
         assetMode: item.assetMode,
         workType: item.assetMode === 'existing' ? item.workType : '',
         workOnExistingAsset: item.assetMode === 'existing',
-        workName: item.assetMode === 'existing' ? form.proposalName.trim() : item.workName.trim(),
-        description: item.assetMode === 'existing' ? form.proposalName.trim() : item.description.trim(),
+        workName: item.assetMode === 'existing' ? item.workName.trim() || form.proposalName.trim() : item.workName.trim(),
+        description: item.description.trim() || (item.assetMode === 'existing' ? form.proposalName.trim() : ''),
         model: item.model.trim(),
         power: item.power.trim(),
         targetSop: item.targetSop,
-        costTreatment: getProposalTreatment({ ...item, amount: budgetAmount }),
+        costTreatment: getProposalTreatment(item),
+        budgetType: item.budgetType,
         assetId: item.assetId,
         assetName: eligibleAssetsById.get(item.assetId)?.name || '',
-        assetAmount: budgetAmount,
+        assetAmount: Number(item.amount) || 0,
         accountCode: item.accountCode || form.accountCode,
         costs: item.costs.filter((cost) => cost.amount !== '' || cost.description.trim()).map((cost) => ({
           type: cost.description.trim() || cost.type,
@@ -217,7 +222,7 @@ export default function MISCreateProposalPage({ assets, proposals, initialWorkRe
               <div className="proposal-inline-field"><span>Proposal Type <em>*</em></span><div className="proposal-radio-group">{['Buy', 'Sales'].map((type) => <label key={type}><input type="radio" name="proposalType" value={type} checked={form.proposalType === type} onChange={() => setField('proposalType', type)} />{type}</label>)}</div></div>
               <div className="proposal-inline-field"><span id="proposal-ownership-label">Asset Ownership <em>*</em></span><div className="proposal-radio-group" role="radiogroup" aria-labelledby="proposal-ownership-label">{[['company', 'Company Asset · TBKK'], ['customer', 'Customer Asset']].map(([value, label]) => <label key={value}><input type="radio" name="ownershipType" value={value} checked={form.ownershipType === value} onChange={() => setField('ownershipType', value)} required />{label}</label>)}</div></div>
               <div className="proposal-inline-field proposal-budget-status"><span>Budget Status <em>*</em></span><div>{[['inBudget', 'In Budget'], ['outOfBudget', 'Out of Budget']].map(([key, label]) => <label key={key}><span>{label}</span><input aria-label={label} type="number" min="0" step="0.01" value={form[key]} onChange={(event) => setField(key, event.target.value)} required /></label>)}</div></div>
-              <Field label="Budget Amount" required><input className="mis-readonly-field proposal-money" value={formatTHB(budgetAmount)} readOnly /><small>Asset / work budget · In Budget + Out of Budget (THB)</small></Field>
+              <Field label="Budget Amount" required><input className="mis-readonly-field proposal-money" value={formatTHB(budgetAmount)} readOnly /><small>Proposal funding · In Budget + Out of Budget (THB)</small></Field>
               <Field label="Production Line"><select value={form.productionLine} onChange={(event) => setField('productionLine', event.target.value)}>{['Line A', 'Line B', 'Line C', 'Line D', 'N/A'].map((line) => <option key={line}>{line}</option>)}</select></Field>
               <Field label="Related Department"><select value={form.relatedDepartment} onChange={(event) => setField('relatedDepartment', event.target.value)}><option value="">+ เพิ่ม Department</option>{DEPARTMENTS.map((option) => <option key={option}>{option}</option>)}</select></Field>
             </div>
@@ -231,33 +236,50 @@ export default function MISCreateProposalPage({ assets, proposals, initialWorkRe
               <Field label="Investment Plan No."><input value={form.investmentPlanNo} onChange={(event) => setField('investmentPlanNo', event.target.value)} maxLength={80} /></Field>
               <Field label="Part No."><div className="proposal-browse-control"><input className="mis-readonly-field" value={form.partNo} readOnly placeholder="Browse to select a Part" /><button type="button" onClick={() => { setBrowse('part'); setBrowseQuery('') }}><Icon name="search" size={13} />Browse</button></div></Field>
               <Field label="Model No."><input className="mis-readonly-field" value={selectedPart?.model || ''} readOnly placeholder="From selected Part" /></Field>
-              <Field label="Asset No." required><select disabled={!form.projectCode.trim() || selectableAssets.length === 0} value={primaryAsset ? item.assetId : ''} onChange={(event) => { const asset = eligibleAssetsById.get(event.target.value); setAssetItem(item.id, { assetId: event.target.value, assetMode: asset?.status === 'Active' ? 'existing' : 'new', workType: 'modification', workName: '', description: '', model: '', power: '', targetSop: '' }) }} required><option value="">{!form.projectCode.trim() ? 'Select a Project Code first' : selectableAssets.length === 0 ? 'No eligible Assets linked to this Project Code' : 'Select one Asset'}</option>{selectableAssets.map((asset) => <option key={asset.assetId} value={asset.assetId}>{asset.assetId} · {asset.name} ({asset.status}){form.ownershipType === 'customer' ? ` · ${asset.customerName}` : ''}</option>)}</select><small>Only Assets linked to this Project Code and matching the Proposal ownership are available.</small></Field>
-              <Field label="Asset Name"><input className="mis-readonly-field" value={primaryAsset?.name || ''} readOnly /></Field>
             </div>
           </div>
-          {isDraftSubAsset ? <div className="proposal-work-information"><p className="proposal-item-context"><strong>Draft Sub Asset:</strong> {primaryAsset.assetId} · {primaryAsset.name}<br /><strong>Main Asset:</strong> {primaryAsset.parentAssetId}</p><div className={`proposal-treatment ${treatment === 'Capitalized' ? 'is-capitalized' : 'is-expense'}`}><strong>{treatment === 'Capitalized' ? 'Capitalized · Use existing Draft Sub Asset' : 'Expense · No Sub Asset activation'}</strong><p>{treatment === 'Capitalized' ? `Saving this Proposal continues ${primaryAsset.assetId} through acquisition without assigning another number.` : 'The total is THB 50,000 or less. Saving this Proposal cancels the unused Draft and records Expense work on the Main Asset. Its reserved number is retained.'}</p></div></div> : null}
-          {item.assetMode === 'existing' ? <div className="proposal-work-information">
-            <div className="proposal-inline-field"><span id="proposal-work-type-label">Work type <em>*</em></span><div className="proposal-radio-group" role="radiogroup" aria-labelledby="proposal-work-type-label">{EXISTING_WORK_TYPES.map((type) => <label key={type.id}><input type="radio" name="workType" value={type.id} checked={item.workType === type.id} onChange={() => setAssetItem(item.id, { workType: type.id })} required />{type.label}</label>)}</div></div>
-          </div> : null}
-          <div className="proposal-budget-details">
-            <div className="proposal-radio-group"><span>Budget Type <em>*</em></span>{BUDGET_TYPES.map((type) => <label key={type}><input type="radio" name="budgetType" checked={form.budgetType === type} onChange={() => setField('budgetType', type)} />{type === 'Capital expenditure' ? 'Investment' : type}</label>)}</div>
-            <button type="button" className="proposal-add-row" onClick={() => setAssetItem(item.id, { costs: [...item.costs, createCostRow('Other cost')] })}><Icon name="plus" size={13} />Add Row</button>
-            <div className="proposal-budget-table-wrap"><table className="proposal-budget-table proposal-additional-cost-table"><thead><tr><th>No.</th><th>Detail (รายการ)</th><th>Account Code</th><th>Budget (รวมเงิน)</th><th><span className="sr-only">Actions</span></th></tr></thead><tbody>{item.costs.map((cost, index) => <tr key={cost.id}>
-              <td>{index + 1}</td>
-              <td><input aria-label={`Detail ${index + 1}`} value={cost.description} onChange={(event) => setCost(item.id, cost.id, { description: event.target.value })} placeholder="e.g. Installation, Delivery" maxLength={100} required /></td>
-              <td><select aria-label={`Account Code ${index + 1}`} value={cost.accountCode || 'A'} onChange={(event) => setCost(item.id, cost.id, { accountCode: event.target.value })}>{ACCOUNT_CODES.map((code) => <option key={code}>{code}</option>)}</select></td>
-              <td><input aria-label={`Budget ${index + 1}`} type="number" min="0" step="0.01" value={cost.amount} onChange={(event) => setCost(item.id, cost.id, { amount: event.target.value })} placeholder="0.00" required /></td>
-              <td><button type="button" className="mis-cost-remove" aria-label={`Remove budget row ${index + 1}`} onClick={() => setAssetItem(item.id, { costs: item.costs.filter((row) => row.id !== cost.id) })}><Icon name="close" size={15} /></button></td>
-            </tr>)}</tbody><tfoot><tr><td colSpan={3}>Additional costs (THB)</td><td>{formatTHB(item.costs.reduce((total, cost) => total + (Number(cost.amount) || 0), 0))}</td><td /></tr></tfoot></table></div>
-            <div className="mis-proposal-line-total"><span>Total (Asset amount + additional costs)</span><strong>฿ {formatTHB(assetTotal)}</strong></div>
-            {eligibleAssets.length === 0 ? <div className="mis-proposal-empty"><div><strong>{form.projectCode.trim() ? 'No eligible Assets linked to this Project Code' : 'Select a Project Code first'}</strong><p>Link an eligible Asset to this project in the Asset form, or select another Project Code.</p></div><button type="button" className="button button-secondary button-small" onClick={onAssets}>Go to Asset list</button></div> : null}
-          </div>
+        </section>
+
+        <section className="panel form-section proposal-assets-panel" aria-labelledby="proposal-assets-heading">
+          <div className="mis-proposal-panel-heading form-section-heading"><div><span className="form-section-icon"><Icon name="box" size={23} /></span><div><h2 id="proposal-assets-heading">Proposal Assets</h2><p>Select one or more Assets. Each Asset has its own amount and additional costs.</p></div></div><button type="button" className="button button-secondary button-small" disabled={!eligibleAssets.length || form.assetItems.length >= eligibleAssets.length} onClick={() => { setForm((current) => ({ ...current, assetItems: [...current.assetItems, createAssetRow()] })); setError('') }}><Icon name="plus" size={15} />Add Asset</button></div>
+          {form.assetItems.map((item, assetIndex) => {
+            const selectedAsset = eligibleAssetsById.get(item.assetId)
+            const isDraftSubAsset = selectedAsset?.draftOrigin === 'Create Sub Asset'
+            const treatment = getProposalTreatment(isDraftSubAsset ? { ...item, assetMode: 'existing' } : item)
+            const additionalCosts = item.costs.reduce((total, cost) => total + Math.round((Number(cost.amount) || 0) * 100), 0) / 100
+            const otherSelectedIds = new Set(form.assetItems.filter((row) => row.id !== item.id).map((row) => row.assetId))
+            return <article className="proposal-asset-card" key={item.id} aria-labelledby={`asset-item-${item.id}`}>
+              <div className="proposal-asset-card-heading"><div><span className="mis-line-count">{String(assetIndex + 1).padStart(2, '0')}</span><h3 id={`asset-item-${item.id}`}>{selectedAsset?.name || 'Select an Asset'}</h3></div><button type="button" className="button button-secondary button-small" disabled={form.assetItems.length === 1} aria-label={`Remove Asset ${assetIndex + 1}`} onClick={() => { setForm((current) => ({ ...current, assetItems: current.assetItems.filter((row) => row.id !== item.id) })); setError('') }}><Icon name="close" size={14} />Remove Asset</button></div>
+              <div className="form-grid">
+                <Field label="Asset No. / Draft reference" required><select aria-label={`Asset ${assetIndex + 1} reference`} disabled={!form.projectCode.trim() || !eligibleAssets.length} value={selectedAsset ? item.assetId : ''} onChange={(event) => { const asset = eligibleAssetsById.get(event.target.value); setAssetItem(item.id, { assetId: event.target.value, assetMode: asset?.status === 'Active' ? 'existing' : 'new', workType: 'modification', workName: '', description: '', model: '', power: '', targetSop: '' }) }} required><option value="">{!form.projectCode.trim() ? 'Select a Project Code first' : !eligibleAssets.length ? 'No eligible Assets linked to this Project Code' : 'Select an Asset'}</option>{eligibleAssets.map((asset) => <option key={asset.assetId} value={asset.assetId} disabled={otherSelectedIds.has(asset.assetId)}>{asset.assetId} · {asset.name} ({asset.status}){otherSelectedIds.has(asset.assetId) ? ' · Already selected' : ''}{form.ownershipType === 'customer' ? ` · ${asset.customerName}` : ''}</option>)}</select><small>Assets must match the Project Code and Proposal ownership.</small></Field>
+                <Field label="Asset name"><input value={selectedAsset?.name || ''} readOnly className="mis-readonly-field" /></Field>
+                <Field label={item.assetMode === 'existing' ? 'Work amount (THB)' : 'Asset amount (THB)'} required><input aria-label={`Asset ${assetIndex + 1} amount`} type="number" min="0" step="0.01" value={item.amount} onChange={(event) => setAssetItem(item.id, { amount: event.target.value })} required placeholder="0.00" /></Field>
+                <Field label="Account Code"><select aria-label={`Asset ${assetIndex + 1} Account Code`} value={item.accountCode || 'A'} onChange={(event) => setAssetItem(item.id, { accountCode: event.target.value })}>{ACCOUNT_CODES.map((code) => <option key={code}>{code}</option>)}</select></Field>
+              </div>
+              {isDraftSubAsset ? <div className="proposal-work-information"><p className="proposal-item-context"><strong>Draft Sub Asset:</strong> {selectedAsset.assetId} · {selectedAsset.name}<br /><strong>Main Asset:</strong> {selectedAsset.parentAssetId}</p><div className={`proposal-treatment ${treatment === 'Capitalized' ? 'is-capitalized' : 'is-expense'}`}><strong>{treatment === 'Capitalized' ? 'Capitalized · Use existing Draft Sub Asset' : 'Expense · No Sub Asset activation'}</strong><p>{treatment === 'Capitalized' ? 'The Draft receives its real Sub Asset No. when the Proposal is approved.' : 'The total is THB 50,000 or less. Saving cancels the unused Draft and records Expense work on the Main Asset, retaining the temporary reference.'}</p></div></div> : null}
+              {item.assetMode === 'existing' ? <div className="proposal-work-information"><div className="proposal-inline-field"><span id={`work-type-${item.id}`}>Work type <em>*</em></span><div className="proposal-radio-group" role="radiogroup" aria-labelledby={`work-type-${item.id}`}>{EXISTING_WORK_TYPES.map((type) => <label key={type.id}><input type="radio" name={`workType-${item.id}`} value={type.id} checked={item.workType === type.id} onChange={() => setAssetItem(item.id, { workType: type.id })} required />{type.label}</label>)}</div></div><div className="form-grid"><Field label="Work title"><input value={item.workName} onChange={(event) => setAssetItem(item.id, { workName: event.target.value })} placeholder="Defaults to Proposal Name" maxLength={120} /></Field><Field label="Work details"><input value={item.description} onChange={(event) => setAssetItem(item.id, { description: event.target.value })} placeholder="Describe work for this Asset" maxLength={240} /></Field></div></div> : null}
+              <div className="proposal-budget-details">
+                <div className="proposal-radio-group"><span>Budget Type <em>*</em></span>{BUDGET_TYPES.map((type) => <label key={type}><input type="radio" name={`budgetType-${item.id}`} checked={item.budgetType === type} onChange={() => setAssetItem(item.id, { budgetType: type })} required />{type === 'Capital expenditure' ? 'Investment' : type}</label>)}</div>
+                <button type="button" className="proposal-add-row" aria-label={`Add cost row for Asset ${assetIndex + 1}`} onClick={() => setAssetItem(item.id, { costs: [...item.costs, createCostRow('Other cost')] })}><Icon name="plus" size={13} />Add Row</button>
+                <div className="proposal-budget-table-wrap"><table className="proposal-budget-table proposal-additional-cost-table"><caption className="sr-only">Additional costs for Asset {assetIndex + 1}</caption><thead><tr><th>No.</th><th>Detail (รายการ)</th><th>Account Code</th><th>Budget (รวมเงิน)</th><th><span className="sr-only">Actions</span></th></tr></thead><tbody>{item.costs.map((cost, index) => <tr key={cost.id}>
+                  <td>{index + 1}</td>
+                  <td><input aria-label={`Asset ${assetIndex + 1} cost ${index + 1} Detail`} value={cost.description} onChange={(event) => setCost(item.id, cost.id, { description: event.target.value })} placeholder="e.g. Installation, Delivery" maxLength={100} required /></td>
+                  <td><select aria-label={`Asset ${assetIndex + 1} cost ${index + 1} Account Code`} value={cost.accountCode || 'A'} onChange={(event) => setCost(item.id, cost.id, { accountCode: event.target.value })}>{ACCOUNT_CODES.map((code) => <option key={code}>{code}</option>)}</select></td>
+                  <td><input aria-label={`Asset ${assetIndex + 1} cost ${index + 1} Budget`} type="number" min="0" step="0.01" value={cost.amount} onChange={(event) => setCost(item.id, cost.id, { amount: event.target.value })} placeholder="0.00" required /></td>
+                  <td><button type="button" className="mis-cost-remove" aria-label={`Remove Asset ${assetIndex + 1} cost row ${index + 1}`} onClick={() => setAssetItem(item.id, { costs: item.costs.filter((row) => row.id !== cost.id) })}><Icon name="close" size={15} /></button></td>
+                </tr>)}{!item.costs.length ? <tr><td colSpan={5}>No additional costs. Select Add Row to add costs for this Asset.</td></tr> : null}</tbody><tfoot><tr><td colSpan={3}>Additional costs (THB)</td><td>{formatTHB(additionalCosts)}</td><td /></tr></tfoot></table></div>
+                <div className="mis-proposal-line-total"><span>Total (Asset amount + additional costs)</span><strong>฿ {formatTHB(getProposalItemTotal(item))}</strong></div>
+              </div>
+            </article>
+          })}
+          {!eligibleAssets.length ? <div className="mis-proposal-empty"><div><strong>{form.projectCode.trim() ? 'No eligible Assets linked to this Project Code' : 'Select a Project Code first'}</strong><p>Link an eligible Asset to this project in the Asset form, or select another Project Code.</p></div><button type="button" className="button button-secondary button-small" onClick={onAssets}>Go to Asset list</button></div> : null}
+          <div className="proposal-all-assets-total"><div><strong>Proposal total</strong><span>{form.assetItems.length} Asset item{form.assetItems.length === 1 ? '' : 's'} · Base amount ฿ {formatTHB(baseTotal)} + Additional costs ฿ {formatTHB(additionalTotal)}</span></div><strong>฿ {formatTHB(proposalTotal)}</strong></div>
         </section>
 
 
         {error ? <div className="form-error" role="alert"><Icon name="alert" size={17} />{error}</div> : null}
         </div>
-          <div className="movement-submit-bar create-asset-submit-bar"><span><Icon name="info" size={16} />Review the details before saving.</span><div className="create-asset-submit-actions"><button type="button" className="button button-secondary" onClick={onBack}>Back</button><button type="submit" className="button button-primary" disabled={eligibleAssets.length === 0}><Icon name="check" size={16} />Save Proposal</button></div></div>
+          <div className="movement-submit-bar create-asset-submit-bar"><span><Icon name="info" size={16} />Assets stay Draft until Proposal approval assigns their real Asset No.</span><div className="create-asset-submit-actions"><button type="button" className="button button-secondary" onClick={onBack}>Back</button><button type="submit" className="button button-primary" disabled={eligibleAssets.length === 0}><Icon name="check" size={16} />Save Proposal</button></div></div>
       </form>
       {browse === 'project' ? <dialog ref={projectDialogRef} className="proposal-project-dialog" aria-labelledby="proposal-project-title" onCancel={() => setBrowse(null)} onClose={() => setBrowse(null)}><div><h2 id="proposal-project-title">Select Project</h2><button type="button" aria-label="Close project selection" onClick={() => setBrowse(null)}><Icon name="close" size={18} /></button></div><input autoFocus aria-label="Search projects" placeholder="Search project code or name" value={browseQuery} onChange={(event) => setBrowseQuery(event.target.value)} /><div className="proposal-project-results">{projects.filter((project) => `${project.projectCode} ${project.projectName}`.toLowerCase().includes(browseQuery.toLowerCase())).map((project) => <button type="button" key={project.projectCode} onClick={() => { setField('projectCode', project.projectCode); setField('projectName', project.projectName); setBrowse(null) }}><strong>{project.projectCode}</strong><span>{project.projectName}</span></button>)}{projects.length === 0 ? <p>No saved projects. Create a project in Project Management, or enter the project code and name in this form.</p> : projects.every((project) => !`${project.projectCode} ${project.projectName}`.toLowerCase().includes(browseQuery.toLowerCase())) ? <p>No matching projects.</p> : null}</div></dialog> : null}
       {browse === 'part' ? <dialog ref={projectDialogRef} className="proposal-project-dialog" aria-labelledby="proposal-part-title" onCancel={() => setBrowse(null)} onClose={() => setBrowse(null)}>

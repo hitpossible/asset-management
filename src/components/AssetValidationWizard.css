@@ -1,0 +1,59 @@
+.validation-check-information { display: grid; gap: 20px; }
+.validation-check-readiness { display: flex; align-items: flex-start; gap: 12px; padding: 16px 20px; border: 1px solid #dce5ef; border-radius: 8px; background: #f8fafc; }
+.validation-check-readiness > svg { flex: none; margin-top: 2px; }
+.validation-check-readiness.is-ready > svg { color: #00875a; }
+.validation-check-readiness.needs-attention { border-color: #eed6a5; background: #fffbf3; }
+.validation-check-readiness.needs-attention > svg { color: #956000; }
+.validation-check-readiness strong { color: #203152; font-size: 14px; }
+.validation-check-readiness p { margin: 4px 0 0; color: #60718a; font-size: 13px; line-height: 1.6; }
+.asset-validation-modal .validation-check-information > .asset-validation-data-section { margin: 0; padding: 20px; border-radius: 8px; }
+.asset-validation-modal .validation-check-information .asset-validation-data-heading { margin-bottom: 16px; }
+.asset-validation-modal .validation-check-information .asset-validation-data-heading h3 { margin: 0; font-size: 17px; }
+.asset-validation-modal .validation-check-information .asset-validation-data-heading p { margin: 4px 0 0; color: #687b95; font-size: 12px; }
+.validation-information-groups { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+.validation-information-group { min-width: 0; padding: 16px; border: 1px solid #e5eaf1; border-radius: 6px; background: #fbfcfe; }
+.validation-information-group h4 { display: flex; align-items: center; gap: 8px; margin: 0 0 16px; color: #344764; font-size: 13px; font-weight: 600; }
+.validation-information-group h4 svg { flex: none; color: #6f81a2; }
+.validation-information-group .validation-asset-fields { grid-template-columns: minmax(0, 1fr); gap: 14px; margin: 0; padding: 0; }
+.validation-information-group .validation-asset-fields dt { color: #60718a; font-size: 12px; }
+.validation-information-group .validation-asset-fields dd { margin: 4px 0 0; color: #172947; font-size: 14px; line-height: 1.5; font-weight: 500; }
+.validation-information-group .validation-information-missing dd { display: flex; align-items: center; gap: 6px; color: #aa6c00; font-size: 13px; }
+.validation-check-customer { margin: 16px 0 0; padding: 12px 16px; border-radius: 6px; background: #f3f6fa; }
+.validation-check-customer dt { color: #60718a; font-size: 12px; }
+.validation-check-customer dd { margin: 4px 0 0; overflow-wrap: anywhere; font-weight: 600; }
+.validation-check-information .asset-match-card { min-height: 114px; padding: 16px; }
+.validation-check-information .asset-match-card-copy > span { font-size: 12px; }
+.validation-check-information .asset-match-card-copy small { font-size: 11px; }
+.validation-check-information .asset-match-table th, .validation-check-information .asset-match-table td { padding: 12px; font-size: 13px; line-height: 1.6; }
+.validation-check-information .asset-match-table tbody tr:hover > * { background: #f8fafc; }
+.validation-check-information .asset-match-table td small { font-size: 11px; }
+.validation-check-information .asset-match-reference-note { margin: 12px 0 16px; font-size: 12px; line-height: 1.7; }
+.validation-check-information .validation-match-grid > div { padding: 12px; }
+.validation-check-information .validation-match-grid span { font-size: 12px; }
+.validation-check-documents { margin-top: 20px; border-top: 1px solid #e3eaf2; }
+.validation-check-documents > summary { display: flex; align-items: center; gap: 12px; padding: 18px 0 0; color: #344764; cursor: pointer; list-style: none; font-size: 14px; font-weight: 600; }
+.validation-check-documents > summary::-webkit-details-marker { display: none; }
+.validation-check-documents > summary > svg { flex: none; }
+.validation-check-documents > summary > svg:last-child { margin-left: auto; }
+.validation-check-documents[open] > summary > svg:last-child { transform: rotate(90deg); }
+.validation-check-documents summary small { display: block; margin-top: 4px; color: #687b95; font-size: 12px; font-weight: 400; }
+.validation-check-documents > summary:focus-visible { outline: 2px solid #e60012; outline-offset: 4px; }
+.validation-check-information .validation-document-panels { grid-template-columns: minmax(0, 1fr); gap: 16px; }
+.asset-validation-modal .validation-check-information .validation-document-table th, .asset-validation-modal .validation-check-information .validation-document-table td { padding: 12px; font-size: 12px; }
+.validation-check-information .validation-document-note { font-size: 12px; }
+@media (max-width: 800px) {
+  .validation-information-groups { grid-template-columns: minmax(0, 1fr); gap: 12px; }
+  .validation-information-group .validation-asset-fields { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+  .asset-validation-modal .validation-check-information > .asset-validation-data-section { padding: 16px; }
+}
+@media (max-width: 420px) {
+  .validation-information-group .validation-asset-fields { grid-template-columns: minmax(0, 1fr); }
+}
+.validation-workflow-summary { display: flex; align-items: flex-start; gap: 11px; margin: -8px 0 20px; padding: 12px 16px; border: 1px solid #dce5ef; border-radius: 7px; color: #30435f; background: #f8fafc; }
+.validation-workflow-summary > svg { flex: none; margin-top: 2px; color: #00875a; }
+.validation-workflow-summary > div { display: grid; gap: 3px; min-width: 0; }
+.validation-workflow-summary strong { font-size: 13px; }
+.validation-workflow-summary span { overflow-wrap: anywhere; font-size: 12px; }
+.validation-workflow-summary small { color: #687b95; font-size: 11px; }
+.validation-workflow-summary.is-error { border-color: #efc6ca; color: #a21b28; background: #fff7f7; }
+.validation-workflow-summary.is-error > svg { color: #d0021b; }

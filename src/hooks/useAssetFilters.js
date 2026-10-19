@@ -28,6 +28,8 @@ export function useAssetFilters(assets) {
       const matchesQuery = !needle || [
         asset.assetId,
         asset.name,
+        asset.rfqNo,
+        asset.partNo,
         asset.assetClass,
         asset.model,
         asset.customerName,

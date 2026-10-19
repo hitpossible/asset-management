@@ -1,3 +1,4 @@
+import { remapAssetReferences } from '../utils/assetNumberUtils.js'
 import { useCallback, useEffect, useState } from 'react'
 
 const MIS_PROPOSAL_STORAGE_KEY = 'tbkk-mis-proposals-v1'
@@ -23,6 +24,10 @@ export function useMISProposalStore() {
     }
   }, [proposals])
 
+  const remapAssetIds = useCallback((mapping) => {
+    setProposals((current) => remapAssetReferences(current, mapping))
+  }, [])
+
   const addProposal = useCallback((proposal) => {
     setProposals((currentProposals) => [proposal, ...currentProposals])
   }, [])
@@ -33,5 +38,5 @@ export function useMISProposalStore() {
     )))
   }, [])
 
-  return { proposals, addProposal, setProposalStatus }
+  return { remapAssetIds, proposals, addProposal, setProposalStatus }
 }

@@ -1141,3 +1141,41 @@ This update supersedes the earlier standalone creation flows and accounting guid
 - The final depreciation month convention is **OPEN / TO CONFIRM**. The mockup requires an explicit choice to include the sale month as a full period or stop in the prior month. No daily proration.
 - Parent/Sub Asset sale scope is **OPEN / TO CONFIRM**. The mockup processes only the selected Asset, preserves hierarchy and shows remaining Sub Assets; it does not automatically sell children.
 - Sold records remain inspectable in Asset Detail and Disposal history. DP details are read-only after sale. Reports retain pre-sale months, show disposal cost/DP removal and zero closing carrying balance in the sale month, and exclude the Asset in later months.
+
+
+# 31. Confirmed Draft numbering (13 Oct 2026)
+
+- Creating a Main Asset or Sub Asset assigns only a unique temporary Draft reference.
+- Save Proposal retains Draft status and does not assign a real Asset number.
+- Approve Proposal assigns the real Asset number and moves the record to Purchasing. Sub Assets receive the next unused Parent suffix at approval, never at Draft/Proposal save. This supersedes earlier immediate numbering and Proposal Processing guidance.
+- Preserve the original temporary reference and update all Proposal, purchasing and lifecycle relationship references when assigning the real number. Active existing work targets stay Active; Expense creates no real Asset number.
+
+
+# 32. Audit Log (13 Oct 2026)
+
+- Record user-driven creation and edits across non-MIS modules, including Assets/Sub Assets, verification drafts and submission, approvals/returns/activation, depreciation, transfer, disposal, projects, Asset Types, users, roles, menus, permissions, and Asset issue reports.
+- Exclude all MIS-origin operations, including their indirect Asset/lifecycle updates. Do not audit automatic migrations or seed generation.
+- Keep timestamp (display Asia/Bangkok), demo actor, module, action, record reference and changed fields with before/after values. No-op saves add no log.
+- Audit Log is a read-only Administrator page with search, module/action/user/date filters, pagination and CSV export. Start recording new changes; do not fabricate historical audit entries.
+- Mockup persistence uses browser localStorage; show a session-only notice when storage fails. Do not save credentials or attachment bodies in audit values.
+
+
+# 33. RFQ reference in Create/Edit Asset (13 Oct 2026)
+
+- Asset information includes an optional RFQ No. selector. Selecting an RFQ fills Model and Part number from the local RFQ reference.
+- Model and Part number remain editable, including when no RFQ is selected. Changing RFQ fills both fields from the new reference; clearing RFQ preserves the entered values.
+- Save the RFQ reference and final entered Model/Part number on the Draft. Reopening an existing Draft preserves manual edits instead of refilling from RFQ. Display the references in the preview and Asset detail.
+
+
+# 34. Create/Edit Asset field visibility (13 Oct 2026)
+
+- Show RFQ No., Model, Part number, Area and Power only for Asset classes in the ME or MD groups in Create/Edit Asset. Hide them for other classes and when no class is selected, including RFQ/Model/Part number in the draft preview.
+- Completion excludes hidden Model/Area/Power fields. Switching class preserves already entered values so switching back restores them.
+
+
+# 35. Multiple Assets in Create Proposal (13 Oct 2026)
+
+- Create Proposal supports one or more distinct eligible Assets from the selected Project Code and ownership. Add/remove Asset cards; keep at least one item. Prevent duplicate Asset selection.
+- Each Asset has its own base amount, account code, Budget Type, scoped additional cost rows and item total. Existing Asset work has item-specific work type/title/details.
+- Proposal total is the sum of all item totals, including their additional costs. Save each item's own amount and costs; never duplicate the Proposal funding amount across items. PR/PO retain each item's scoped costs.
+- Header In Budget/Out of Budget are Proposal funding references. Budget Type on the Proposal summarizes item types (Mixed when different). Draft numbering and MIS Audit Log exclusions remain unchanged.

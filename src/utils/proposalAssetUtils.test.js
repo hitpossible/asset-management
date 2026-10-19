@@ -1,8 +1,10 @@
+import { getAssetNumberYear } from './assetNumberUtils.js'
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { getProposalTreatment, getProposalItemTotal, prepareProposalAssets, WORK_TYPES } from './proposalAssetUtils.js'
 import { getAssetExpenses } from './assetExpenseUtils.js'
 
+const temporary = (n) => `TMP-${getAssetNumberYear()}-${String(n).padStart(4, '0')}`
 const parent = { assetId: 'ME-2026-0005', name: 'Machine', status: 'Active', assetClass: 'ME - Machine', custodian: 'Maya', plant: 'Plant 1', location: 'Line C', line: 'Line C', area: 'Assembly', poNo: 'OLD-PO', depreciationStartDate: '2025-01-01', invoices: ['OLD-INV'] }
 const makeItem = (changes = {}) => ({ itemId: 'item-1', assetMode: 'existing', assetId: parent.assetId, workType: 'subAsset', workName: 'New component', description: 'Upgrade machine', model: 'C-1', power: '380 VAC', targetSop: '2026-10-22', assetAmount: 50_001, costs: [], ...changes })
 const proposal = (items) => ({ proposalId: 'PROP-2026-0042', projectCode: 'P2026-00042', savedAt: '2026-10-01T03:00:00Z', assetItems: items })
@@ -26,12 +28,12 @@ test('expense keeps the parent reference without creating a new asset', () => {
   assert.equal(parent.status, 'Active')
 })
 
-test('sub asset gets the next suffix, isolated acquisition data and linked proposal item', () => {
+test('sub asset gets a temporary reference, isolated acquisition data and linked proposal item', () => {
   const result = prepareProposalAssets(proposal([makeItem({ workType: 'maintenance' })]), [parent, { assetId: `${parent.assetId}-1` }, { assetId: `${parent.assetId}-3` }, { assetId: `${parent.assetId}-99-1` }])
   const child = result.createdAssets[0]
-  assert.equal(child.assetId, `${parent.assetId}-4`)
+  assert.equal(child.assetId, temporary(1))
   assert.equal(child.parentAssetId, parent.assetId)
-  assert.equal(child.status, 'Proposal Processing')
+  assert.equal(child.status, 'Draft')
   assert.equal(child.workType, 'maintenance')
   assert.equal(child.proposalNo, 'PROP-2026-0042')
   assert.equal(child.poNo, '')
@@ -56,7 +58,7 @@ test('mixed proposal preserves new assets and treats each existing-asset item se
   assert.equal(result.events.length, 2)
   assert.equal(JSON.stringify(input), snapshot)
   const subsequent = prepareProposalAssets(proposal([makeItem()]), [parent, ...result.createdAssets])
-  assert.equal(subsequent.createdAssets[0].assetId, `${parent.assetId}-2`)
+  assert.equal(subsequent.createdAssets[0].assetId, temporary(2))
 })
 
 test('capitalized maintenance is excluded from expense totals', () => {
@@ -83,7 +85,7 @@ test('work on a Sub Asset creates a sibling under the main Asset, retaining the 
   for (const workType of ['subAsset', 'modification', 'maintenance']) {
     const result = prepareProposalAssets(proposal([makeItem({ assetId: child.assetId, workType })]), [parent, child])
     const next = result.createdAssets[0]
-    assert.equal(next.assetId, `${parent.assetId}-2`)
+    assert.equal(next.assetId, temporary(1))
     assert.equal(next.parentAssetId, parent.assetId)
     assert.equal(next.sourceAssetId, child.assetId)
     assert.equal(next.location, child.location)
@@ -94,10 +96,10 @@ test('work on a Sub Asset creates a sibling under the main Asset, retaining the 
   }
 })
 
-test('multiple work targets under the same main Asset share one suffix sequence', () => {
+test('multiple work targets under the same main Asset share one temporary reference sequence', () => {
   const child = { ...parent, assetId: `${parent.assetId}-1`, parentAssetId: parent.assetId }
   const result = prepareProposalAssets(proposal([makeItem(), makeItem({ itemId: 'item-2', assetId: child.assetId })]), [parent, child])
-  assert.deepEqual(result.createdAssets.map((asset) => asset.assetId), [`${parent.assetId}-2`, `${parent.assetId}-3`])
+  assert.deepEqual(result.createdAssets.map((asset) => asset.assetId), [temporary(1), temporary(2)])
   assert.ok(result.createdAssets.every((asset) => asset.parentAssetId === parent.assetId))
 })
 
@@ -132,4 +134,36 @@ test('Active Asset radio work records Modification or Maintenance on the selecte
     }
   }
   assert.throws(() => prepareProposalAssets(proposal([makeItem({ workOnExistingAsset: true })]), [parent]), /Modification or Maintenance/)
+})
+
+test('multiple new Assets retain independent costs and budgets through approval and purchasing item references', async () => {
+  const { prepareProposalApproval, remapAssetReferences } = await import('./assetNumberUtils.js')
+  const assets = [
+    { assetId: 'TMP-2026-1001', name: 'Conveyor', status: 'Draft' },
+    { assetId: 'TMP-2026-1002', name: 'Robot', status: 'Draft' },
+  ]
+  const items = [
+    { itemId: 'conveyor', assetMode: 'new', assetId: assets[0].assetId, budgetType: 'Capital expenditure', assetAmount: 1400000, costs: [{ type: 'Installation', amount: 150000, accountCode: 'A' }, { type: 'Delivery', amount: 50000, accountCode: 'B' }] },
+    { itemId: 'robot', assetMode: 'new', assetId: assets[1].assetId, budgetType: 'Expense', assetAmount: 250000, costs: [{ type: 'Installation', amount: 10000, accountCode: 'C' }] },
+  ]
+  const saved = prepareProposalAssets({ ...proposal(items), status: 'Pending Approval' }, assets).proposal
+  assert.deepEqual(saved.assetItems.map(getProposalItemTotal), [1600000, 260000])
+  assert.equal(saved.assetItems.reduce((sum, item) => sum + getProposalItemTotal(item), 0), 1860000)
+  assert.equal(saved.assetItems[0].costs.length, 2)
+  assert.equal(saved.assetItems[1].costs[0].accountCode, 'C')
+  const linked = assets.map((asset) => ({ ...asset, proposalNo: saved.proposalId }))
+  const approval = prepareProposalApproval(saved, linked, '2026')
+  const approved = remapAssetReferences(saved, approval.mapping)
+  assert.equal(new Set(approved.assetItems.map((item) => item.assetId)).size, 2)
+  assert.ok(approved.assetItems.every((item) => item.assetId.startsWith('AST-2026-')))
+  const prItems = approved.assetItems.map((item) => ({ ...item }))
+  const poItems = prItems.map((item, index) => ({ ...item, itemNo: String((index + 1) * 10) }))
+  assert.deepEqual(poItems.map((item) => [item.itemNo, item.assetAmount, item.costs.map((cost) => cost.amount)]), [['10', 1400000, [150000, 50000]], ['20', 250000, [10000]]])
+  assert.deepEqual(poItems.map((item) => item.budgetType), ['Capital expenditure', 'Expense'])
+})
+
+test('a new Draft Asset cannot be allocated twice in one Proposal', () => {
+  const draft = { assetId: 'TMP-2026-1001', status: 'Draft' }
+  const item = { assetMode: 'new', assetId: draft.assetId, assetAmount: 10000, costs: [] }
+  assert.throws(() => prepareProposalAssets(proposal([item, { ...item, itemId: 'duplicate' }]), [draft]), /only once/)
 })

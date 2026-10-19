@@ -1,0 +1,65 @@
+{
+  "removed_tables": [
+    "info_rfq",
+    "info_rfq_item",
+    "info_rfq_quote",
+    "info_department_budget",
+    "info_proposal",
+    "info_proposal_item",
+    "info_proposal_cost",
+    "info_asset_reservation",
+    "info_pr",
+    "info_pr_item",
+    "info_pr_allocation",
+    "info_pr_cost",
+    "info_po",
+    "info_po_item",
+    "info_po_allocation",
+    "info_po_cost",
+    "info_invoice",
+    "info_invoice_item",
+    "info_delivery",
+    "info_delivery_item",
+    "info_delivery_invoice",
+    "info_gr",
+    "info_gr_item",
+    "info_gr_invoice",
+    "mst_warehouse",
+    "info_spare_issue",
+    "info_spare_issue_item",
+    "info_stock_adjustment",
+    "info_stock_adjustment_item",
+    "info_stock_balance",
+    "log_stock_movement",
+    "info_asset_po_allocation"
+  ],
+  "added_tables": [
+    "info_mis_document_reference",
+    "info_rfq_reference",
+    "info_asset_acquisition",
+    "info_asset_acquisition_cost",
+    "info_asset_acquisition_document",
+    "info_asset_spare_usage"
+  ],
+  "removed_admin_tables": [
+    "sys_role",
+    "sys_permission",
+    "sys_user_role",
+    "sys_role_permission",
+    "sys_menu_permission",
+    "mst_department",
+    "sys_user"
+  ],
+  "added_admin_tables": [
+    "sys_submenu",
+    "sys_permission_group",
+    "sys_permission_detail",
+    "sys_department",
+    "sys_users"
+  ],
+  "renamed_tables": {
+    "sys_user": "sys_users",
+    "mst_department": "sys_department",
+    "sys_role": "sys_permission_group"
+  }
+}

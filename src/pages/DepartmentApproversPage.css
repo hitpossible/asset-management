@@ -1,0 +1,72 @@
+.department-transfer-flow { margin-bottom: 18px; padding: 22px 24px; }
+.department-transfer-flow > header { display: flex; align-items: center; gap: 12px; }
+.department-flow-icon { display: grid; width: 40px; height: 40px; flex: none; place-items: center; border-radius: 7px; color: #526d91; background: #edf2f8; }
+.department-transfer-flow h2, .department-approver-panel h2, .department-team-setting h2 { margin: 0 0 5px; color: #203152; font-size: 17px; font-weight: 600; }
+.department-transfer-flow p, .department-approver-panel header p, .department-team-setting p { margin: 0; color: #718097; font-size: 12px; line-height: 1.6; }
+.department-transfer-sequence { display: grid; grid-template-columns: minmax(0, 1.55fr) auto minmax(250px, .9fr); align-items: stretch; gap: 14px; margin-top: 18px; }
+.department-flow-group { min-width: 0; padding: 14px; border: 1px solid #e0e6ef; border-radius: 7px; background: #fbfcfe; }
+.department-flow-group h3 { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0 0 12px; color: #344764; font-size: 12px; font-weight: 600; }
+.department-flow-group h3 span { padding: 3px 7px; border-radius: 4px; color: #687b95; background: #eef2f7; font-size: 10px; font-weight: 500; }
+.department-flow-group ol { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin: 0; padding: 0; list-style: none; }
+.department-flow-group li, .department-flow-final-step { display: flex; min-width: 0; align-items: flex-start; gap: 9px; padding: 10px; border: 1px solid #e5eaf1; border-radius: 6px; background: #fff; }
+.department-flow-group li > span, .department-flow-final-step > span { display: grid; width: 25px; height: 25px; flex: none; place-items: center; border-radius: 50%; color: #526d91; background: #edf2f8; font-size: 11px; font-weight: 600; }
+.department-flow-group li > div, .department-flow-final-step > div { display: grid; min-width: 0; gap: 4px; }
+.department-flow-group li strong, .department-flow-final-step strong { color: #344764; font-size: 11px; line-height: 1.45; }
+.department-flow-group li small, .department-flow-final-step small { color: #718097; font-size: 10px; line-height: 1.5; }
+.department-flow-connector { align-self: center; color: #9aa7b8; }
+.department-flow-acknowledgement { border-color: #d9e8df; background: #f8fcf9; }
+.department-flow-acknowledgement h3 span { color: #2d7652; background: #e7f4eb; }
+.department-flow-final-step { border-color: #d9e8df; }
+.department-flow-final-step > span { color: #2d7652; background: #e7f4eb; }
+
+.department-approver-tabs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-bottom: 14px; }
+.department-approver-tabs button { display: flex; min-width: 0; align-items: center; justify-content: space-between; gap: 12px; padding: 13px 16px; border: 1px solid #dfe5ee; border-radius: 7px; color: #52627c; background: #fff; text-align: left; cursor: pointer; }
+.department-approver-tabs button[aria-pressed="true"] { border-color: #e60012; color: #263650; box-shadow: inset 0 -2px 0 #e60012; background: #fffafa; }
+.department-approver-tabs button:focus-visible { outline: 2px solid #e60012; outline-offset: 2px; }
+.department-approver-tabs button > span { font-size: 13px; font-weight: 600; }
+.department-approver-tabs button > small { flex: none; color: #7b899e; font-size: 11px; }
+
+.department-approver-panel { overflow: hidden; }
+.department-approver-panel > header { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; padding: 22px 24px; }
+.department-approver-table { width: 100%; min-width: 680px; border-collapse: collapse; }
+.department-approver-table th { padding: 12px 24px; border-top: 1px solid #e5eaf1; border-bottom: 1px solid #e5eaf1; color: #7b899e; background: #f8fafc; text-align: left; font-size: 12px; font-weight: 500; }
+.department-approver-table td { padding: 14px 24px; border-bottom: 1px solid #edf0f5; }
+.department-approver-table th:first-child { width: 35%; }
+.department-approver-table th:nth-child(2) { width: 40%; }
+.department-approver-table input:not([type="checkbox"]), .department-approver-table select, .department-team-setting select { width: 100%; min-width: 0; height: 40px; padding: 0 12px; border: 1px solid #d5ddea; border-radius: 5px; color: #344764; background: #fff; font-size: 13px; }
+.department-active { display: flex; align-items: center; gap: 7px; white-space: nowrap; color: #60718b; font-size: 12px; }
+.department-active input { accent-color: #00875a; }
+.department-remove { display: grid; width: 30px; height: 30px; place-items: center; border: 0; border-radius: 4px; color: #9aa7b8; background: transparent; }
+.department-remove:hover { color: #c60012; background: #fff0f2; }
+.department-approver-empty { display: grid; justify-items: center; gap: 12px; padding: 40px 24px; color: #7b899e; }
+.department-approver-empty strong { color: #344764; font-size: 15px; }
+.department-approver-empty p { margin: 0; font-size: 12px; text-align: center; }
+
+.department-team-setting { display: flex; align-items: flex-start; gap: 16px; min-height: 216px; padding: 24px; border-color: #d9e8df; }
+.department-team-icon { display: grid; width: 44px; height: 44px; flex: none; place-items: center; border-radius: 8px; color: #2d7652; background: #e7f4eb; }
+.department-team-setting > div { flex: 1; min-width: 0; }
+.department-team-kicker { display: block; margin-bottom: 6px; color: #2d7652; font-size: 11px; font-weight: 600; }
+.department-team-setting label { display: grid; max-width: 450px; gap: 8px; margin-top: 18px; color: #60718b; font-size: 12px; }
+.department-team-setting label > span { font-weight: 600; }
+.department-team-setting .department-team-empty-help { margin-top: 12px; color: #9a6500; }
+
+.department-approver-note { display: flex; align-items: flex-start; gap: 8px; margin: 18px 0; color: #7b899e; font-size: 12px; line-height: 1.7; }
+.department-approver-note svg { flex: none; margin-top: 2px; }
+.department-approver-save { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 10px; margin-top: 20px; padding: 16px 20px; border: 1px solid #e1e7f0; border-radius: 8px; background: #fff; }
+.department-approver-save > span { display: grid; gap: 3px; margin-right: auto; color: #344764; font-size: 12px; font-weight: 600; }
+.department-approver-save > span small { color: #7b899e; font-size: 10px; font-weight: 400; }
+
+@media (max-width: 900px) {
+  .department-transfer-sequence { grid-template-columns: minmax(0, 1fr); gap: 8px; }
+  .department-flow-connector { justify-self: center; transform: rotate(90deg); }
+}
+@media (max-width: 600px) {
+  .department-approver-tabs { grid-template-columns: minmax(0, 1fr); }
+  .department-flow-group ol { grid-template-columns: minmax(0, 1fr); }
+  .department-transfer-flow { padding: 18px 16px; }
+  .department-approver-panel > header { padding: 18px 16px; }
+  .department-team-setting { gap: 12px; padding: 18px 16px; }
+  .department-approver-save { justify-content: stretch; padding: 14px; }
+  .department-approver-save > span { width: 100%; }
+  .department-approver-save .button { flex: 1; }
+}

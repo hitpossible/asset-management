@@ -1,0 +1,7629 @@
+{
+  "sys_menu": {
+    "prefix": "sm",
+    "module": "System",
+    "description": "เมนูหลักในแถบ navigation",
+    "columns": [
+      {
+        "name": "id",
+        "type": "BIGINT UNSIGNED",
+        "description": "รหัสภายในถาวร",
+        "nullable": false,
+        "default": "AUTO_INCREMENT",
+        "ref": null
+      },
+      {
+        "name": "name",
+        "type": "VARCHAR(120)",
+        "description": "ชื่อเมนู",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "icon",
+        "type": "VARCHAR(80)",
+        "description": "ชื่อไอคอน",
+        "nullable": true,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "order",
+        "type": "INT UNSIGNED",
+        "description": "ลำดับเมนูหลัก",
+        "nullable": false,
+        "default": "0",
+        "ref": null
+      },
+      {
+        "name": "status",
+        "type": "BOOLEAN",
+        "description": "สถานะเมนู",
+        "nullable": false,
+        "default": "'1'",
+        "ref": null
+      },
+      {
+        "name": "created_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาสร้าง UTC",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6)",
+        "ref": null
+      },
+      {
+        "name": "created_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้สร้าง",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "updated_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาแก้ไขล่าสุด UTC",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6)",
+        "ref": null
+      },
+      {
+        "name": "updated_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้แก้ไขล่าสุด",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      }
+    ],
+    "unique": [],
+    "idx": [],
+    "checks": [],
+    "mutable": true
+  },
+  "sys_setting": {
+    "prefix": "sst",
+    "module": "System",
+    "description": "ค่าตั้งระบบ ไม่ใช้เก็บ secrets",
+    "columns": [
+      {
+        "name": "id",
+        "type": "BIGINT UNSIGNED",
+        "description": "รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK",
+        "nullable": false,
+        "default": "AUTO_INCREMENT",
+        "ref": null
+      },
+      {
+        "name": "key",
+        "type": "VARCHAR(100)",
+        "description": "ชื่อค่า",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "value",
+        "type": "JSON",
+        "description": "ค่าที่ตั้ง",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "description",
+        "type": "VARCHAR(255)",
+        "description": "คำอธิบาย",
+        "nullable": true,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "created_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาสร้าง UTC",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6)",
+        "ref": null
+      },
+      {
+        "name": "created_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้สร้าง",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "updated_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาแก้ไขล่าสุด UTC",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6)",
+        "ref": null
+      },
+      {
+        "name": "updated_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้แก้ไขล่าสุด",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "row_version",
+        "type": "INT UNSIGNED",
+        "description": "เลขเวอร์ชันสำหรับ optimistic locking",
+        "nullable": false,
+        "default": "1",
+        "ref": null
+      }
+    ],
+    "unique": [
+      [
+        "key"
+      ]
+    ],
+    "idx": [],
+    "checks": [],
+    "mutable": true
+  },
+  "sys_number_sequence": {
+    "prefix": "sns",
+    "module": "System",
+    "description": "ตัวนับเลขเอกสารและเลข Asset โดยล็อกแถวใน transaction",
+    "columns": [
+      {
+        "name": "id",
+        "type": "BIGINT UNSIGNED",
+        "description": "รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK",
+        "nullable": false,
+        "default": "AUTO_INCREMENT",
+        "ref": null
+      },
+      {
+        "name": "scope",
+        "type": "VARCHAR(150)",
+        "description": "namespace เช่น ASSET:ME:2026 หรือ CHILD:<main_id>",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "last_value",
+        "type": "BIGINT UNSIGNED",
+        "description": "เลขที่ใช้ล่าสุด ห้ามลดหรือใช้ซ้ำ",
+        "nullable": false,
+        "default": "0",
+        "ref": null
+      },
+      {
+        "name": "created_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาสร้าง UTC",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6)",
+        "ref": null
+      },
+      {
+        "name": "created_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้สร้าง",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "updated_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาแก้ไขล่าสุด UTC",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6)",
+        "ref": null
+      },
+      {
+        "name": "updated_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้แก้ไขล่าสุด",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "row_version",
+        "type": "INT UNSIGNED",
+        "description": "เลขเวอร์ชันสำหรับ optimistic locking",
+        "nullable": false,
+        "default": "1",
+        "ref": null
+      }
+    ],
+    "unique": [
+      [
+        "scope"
+      ]
+    ],
+    "idx": [],
+    "checks": [],
+    "mutable": true
+  },
+  "sys_workflow": {
+    "prefix": "sw",
+    "module": "System",
+    "description": "นิยาม workflow แบบมี version หลังใช้งานให้สร้าง version ใหม่",
+    "columns": [
+      {
+        "name": "id",
+        "type": "BIGINT UNSIGNED",
+        "description": "รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK",
+        "nullable": false,
+        "default": "AUTO_INCREMENT",
+        "ref": null
+      },
+      {
+        "name": "code",
+        "type": "VARCHAR(80)",
+        "description": "รหัส workflow",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "version",
+        "type": "INT UNSIGNED",
+        "description": "เวอร์ชัน",
+        "nullable": false,
+        "default": "1",
+        "ref": null
+      },
+      {
+        "name": "name",
+        "type": "VARCHAR(255)",
+        "description": "ชื่อ workflow",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "process",
+        "type": "VARCHAR(80)",
+        "description": "กระบวนการภายใน Asset เช่น TRANSFER / ACTIVATION",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "is_active",
+        "type": "BOOLEAN",
+        "description": "เปิดใช้",
+        "nullable": false,
+        "default": "1",
+        "ref": null
+      },
+      {
+        "name": "created_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาสร้าง UTC",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6)",
+        "ref": null
+      },
+      {
+        "name": "created_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้สร้าง",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "updated_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาแก้ไขล่าสุด UTC",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6)",
+        "ref": null
+      },
+      {
+        "name": "updated_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้แก้ไขล่าสุด",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "row_version",
+        "type": "INT UNSIGNED",
+        "description": "เลขเวอร์ชันสำหรับ optimistic locking",
+        "nullable": false,
+        "default": "1",
+        "ref": null
+      }
+    ],
+    "unique": [
+      [
+        "code",
+        "version"
+      ]
+    ],
+    "idx": [],
+    "checks": [],
+    "mutable": true
+  },
+  "sys_workflow_step": {
+    "prefix": "sws",
+    "module": "System",
+    "description": "ลำดับและผู้รับผิดชอบของนิยาม workflow",
+    "columns": [
+      {
+        "name": "id",
+        "type": "BIGINT UNSIGNED",
+        "description": "รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK",
+        "nullable": false,
+        "default": "AUTO_INCREMENT",
+        "ref": null
+      },
+      {
+        "name": "workflow_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "workflow",
+        "nullable": false,
+        "default": null,
+        "ref": "sys_workflow"
+      },
+      {
+        "name": "sequence",
+        "type": "INT UNSIGNED",
+        "description": "ลำดับ",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "code",
+        "type": "VARCHAR(80)",
+        "description": "รหัสขั้น",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "name",
+        "type": "VARCHAR(255)",
+        "description": "ชื่อขั้น",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "action",
+        "type": "ENUM('APPROVE','REVIEW','ACKNOWLEDGE')",
+        "description": "ชนิดการตัดสินใจ",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "assignee_type",
+        "type": "ENUM('USER','ROLE','DYNAMIC')",
+        "description": "วิธีหาผู้อนุมัติ",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "user_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้อนุมัติระบุคน",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "permission_group_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "กลุ่มสิทธิ์/Role ที่กำหนดผู้อนุมัติ",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_permission_group"
+      },
+      {
+        "name": "resolver",
+        "type": "VARCHAR(100)",
+        "description": "ตัวแก้แบบ dynamic เช่น SOURCE_AREA_OWNER",
+        "nullable": true,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "is_required",
+        "type": "BOOLEAN",
+        "description": "จำเป็น",
+        "nullable": false,
+        "default": "1",
+        "ref": null
+      },
+      {
+        "name": "allow_return",
+        "type": "BOOLEAN",
+        "description": "อนุญาตส่งกลับ",
+        "nullable": false,
+        "default": "1",
+        "ref": null
+      },
+      {
+        "name": "allow_reject",
+        "type": "BOOLEAN",
+        "description": "อนุญาตปฏิเสธ",
+        "nullable": false,
+        "default": "1",
+        "ref": null
+      },
+      {
+        "name": "requires_dp_date",
+        "type": "BOOLEAN",
+        "description": "ขั้นกำหนดวันเริ่มค่าเสื่อม",
+        "nullable": false,
+        "default": "0",
+        "ref": null
+      },
+      {
+        "name": "created_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาสร้าง UTC",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6)",
+        "ref": null
+      },
+      {
+        "name": "created_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้สร้าง",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "updated_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาแก้ไขล่าสุด UTC",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6)",
+        "ref": null
+      },
+      {
+        "name": "updated_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้แก้ไขล่าสุด",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "row_version",
+        "type": "INT UNSIGNED",
+        "description": "เลขเวอร์ชันสำหรับ optimistic locking",
+        "nullable": false,
+        "default": "1",
+        "ref": null
+      }
+    ],
+    "unique": [
+      [
+        "workflow_id",
+        "sequence"
+      ],
+      [
+        "workflow_id",
+        "code"
+      ]
+    ],
+    "idx": [],
+    "checks": [
+      "(assignee_type = 'USER' AND user_id IS NOT NULL AND permission_group_id IS NULL AND resolver IS NULL) OR (assignee_type = 'ROLE' AND permission_group_id IS NOT NULL AND user_id IS NULL AND resolver IS NULL) OR (assignee_type = 'DYNAMIC' AND resolver IS NOT NULL AND user_id IS NULL AND permission_group_id IS NULL)"
+    ],
+    "mutable": true,
+    "column_names": {
+      "workflow_id": "sw_id",
+      "user_id": "su_id",
+      "permission_group_id": "spg_id"
+    }
+  },
+  "sys_workflow_assignment": {
+    "prefix": "swa",
+    "module": "System",
+    "description": "กำหนด workflow ปัจจุบันต่อประเภทงาน",
+    "columns": [
+      {
+        "name": "id",
+        "type": "BIGINT UNSIGNED",
+        "description": "รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK",
+        "nullable": false,
+        "default": "AUTO_INCREMENT",
+        "ref": null
+      },
+      {
+        "name": "process",
+        "type": "VARCHAR(80)",
+        "description": "กระบวนการ",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "workflow_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "workflow ที่ใช้",
+        "nullable": false,
+        "default": null,
+        "ref": "sys_workflow"
+      },
+      {
+        "name": "created_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาสร้าง UTC",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6)",
+        "ref": null
+      },
+      {
+        "name": "created_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้สร้าง",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "updated_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาแก้ไขล่าสุด UTC",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6)",
+        "ref": null
+      },
+      {
+        "name": "updated_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้แก้ไขล่าสุด",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "row_version",
+        "type": "INT UNSIGNED",
+        "description": "เลขเวอร์ชันสำหรับ optimistic locking",
+        "nullable": false,
+        "default": "1",
+        "ref": null
+      }
+    ],
+    "unique": [
+      [
+        "process"
+      ]
+    ],
+    "idx": [],
+    "checks": [],
+    "mutable": true,
+    "column_names": {
+      "workflow_id": "sw_id"
+    }
+  },
+  "sys_responsibility": {
+    "prefix": "sres",
+    "module": "System",
+    "description": "ผู้รับผิดชอบหน่วยงานตามหน้าที่",
+    "columns": [
+      {
+        "name": "id",
+        "type": "BIGINT UNSIGNED",
+        "description": "รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK",
+        "nullable": false,
+        "default": "AUTO_INCREMENT",
+        "ref": null
+      },
+      {
+        "name": "department_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "หน่วยงาน",
+        "nullable": false,
+        "default": null,
+        "ref": "sys_department"
+      },
+      {
+        "name": "duty",
+        "type": "VARCHAR(80)",
+        "description": "หน้าที่ เช่น AREA_OWNER / DEPARTMENT_LEADER",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "user_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้รับผิดชอบ",
+        "nullable": false,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "created_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาสร้าง UTC",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6)",
+        "ref": null
+      },
+      {
+        "name": "created_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้สร้าง",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "updated_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาแก้ไขล่าสุด UTC",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6)",
+        "ref": null
+      },
+      {
+        "name": "updated_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้แก้ไขล่าสุด",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "row_version",
+        "type": "INT UNSIGNED",
+        "description": "เลขเวอร์ชันสำหรับ optimistic locking",
+        "nullable": false,
+        "default": "1",
+        "ref": null
+      }
+    ],
+    "unique": [
+      [
+        "department_id",
+        "duty"
+      ]
+    ],
+    "idx": [],
+    "checks": [],
+    "mutable": true,
+    "column_names": {
+      "department_id": "sd_id",
+      "user_id": "su_id"
+    }
+  },
+  "mst_plant": {
+    "prefix": "mp",
+    "module": "Master",
+    "description": "โรงงาน",
+    "columns": [
+      {
+        "name": "id",
+        "type": "BIGINT UNSIGNED",
+        "description": "รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK",
+        "nullable": false,
+        "default": "AUTO_INCREMENT",
+        "ref": null
+      },
+      {
+        "name": "code",
+        "type": "VARCHAR(80)",
+        "description": "รหัสอ้างอิง",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "name",
+        "type": "VARCHAR(200)",
+        "description": "ชื่อ",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "is_active",
+        "type": "BOOLEAN",
+        "description": "เปิดใช้งาน",
+        "nullable": false,
+        "default": "1",
+        "ref": null
+      },
+      {
+        "name": "created_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาสร้าง UTC",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6)",
+        "ref": null
+      },
+      {
+        "name": "created_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้สร้าง",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "updated_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาแก้ไขล่าสุด UTC",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6)",
+        "ref": null
+      },
+      {
+        "name": "updated_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้แก้ไขล่าสุด",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "row_version",
+        "type": "INT UNSIGNED",
+        "description": "เลขเวอร์ชันสำหรับ optimistic locking",
+        "nullable": false,
+        "default": "1",
+        "ref": null
+      }
+    ],
+    "unique": [
+      [
+        "code"
+      ]
+    ],
+    "idx": [],
+    "checks": [],
+    "mutable": true
+  },
+  "mst_location": {
+    "prefix": "ml",
+    "module": "Master",
+    "description": "สถานที่",
+    "columns": [
+      {
+        "name": "id",
+        "type": "BIGINT UNSIGNED",
+        "description": "รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK",
+        "nullable": false,
+        "default": "AUTO_INCREMENT",
+        "ref": null
+      },
+      {
+        "name": "code",
+        "type": "VARCHAR(80)",
+        "description": "รหัสอ้างอิง",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "name",
+        "type": "VARCHAR(200)",
+        "description": "ชื่อ",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "plant_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "โรงงาน",
+        "nullable": false,
+        "default": null,
+        "ref": "mst_plant"
+      },
+      {
+        "name": "is_active",
+        "type": "BOOLEAN",
+        "description": "เปิดใช้งาน",
+        "nullable": false,
+        "default": "1",
+        "ref": null
+      },
+      {
+        "name": "created_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาสร้าง UTC",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6)",
+        "ref": null
+      },
+      {
+        "name": "created_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้สร้าง",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "updated_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาแก้ไขล่าสุด UTC",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6)",
+        "ref": null
+      },
+      {
+        "name": "updated_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้แก้ไขล่าสุด",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "row_version",
+        "type": "INT UNSIGNED",
+        "description": "เลขเวอร์ชันสำหรับ optimistic locking",
+        "nullable": false,
+        "default": "1",
+        "ref": null
+      }
+    ],
+    "unique": [
+      [
+        "code"
+      ]
+    ],
+    "idx": [],
+    "checks": [],
+    "mutable": true,
+    "column_names": {
+      "plant_id": "mp_id"
+    }
+  },
+  "mst_line": {
+    "prefix": "mli",
+    "module": "Master",
+    "description": "สายการผลิต",
+    "columns": [
+      {
+        "name": "id",
+        "type": "BIGINT UNSIGNED",
+        "description": "รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK",
+        "nullable": false,
+        "default": "AUTO_INCREMENT",
+        "ref": null
+      },
+      {
+        "name": "code",
+        "type": "VARCHAR(80)",
+        "description": "รหัสอ้างอิง",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "name",
+        "type": "VARCHAR(200)",
+        "description": "ชื่อ",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "location_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "สถานที่",
+        "nullable": false,
+        "default": null,
+        "ref": "mst_location"
+      },
+      {
+        "name": "is_active",
+        "type": "BOOLEAN",
+        "description": "เปิดใช้งาน",
+        "nullable": false,
+        "default": "1",
+        "ref": null
+      },
+      {
+        "name": "created_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาสร้าง UTC",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6)",
+        "ref": null
+      },
+      {
+        "name": "created_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้สร้าง",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "updated_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาแก้ไขล่าสุด UTC",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6)",
+        "ref": null
+      },
+      {
+        "name": "updated_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้แก้ไขล่าสุด",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "row_version",
+        "type": "INT UNSIGNED",
+        "description": "เลขเวอร์ชันสำหรับ optimistic locking",
+        "nullable": false,
+        "default": "1",
+        "ref": null
+      }
+    ],
+    "unique": [
+      [
+        "code"
+      ]
+    ],
+    "idx": [],
+    "checks": [],
+    "mutable": true,
+    "column_names": {
+      "location_id": "ml_id"
+    }
+  },
+  "mst_cost_center": {
+    "prefix": "mcc",
+    "module": "Master",
+    "description": "ศูนย์ต้นทุน",
+    "columns": [
+      {
+        "name": "id",
+        "type": "BIGINT UNSIGNED",
+        "description": "รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK",
+        "nullable": false,
+        "default": "AUTO_INCREMENT",
+        "ref": null
+      },
+      {
+        "name": "code",
+        "type": "VARCHAR(80)",
+        "description": "รหัสอ้างอิง",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "name",
+        "type": "VARCHAR(200)",
+        "description": "ชื่อ",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "department_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "หน่วยงาน",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_department"
+      },
+      {
+        "name": "is_active",
+        "type": "BOOLEAN",
+        "description": "เปิดใช้งาน",
+        "nullable": false,
+        "default": "1",
+        "ref": null
+      },
+      {
+        "name": "created_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาสร้าง UTC",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6)",
+        "ref": null
+      },
+      {
+        "name": "created_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้สร้าง",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "updated_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาแก้ไขล่าสุด UTC",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6)",
+        "ref": null
+      },
+      {
+        "name": "updated_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้แก้ไขล่าสุด",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "row_version",
+        "type": "INT UNSIGNED",
+        "description": "เลขเวอร์ชันสำหรับ optimistic locking",
+        "nullable": false,
+        "default": "1",
+        "ref": null
+      }
+    ],
+    "unique": [
+      [
+        "code"
+      ]
+    ],
+    "idx": [],
+    "checks": [],
+    "mutable": true,
+    "column_names": {
+      "department_id": "sd_id"
+    }
+  },
+  "mst_project": {
+    "prefix": "mprj",
+    "module": "Master",
+    "description": "โครงการ",
+    "columns": [
+      {
+        "name": "id",
+        "type": "BIGINT UNSIGNED",
+        "description": "รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK",
+        "nullable": false,
+        "default": "AUTO_INCREMENT",
+        "ref": null
+      },
+      {
+        "name": "code",
+        "type": "VARCHAR(80)",
+        "description": "รหัสอ้างอิง",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "name",
+        "type": "VARCHAR(200)",
+        "description": "ชื่อ",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "detail",
+        "type": "TEXT",
+        "description": "รายละเอียด",
+        "nullable": true,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "department_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "หน่วยงาน",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_department"
+      },
+      {
+        "name": "is_active",
+        "type": "BOOLEAN",
+        "description": "เปิดใช้งาน",
+        "nullable": false,
+        "default": "1",
+        "ref": null
+      },
+      {
+        "name": "created_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาสร้าง UTC",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6)",
+        "ref": null
+      },
+      {
+        "name": "created_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้สร้าง",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "updated_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาแก้ไขล่าสุด UTC",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6)",
+        "ref": null
+      },
+      {
+        "name": "updated_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้แก้ไขล่าสุด",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "row_version",
+        "type": "INT UNSIGNED",
+        "description": "เลขเวอร์ชันสำหรับ optimistic locking",
+        "nullable": false,
+        "default": "1",
+        "ref": null
+      }
+    ],
+    "unique": [
+      [
+        "code"
+      ]
+    ],
+    "idx": [],
+    "checks": [],
+    "mutable": true,
+    "column_names": {
+      "department_id": "sd_id"
+    }
+  },
+  "mst_customer": {
+    "prefix": "mc",
+    "module": "Master",
+    "description": "ลูกค้าเจ้าของ Customer Asset",
+    "columns": [
+      {
+        "name": "id",
+        "type": "BIGINT UNSIGNED",
+        "description": "รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK",
+        "nullable": false,
+        "default": "AUTO_INCREMENT",
+        "ref": null
+      },
+      {
+        "name": "code",
+        "type": "VARCHAR(80)",
+        "description": "รหัสอ้างอิง",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "name",
+        "type": "VARCHAR(200)",
+        "description": "ชื่อ",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "tax_id",
+        "type": "VARCHAR(40)",
+        "description": "เลขผู้เสียภาษี",
+        "nullable": true,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "is_active",
+        "type": "BOOLEAN",
+        "description": "เปิดใช้งาน",
+        "nullable": false,
+        "default": "1",
+        "ref": null
+      },
+      {
+        "name": "created_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาสร้าง UTC",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6)",
+        "ref": null
+      },
+      {
+        "name": "created_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้สร้าง",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "updated_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาแก้ไขล่าสุด UTC",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6)",
+        "ref": null
+      },
+      {
+        "name": "updated_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้แก้ไขล่าสุด",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "row_version",
+        "type": "INT UNSIGNED",
+        "description": "เลขเวอร์ชันสำหรับ optimistic locking",
+        "nullable": false,
+        "default": "1",
+        "ref": null
+      }
+    ],
+    "unique": [
+      [
+        "code"
+      ]
+    ],
+    "idx": [],
+    "checks": [],
+    "mutable": true
+  },
+  "mst_vendor": {
+    "prefix": "mv",
+    "module": "Master",
+    "description": "ผู้ขาย",
+    "columns": [
+      {
+        "name": "id",
+        "type": "BIGINT UNSIGNED",
+        "description": "รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK",
+        "nullable": false,
+        "default": "AUTO_INCREMENT",
+        "ref": null
+      },
+      {
+        "name": "code",
+        "type": "VARCHAR(80)",
+        "description": "รหัสอ้างอิง",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "name",
+        "type": "VARCHAR(200)",
+        "description": "ชื่อ",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "tax_id",
+        "type": "VARCHAR(40)",
+        "description": "เลขภาษี",
+        "nullable": true,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "contact",
+        "type": "VARCHAR(255)",
+        "description": "ผู้ติดต่อ",
+        "nullable": true,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "address",
+        "type": "TEXT",
+        "description": "ที่อยู่",
+        "nullable": true,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "payment_terms",
+        "type": "VARCHAR(255)",
+        "description": "เงื่อนไขชำระเงิน",
+        "nullable": true,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "is_active",
+        "type": "BOOLEAN",
+        "description": "เปิดใช้งาน",
+        "nullable": false,
+        "default": "1",
+        "ref": null
+      },
+      {
+        "name": "created_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาสร้าง UTC",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6)",
+        "ref": null
+      },
+      {
+        "name": "created_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้สร้าง",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "updated_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาแก้ไขล่าสุด UTC",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6)",
+        "ref": null
+      },
+      {
+        "name": "updated_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้แก้ไขล่าสุด",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "row_version",
+        "type": "INT UNSIGNED",
+        "description": "เลขเวอร์ชันสำหรับ optimistic locking",
+        "nullable": false,
+        "default": "1",
+        "ref": null
+      }
+    ],
+    "unique": [
+      [
+        "code"
+      ]
+    ],
+    "idx": [],
+    "checks": [],
+    "mutable": true
+  },
+  "mst_asset_group": {
+    "prefix": "mag",
+    "module": "Master",
+    "description": "กลุ่ม Asset เช่น ME MD IT",
+    "columns": [
+      {
+        "name": "id",
+        "type": "BIGINT UNSIGNED",
+        "description": "รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK",
+        "nullable": false,
+        "default": "AUTO_INCREMENT",
+        "ref": null
+      },
+      {
+        "name": "code",
+        "type": "VARCHAR(80)",
+        "description": "รหัสอ้างอิง",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "name",
+        "type": "VARCHAR(200)",
+        "description": "ชื่อ",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "is_active",
+        "type": "BOOLEAN",
+        "description": "เปิดใช้งาน",
+        "nullable": false,
+        "default": "1",
+        "ref": null
+      },
+      {
+        "name": "created_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาสร้าง UTC",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6)",
+        "ref": null
+      },
+      {
+        "name": "created_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้สร้าง",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "updated_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาแก้ไขล่าสุด UTC",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6)",
+        "ref": null
+      },
+      {
+        "name": "updated_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้แก้ไขล่าสุด",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "row_version",
+        "type": "INT UNSIGNED",
+        "description": "เลขเวอร์ชันสำหรับ optimistic locking",
+        "nullable": false,
+        "default": "1",
+        "ref": null
+      }
+    ],
+    "unique": [
+      [
+        "code"
+      ]
+    ],
+    "idx": [],
+    "checks": [],
+    "mutable": true
+  },
+  "mst_asset_type": {
+    "prefix": "mat",
+    "module": "Master",
+    "description": "ประเภท Asset และอายุใช้งาน",
+    "columns": [
+      {
+        "name": "id",
+        "type": "BIGINT UNSIGNED",
+        "description": "รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK",
+        "nullable": false,
+        "default": "AUTO_INCREMENT",
+        "ref": null
+      },
+      {
+        "name": "code",
+        "type": "VARCHAR(80)",
+        "description": "รหัสอ้างอิง",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "name",
+        "type": "VARCHAR(200)",
+        "description": "ชื่อ",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "group_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "กลุ่ม",
+        "nullable": false,
+        "default": null,
+        "ref": "mst_asset_group"
+      },
+      {
+        "name": "useful_life_years",
+        "type": "DECIMAL(7,2)",
+        "description": "อายุใช้งานปัจจุบัน ต้องมากกว่า 0",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "show_technical_fields",
+        "type": "BOOLEAN",
+        "description": "แสดง RFQ Model Part Area Power สำหรับ ME/MD",
+        "nullable": false,
+        "default": "0",
+        "ref": null
+      },
+      {
+        "name": "is_active",
+        "type": "BOOLEAN",
+        "description": "เปิดใช้งาน",
+        "nullable": false,
+        "default": "1",
+        "ref": null
+      },
+      {
+        "name": "created_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาสร้าง UTC",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6)",
+        "ref": null
+      },
+      {
+        "name": "created_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้สร้าง",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "updated_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาแก้ไขล่าสุด UTC",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6)",
+        "ref": null
+      },
+      {
+        "name": "updated_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้แก้ไขล่าสุด",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "row_version",
+        "type": "INT UNSIGNED",
+        "description": "เลขเวอร์ชันสำหรับ optimistic locking",
+        "nullable": false,
+        "default": "1",
+        "ref": null
+      }
+    ],
+    "unique": [
+      [
+        "code"
+      ]
+    ],
+    "idx": [],
+    "checks": [
+      "useful_life_years > 0"
+    ],
+    "mutable": true,
+    "column_names": {
+      "group_id": "mag_id"
+    }
+  },
+  "mst_account": {
+    "prefix": "mac",
+    "module": "Master",
+    "description": "รหัสบัญชี",
+    "columns": [
+      {
+        "name": "id",
+        "type": "BIGINT UNSIGNED",
+        "description": "รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK",
+        "nullable": false,
+        "default": "AUTO_INCREMENT",
+        "ref": null
+      },
+      {
+        "name": "code",
+        "type": "VARCHAR(80)",
+        "description": "รหัสอ้างอิง",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "name",
+        "type": "VARCHAR(200)",
+        "description": "ชื่อ",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "is_active",
+        "type": "BOOLEAN",
+        "description": "เปิดใช้งาน",
+        "nullable": false,
+        "default": "1",
+        "ref": null
+      },
+      {
+        "name": "created_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาสร้าง UTC",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6)",
+        "ref": null
+      },
+      {
+        "name": "created_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้สร้าง",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "updated_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาแก้ไขล่าสุด UTC",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6)",
+        "ref": null
+      },
+      {
+        "name": "updated_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้แก้ไขล่าสุด",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "row_version",
+        "type": "INT UNSIGNED",
+        "description": "เลขเวอร์ชันสำหรับ optimistic locking",
+        "nullable": false,
+        "default": "1",
+        "ref": null
+      }
+    ],
+    "unique": [
+      [
+        "code"
+      ]
+    ],
+    "idx": [],
+    "checks": [],
+    "mutable": true
+  },
+  "mst_cost_type": {
+    "prefix": "mct",
+    "module": "Master",
+    "description": "ชนิดต้นทุนเพิ่มเติม เช่น Installation Delivery Other",
+    "columns": [
+      {
+        "name": "id",
+        "type": "BIGINT UNSIGNED",
+        "description": "รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK",
+        "nullable": false,
+        "default": "AUTO_INCREMENT",
+        "ref": null
+      },
+      {
+        "name": "code",
+        "type": "VARCHAR(80)",
+        "description": "รหัสอ้างอิง",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "name",
+        "type": "VARCHAR(200)",
+        "description": "ชื่อ",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "is_active",
+        "type": "BOOLEAN",
+        "description": "เปิดใช้งาน",
+        "nullable": false,
+        "default": "1",
+        "ref": null
+      },
+      {
+        "name": "created_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาสร้าง UTC",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6)",
+        "ref": null
+      },
+      {
+        "name": "created_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้สร้าง",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "updated_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาแก้ไขล่าสุด UTC",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6)",
+        "ref": null
+      },
+      {
+        "name": "updated_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้แก้ไขล่าสุด",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "row_version",
+        "type": "INT UNSIGNED",
+        "description": "เลขเวอร์ชันสำหรับ optimistic locking",
+        "nullable": false,
+        "default": "1",
+        "ref": null
+      }
+    ],
+    "unique": [
+      [
+        "code"
+      ]
+    ],
+    "idx": [],
+    "checks": [],
+    "mutable": true
+  },
+  "mst_uom": {
+    "prefix": "mu",
+    "module": "Master",
+    "description": "หน่วยนับ",
+    "columns": [
+      {
+        "name": "id",
+        "type": "BIGINT UNSIGNED",
+        "description": "รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK",
+        "nullable": false,
+        "default": "AUTO_INCREMENT",
+        "ref": null
+      },
+      {
+        "name": "code",
+        "type": "VARCHAR(80)",
+        "description": "รหัสอ้างอิง",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "name",
+        "type": "VARCHAR(200)",
+        "description": "ชื่อ",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "is_active",
+        "type": "BOOLEAN",
+        "description": "เปิดใช้งาน",
+        "nullable": false,
+        "default": "1",
+        "ref": null
+      },
+      {
+        "name": "created_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาสร้าง UTC",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6)",
+        "ref": null
+      },
+      {
+        "name": "created_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้สร้าง",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "updated_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาแก้ไขล่าสุด UTC",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6)",
+        "ref": null
+      },
+      {
+        "name": "updated_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้แก้ไขล่าสุด",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "row_version",
+        "type": "INT UNSIGNED",
+        "description": "เลขเวอร์ชันสำหรับ optimistic locking",
+        "nullable": false,
+        "default": "1",
+        "ref": null
+      }
+    ],
+    "unique": [
+      [
+        "code"
+      ]
+    ],
+    "idx": [],
+    "checks": [],
+    "mutable": true
+  },
+  "mst_part": {
+    "prefix": "mpt",
+    "module": "Master",
+    "description": "อะไหล่และ part catalog",
+    "columns": [
+      {
+        "name": "id",
+        "type": "BIGINT UNSIGNED",
+        "description": "รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK",
+        "nullable": false,
+        "default": "AUTO_INCREMENT",
+        "ref": null
+      },
+      {
+        "name": "code",
+        "type": "VARCHAR(80)",
+        "description": "รหัสอ้างอิง",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "name",
+        "type": "VARCHAR(200)",
+        "description": "ชื่อ",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "model",
+        "type": "VARCHAR(255)",
+        "description": "รุ่น",
+        "nullable": true,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "part_no",
+        "type": "VARCHAR(255)",
+        "description": "เลขชิ้นส่วน",
+        "nullable": true,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "uom_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "หน่วยนับ",
+        "nullable": false,
+        "default": null,
+        "ref": "mst_uom"
+      },
+      {
+        "name": "is_active",
+        "type": "BOOLEAN",
+        "description": "เปิดใช้งาน",
+        "nullable": false,
+        "default": "1",
+        "ref": null
+      },
+      {
+        "name": "created_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาสร้าง UTC",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6)",
+        "ref": null
+      },
+      {
+        "name": "created_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้สร้าง",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "updated_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาแก้ไขล่าสุด UTC",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6)",
+        "ref": null
+      },
+      {
+        "name": "updated_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้แก้ไขล่าสุด",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "row_version",
+        "type": "INT UNSIGNED",
+        "description": "เลขเวอร์ชันสำหรับ optimistic locking",
+        "nullable": false,
+        "default": "1",
+        "ref": null
+      }
+    ],
+    "unique": [
+      [
+        "code"
+      ]
+    ],
+    "idx": [],
+    "checks": [],
+    "mutable": true,
+    "column_names": {
+      "uom_id": "mu_id"
+    }
+  },
+  "info_document": {
+    "prefix": "idoc",
+    "module": "Document",
+    "description": "ทะเบียนเอกสารภายใน Asset และ sale references ไม่เก็บธุรกรรมจัดซื้อ",
+    "columns": [
+      {
+        "name": "id",
+        "type": "BIGINT UNSIGNED",
+        "description": "รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK",
+        "nullable": false,
+        "default": "AUTO_INCREMENT",
+        "ref": null
+      },
+      {
+        "name": "no",
+        "type": "VARCHAR(100)",
+        "description": "เลขเอกสาร",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "kind",
+        "type": "ENUM('VERIFICATION','TRANSFER','DISPOSAL','ASSET_ISSUE','SALE_PROPOSAL','TAX_INVOICE')",
+        "description": "ประเภทเอกสาร",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "status",
+        "type": "VARCHAR(80)",
+        "description": "สถานะเฉพาะประเภทเอกสาร",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "origin",
+        "type": "ENUM('ASSET','MIS','ETAX','IMPORT')",
+        "description": "ต้นทางงาน ใช้ตัดสิน audit",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "document_date",
+        "type": "DATE",
+        "description": "วันที่เอกสาร",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "external_key",
+        "type": "VARCHAR(150)",
+        "description": "รหัสต้นทางสำหรับ deduplication",
+        "nullable": true,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "remark",
+        "type": "TEXT",
+        "description": "หมายเหตุ",
+        "nullable": true,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "created_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาสร้าง UTC",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6)",
+        "ref": null
+      },
+      {
+        "name": "created_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้สร้าง",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "updated_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาแก้ไขล่าสุด UTC",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6)",
+        "ref": null
+      },
+      {
+        "name": "updated_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้แก้ไขล่าสุด",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "row_version",
+        "type": "INT UNSIGNED",
+        "description": "เลขเวอร์ชันสำหรับ optimistic locking",
+        "nullable": false,
+        "default": "1",
+        "ref": null
+      }
+    ],
+    "unique": [
+      [
+        "kind",
+        "no"
+      ],
+      [
+        "origin",
+        "kind",
+        "external_key"
+      ]
+    ],
+    "idx": [
+      [
+        "kind",
+        "status",
+        "document_date"
+      ]
+    ],
+    "checks": [],
+    "mutable": true
+  },
+  "info_file": {
+    "prefix": "ifile",
+    "module": "Document",
+    "description": "metadata ไฟล์ เก็บ body ใน object storage",
+    "columns": [
+      {
+        "name": "id",
+        "type": "BIGINT UNSIGNED",
+        "description": "รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK",
+        "nullable": false,
+        "default": "AUTO_INCREMENT",
+        "ref": null
+      },
+      {
+        "name": "storage_key",
+        "type": "VARCHAR(500)",
+        "description": "object key ไม่เก็บ URL ที่มี token",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "original_name",
+        "type": "VARCHAR(255)",
+        "description": "ชื่อไฟล์",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "mime_type",
+        "type": "VARCHAR(100)",
+        "description": "MIME type",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "size_bytes",
+        "type": "BIGINT UNSIGNED",
+        "description": "ขนาด bytes",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "sha256",
+        "type": "CHAR(64)",
+        "description": "checksum",
+        "nullable": true,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "created_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาสร้าง UTC",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6)",
+        "ref": null
+      },
+      {
+        "name": "created_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้สร้าง",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "updated_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาแก้ไขล่าสุด UTC",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6)",
+        "ref": null
+      },
+      {
+        "name": "updated_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้แก้ไขล่าสุด",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "row_version",
+        "type": "INT UNSIGNED",
+        "description": "เลขเวอร์ชันสำหรับ optimistic locking",
+        "nullable": false,
+        "default": "1",
+        "ref": null
+      }
+    ],
+    "unique": [
+      [
+        "storage_key"
+      ]
+    ],
+    "idx": [],
+    "checks": [],
+    "mutable": true
+  },
+  "info_document_file": {
+    "prefix": "idf",
+    "module": "Document",
+    "description": "ไฟล์แนบเอกสาร รวมภาพ verification และ control sheet",
+    "columns": [
+      {
+        "name": "id",
+        "type": "BIGINT UNSIGNED",
+        "description": "รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK",
+        "nullable": false,
+        "default": "AUTO_INCREMENT",
+        "ref": null
+      },
+      {
+        "name": "document_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "เอกสาร",
+        "nullable": false,
+        "default": null,
+        "ref": "info_document"
+      },
+      {
+        "name": "file_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "ไฟล์",
+        "nullable": false,
+        "default": null,
+        "ref": "info_file"
+      },
+      {
+        "name": "purpose",
+        "type": "VARCHAR(80)",
+        "description": "INVOICE / MACHINE_PHOTO / ASSET_PLATE / CONTROL_SHEET เป็นต้น",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "created_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาสร้าง UTC",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6)",
+        "ref": null
+      },
+      {
+        "name": "created_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้สร้าง",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "updated_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาแก้ไขล่าสุด UTC",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6)",
+        "ref": null
+      },
+      {
+        "name": "updated_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้แก้ไขล่าสุด",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "row_version",
+        "type": "INT UNSIGNED",
+        "description": "เลขเวอร์ชันสำหรับ optimistic locking",
+        "nullable": false,
+        "default": "1",
+        "ref": null
+      }
+    ],
+    "unique": [
+      [
+        "document_id",
+        "file_id",
+        "purpose"
+      ]
+    ],
+    "idx": [],
+    "checks": [],
+    "mutable": true,
+    "column_names": {
+      "document_id": "idoc_id",
+      "file_id": "ifile_id"
+    }
+  },
+  "mst_asset": {
+    "prefix": "ma",
+    "module": "Asset",
+    "description": "ทะเบียน Main และ Sub Asset สองระดับ ID ไม่เปลี่ยนตามเลขเอกสาร",
+    "columns": [
+      {
+        "name": "id",
+        "type": "BIGINT UNSIGNED",
+        "description": "รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK",
+        "nullable": false,
+        "default": "AUTO_INCREMENT",
+        "ref": null
+      },
+      {
+        "name": "temporary_ref",
+        "type": "VARCHAR(100)",
+        "description": "เลข Draft ถาวร แม้ได้เลขจริงแล้ว",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "no",
+        "type": "VARCHAR(100)",
+        "description": "เลข Asset จริง NULL จน Proposal Approved",
+        "nullable": true,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "name",
+        "type": "VARCHAR(255)",
+        "description": "ชื่อ Asset",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "ownership",
+        "type": "ENUM('COMPANY','CUSTOMER')",
+        "description": "ประเภทเจ้าของ",
+        "nullable": false,
+        "default": "'COMPANY'",
+        "ref": null
+      },
+      {
+        "name": "customer_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "เจ้าของ Customer Asset",
+        "nullable": true,
+        "default": null,
+        "ref": "mst_customer"
+      },
+      {
+        "name": "customer_name_snapshot",
+        "type": "VARCHAR(255)",
+        "description": "ชื่อลูกค้าที่บันทึกบน Asset",
+        "nullable": true,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "parent_asset_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "Main Asset เท่านั้น NULL สำหรับ Main",
+        "nullable": true,
+        "default": null,
+        "ref": "mst_asset"
+      },
+      {
+        "name": "source_asset_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "Asset ที่ถูกเลือกเป็น work target แยกจาก parent",
+        "nullable": true,
+        "default": null,
+        "ref": "mst_asset"
+      },
+      {
+        "name": "child_suffix",
+        "type": "INT UNSIGNED",
+        "description": "suffix ที่ได้รับเมื่ออนุมัติ Proposal",
+        "nullable": true,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "asset_type_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "ประเภท Asset",
+        "nullable": false,
+        "default": null,
+        "ref": "mst_asset_type"
+      },
+      {
+        "name": "project_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "โครงการ",
+        "nullable": true,
+        "default": null,
+        "ref": "mst_project"
+      },
+      {
+        "name": "rfq_reference_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "RFQ item reference จาก MIS ที่เลือก",
+        "nullable": true,
+        "default": null,
+        "ref": "info_rfq_reference"
+      },
+      {
+        "name": "model",
+        "type": "VARCHAR(255)",
+        "description": "รุ่นสุดท้ายที่ผู้ใช้แก้ได้",
+        "nullable": true,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "part_no",
+        "type": "VARCHAR(255)",
+        "description": "เลข part สุดท้าย",
+        "nullable": true,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "custodian_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้ดูแล",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "department_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "หน่วยงาน",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_department"
+      },
+      {
+        "name": "plant_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "โรงงาน",
+        "nullable": true,
+        "default": null,
+        "ref": "mst_plant"
+      },
+      {
+        "name": "location_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "สถานที่",
+        "nullable": true,
+        "default": null,
+        "ref": "mst_location"
+      },
+      {
+        "name": "line_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "สายการผลิต",
+        "nullable": true,
+        "default": null,
+        "ref": "mst_line"
+      },
+      {
+        "name": "cost_center_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "ศูนย์ต้นทุน",
+        "nullable": true,
+        "default": null,
+        "ref": "mst_cost_center"
+      },
+      {
+        "name": "area",
+        "type": "VARCHAR(255)",
+        "description": "พื้นที่ รองรับข้อความเดิม",
+        "nullable": true,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "area_m2",
+        "type": "DECIMAL(12,4)",
+        "description": "ขนาดพื้นที่ m2 ถ้ามี",
+        "nullable": true,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "power",
+        "type": "VARCHAR(255)",
+        "description": "ค่า Power เดิมหรือข้อความไฟฟ้า",
+        "nullable": true,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "power_unit",
+        "type": "VARCHAR(30)",
+        "description": "หน่วย Power",
+        "nullable": true,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "target_sop",
+        "type": "DATE",
+        "description": "Target SOP",
+        "nullable": true,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "confirmed_sop",
+        "type": "DATE",
+        "description": "SOP ที่ตรวจยืนยัน",
+        "nullable": true,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "maker",
+        "type": "VARCHAR(255)",
+        "description": "ผู้ผลิต",
+        "nullable": true,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "serial_no",
+        "type": "VARCHAR(150)",
+        "description": "serial number",
+        "nullable": true,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "investment_no",
+        "type": "VARCHAR(100)",
+        "description": "เลขลงทุน",
+        "nullable": true,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "manufacturing_date",
+        "type": "DATE",
+        "description": "วันที่ผลิต",
+        "nullable": true,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "registration_date",
+        "type": "DATE",
+        "description": "วันที่ขึ้นทะเบียน",
+        "nullable": true,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "acquisition_date",
+        "type": "DATE",
+        "description": "วันที่ได้มา",
+        "nullable": true,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "warranty_until",
+        "type": "DATE",
+        "description": "สิ้นสุดประกัน",
+        "nullable": true,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "special_control",
+        "type": "VARCHAR(80)",
+        "description": "BOI / EL / Other",
+        "nullable": true,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "condition",
+        "type": "VARCHAR(80)",
+        "description": "Purchase / Leasing / Rental / Other",
+        "nullable": true,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "status",
+        "type": "ENUM('Draft','Purchasing','Waiting Delivery','Waiting Invoice','Waiting GR','Receiving Validation','Ready for Verification','Verification In Progress','Pending Asset Team Leader Approval','Pending Accounting Review','Pending Accounting Approval','Pending Activation Approval','Active','Returned for Correction','On Hold','Cancelled','Sold')",
+        "description": "สถานะ Asset",
+        "nullable": false,
+        "default": "'Draft'",
+        "ref": null
+      },
+      {
+        "name": "activated_at",
+        "type": "DATETIME(6)",
+        "description": "วันที่ Active",
+        "nullable": true,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "notes",
+        "type": "TEXT",
+        "description": "หมายเหตุ",
+        "nullable": true,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "created_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาสร้าง UTC",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6)",
+        "ref": null
+      },
+      {
+        "name": "created_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้สร้าง",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "updated_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาแก้ไขล่าสุด UTC",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6)",
+        "ref": null
+      },
+      {
+        "name": "updated_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้แก้ไขล่าสุด",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "row_version",
+        "type": "INT UNSIGNED",
+        "description": "เลขเวอร์ชันสำหรับ optimistic locking",
+        "nullable": false,
+        "default": "1",
+        "ref": null
+      }
+    ],
+    "unique": [
+      [
+        "temporary_ref"
+      ],
+      [
+        "no"
+      ],
+      [
+        "parent_asset_id",
+        "child_suffix"
+      ]
+    ],
+    "idx": [
+      [
+        "status",
+        "ownership",
+        "plant_id"
+      ],
+      [
+        "project_id",
+        "ownership",
+        "status"
+      ],
+      [
+        "custodian_id"
+      ],
+      [
+        "source_asset_id"
+      ]
+    ],
+    "checks": [
+      "(ownership = 'COMPANY' AND customer_id IS NULL AND customer_name_snapshot IS NULL) OR (ownership = 'CUSTOMER' AND customer_id IS NOT NULL AND customer_name_snapshot IS NOT NULL AND CHAR_LENGTH(TRIM(customer_name_snapshot)) > 0 AND parent_asset_id IS NULL AND source_asset_id IS NULL)",
+      "(parent_asset_id IS NULL AND child_suffix IS NULL) OR (parent_asset_id IS NOT NULL AND (child_suffix IS NULL OR child_suffix > 0))",
+      "(no IS NULL AND status IN ('Draft','Cancelled')) OR no IS NOT NULL"
+    ],
+    "mutable": true,
+    "column_names": {
+      "customer_id": "mc_id",
+      "parent_asset_id": "parent_ma_id",
+      "source_asset_id": "source_ma_id",
+      "asset_type_id": "mat_id",
+      "project_id": "mprj_id",
+      "rfq_reference_id": "irfr_id",
+      "custodian_id": "su_id",
+      "department_id": "sd_id",
+      "plant_id": "mp_id",
+      "location_id": "ml_id",
+      "line_id": "mli_id",
+      "cost_center_id": "mcc_id"
+    }
+  },
+  "info_asset_file": {
+    "prefix": "iaf",
+    "module": "Asset",
+    "description": "ไฟล์แนบ Asset",
+    "columns": [
+      {
+        "name": "id",
+        "type": "BIGINT UNSIGNED",
+        "description": "รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK",
+        "nullable": false,
+        "default": "AUTO_INCREMENT",
+        "ref": null
+      },
+      {
+        "name": "asset_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "Asset",
+        "nullable": false,
+        "default": null,
+        "ref": "mst_asset"
+      },
+      {
+        "name": "file_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "ไฟล์",
+        "nullable": false,
+        "default": null,
+        "ref": "info_file"
+      },
+      {
+        "name": "purpose",
+        "type": "VARCHAR(80)",
+        "description": "หน้าที่ไฟล์",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "created_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาสร้าง UTC",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6)",
+        "ref": null
+      },
+      {
+        "name": "created_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้สร้าง",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "updated_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาแก้ไขล่าสุด UTC",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6)",
+        "ref": null
+      },
+      {
+        "name": "updated_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้แก้ไขล่าสุด",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "row_version",
+        "type": "INT UNSIGNED",
+        "description": "เลขเวอร์ชันสำหรับ optimistic locking",
+        "nullable": false,
+        "default": "1",
+        "ref": null
+      }
+    ],
+    "unique": [
+      [
+        "asset_id",
+        "file_id",
+        "purpose"
+      ]
+    ],
+    "idx": [],
+    "checks": [],
+    "mutable": true,
+    "column_names": {
+      "asset_id": "ma_id",
+      "file_id": "ifile_id"
+    }
+  },
+  "info_receiving_validation": {
+    "prefix": "irv",
+    "module": "Asset",
+    "description": "ผลตรวจรับปัจจุบันจาก MIS ต่อ acquisition และ PO item ไม่สร้าง GR ภายใน",
+    "columns": [
+      {
+        "name": "id",
+        "type": "BIGINT UNSIGNED",
+        "description": "รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK",
+        "nullable": false,
+        "default": "AUTO_INCREMENT",
+        "ref": null
+      },
+      {
+        "name": "po_reference_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "PO reference ใน MIS",
+        "nullable": false,
+        "default": null,
+        "ref": "info_mis_document_reference"
+      },
+      {
+        "name": "po_item_key",
+        "type": "VARCHAR(150)",
+        "description": "PO item key ต้นทาง",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "ordered_quantity",
+        "type": "DECIMAL(18,4)",
+        "description": "จำนวนสั่งในขอบเขตนี้",
+        "nullable": false,
+        "default": "0",
+        "ref": null
+      },
+      {
+        "name": "accepted_quantity",
+        "type": "DECIMAL(18,4)",
+        "description": "จำนวนรับสะสมที่ผ่านตรวจจาก MIS",
+        "nullable": false,
+        "default": "0",
+        "ref": null
+      },
+      {
+        "name": "acquisition_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "รายการ acquisition ที่ตรวจรับ",
+        "nullable": false,
+        "default": null,
+        "ref": "info_asset_acquisition"
+      },
+      {
+        "name": "po_valid",
+        "type": "BOOLEAN",
+        "description": "PO ใช้รับได้",
+        "nullable": false,
+        "default": "0",
+        "ref": null
+      },
+      {
+        "name": "invoice_valid",
+        "type": "BOOLEAN",
+        "description": "มีเอกสาร Invoice และ PO ตรงกัน",
+        "nullable": false,
+        "default": "0",
+        "ref": null
+      },
+      {
+        "name": "gr_valid",
+        "type": "BOOLEAN",
+        "description": "มี GR และ PO ตรงกัน",
+        "nullable": false,
+        "default": "0",
+        "ref": null
+      },
+      {
+        "name": "purchasing_accepted",
+        "type": "BOOLEAN",
+        "description": "Purchasing ยืนยัน",
+        "nullable": false,
+        "default": "0",
+        "ref": null
+      },
+      {
+        "name": "owner_accepted",
+        "type": "BOOLEAN",
+        "description": "Owner ยืนยัน",
+        "nullable": false,
+        "default": "0",
+        "ref": null
+      },
+      {
+        "name": "result",
+        "type": "ENUM('PENDING','PARTIAL','COMPLETE','HOLD')",
+        "description": "ผลรวมรับ; ไม่ใช้ Invoice amounts",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "validated_at",
+        "type": "DATETIME(6)",
+        "description": "เวลาประเมินผล",
+        "nullable": true,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "reason",
+        "type": "TEXT",
+        "description": "เหตุผล hold",
+        "nullable": true,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "created_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาสร้าง UTC",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6)",
+        "ref": null
+      },
+      {
+        "name": "created_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้สร้าง",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "updated_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาแก้ไขล่าสุด UTC",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6)",
+        "ref": null
+      },
+      {
+        "name": "updated_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้แก้ไขล่าสุด",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "row_version",
+        "type": "INT UNSIGNED",
+        "description": "เลขเวอร์ชันสำหรับ optimistic locking",
+        "nullable": false,
+        "default": "1",
+        "ref": null
+      }
+    ],
+    "unique": [
+      [
+        "acquisition_id",
+        "po_reference_id",
+        "po_item_key"
+      ]
+    ],
+    "idx": [],
+    "checks": [
+      "result <> 'COMPLETE' OR (po_valid = 1 AND invoice_valid = 1 AND gr_valid = 1 AND purchasing_accepted = 1 AND owner_accepted = 1)",
+      "ordered_quantity >= 0 AND accepted_quantity >= 0"
+    ],
+    "mutable": true,
+    "column_names": {
+      "po_reference_id": "imdr_id",
+      "acquisition_id": "iaa_id"
+    }
+  },
+  "mst_verification_check": {
+    "prefix": "mvc",
+    "module": "Master",
+    "description": "รายการตรวจตัว Asset เช่น identity class model custodian location completeness",
+    "columns": [
+      {
+        "name": "id",
+        "type": "BIGINT UNSIGNED",
+        "description": "รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK",
+        "nullable": false,
+        "default": "AUTO_INCREMENT",
+        "ref": null
+      },
+      {
+        "name": "code",
+        "type": "VARCHAR(80)",
+        "description": "รหัสอ้างอิง",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "name",
+        "type": "VARCHAR(200)",
+        "description": "ชื่อ",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "is_active",
+        "type": "BOOLEAN",
+        "description": "เปิดใช้งาน",
+        "nullable": false,
+        "default": "1",
+        "ref": null
+      },
+      {
+        "name": "created_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาสร้าง UTC",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6)",
+        "ref": null
+      },
+      {
+        "name": "created_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้สร้าง",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "updated_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาแก้ไขล่าสุด UTC",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6)",
+        "ref": null
+      },
+      {
+        "name": "updated_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้แก้ไขล่าสุด",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "row_version",
+        "type": "INT UNSIGNED",
+        "description": "เลขเวอร์ชันสำหรับ optimistic locking",
+        "nullable": false,
+        "default": "1",
+        "ref": null
+      }
+    ],
+    "unique": [
+      [
+        "code"
+      ]
+    ],
+    "idx": [],
+    "checks": [],
+    "mutable": true
+  },
+  "info_asset_verification": {
+    "prefix": "iav",
+    "module": "Asset",
+    "description": "verification ของ Asset แต่ละรอบ แยกจาก receiving",
+    "columns": [
+      {
+        "name": "id",
+        "type": "BIGINT UNSIGNED",
+        "description": "รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK",
+        "nullable": false,
+        "default": "AUTO_INCREMENT",
+        "ref": null
+      },
+      {
+        "name": "document_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "Verification document",
+        "nullable": false,
+        "default": null,
+        "ref": "info_document"
+      },
+      {
+        "name": "asset_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "Asset",
+        "nullable": false,
+        "default": null,
+        "ref": "mst_asset"
+      },
+      {
+        "name": "revision",
+        "type": "INT UNSIGNED",
+        "description": "รอบตรวจ",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "result",
+        "type": "ENUM('PENDING','COMPLETE','MISMATCH')",
+        "description": "ผลตรวจ",
+        "nullable": false,
+        "default": "'PENDING'",
+        "ref": null
+      },
+      {
+        "name": "confirmed_sop",
+        "type": "DATE",
+        "description": "SOP ยืนยัน",
+        "nullable": true,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "required_info_complete",
+        "type": "BOOLEAN",
+        "description": "ข้อมูลจำเป็นครบ",
+        "nullable": false,
+        "default": "0",
+        "ref": null
+      },
+      {
+        "name": "special_plate_na",
+        "type": "BOOLEAN",
+        "description": "ไม่ใช้ special plate",
+        "nullable": false,
+        "default": "0",
+        "ref": null
+      },
+      {
+        "name": "form_snapshot",
+        "type": "JSON",
+        "description": "ข้อมูลฟอร์มและค่าทางเทคนิคที่ตรวจแล้ว",
+        "nullable": true,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "remark",
+        "type": "TEXT",
+        "description": "ข้อสังเกต",
+        "nullable": true,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "submitted_at",
+        "type": "DATETIME(6)",
+        "description": "เวลาส่งอนุมัติ",
+        "nullable": true,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "created_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาสร้าง UTC",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6)",
+        "ref": null
+      },
+      {
+        "name": "created_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้สร้าง",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "updated_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาแก้ไขล่าสุด UTC",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6)",
+        "ref": null
+      },
+      {
+        "name": "updated_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้แก้ไขล่าสุด",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "row_version",
+        "type": "INT UNSIGNED",
+        "description": "เลขเวอร์ชันสำหรับ optimistic locking",
+        "nullable": false,
+        "default": "1",
+        "ref": null
+      }
+    ],
+    "unique": [
+      [
+        "document_id"
+      ],
+      [
+        "asset_id",
+        "revision"
+      ]
+    ],
+    "idx": [],
+    "checks": [],
+    "mutable": true,
+    "column_names": {
+      "document_id": "idoc_id",
+      "asset_id": "ma_id"
+    }
+  },
+  "info_verification_check": {
+    "prefix": "ivc",
+    "module": "Asset",
+    "description": "ผล checklist ต่อ revision",
+    "columns": [
+      {
+        "name": "id",
+        "type": "BIGINT UNSIGNED",
+        "description": "รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK",
+        "nullable": false,
+        "default": "AUTO_INCREMENT",
+        "ref": null
+      },
+      {
+        "name": "verification_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "verification",
+        "nullable": false,
+        "default": null,
+        "ref": "info_asset_verification"
+      },
+      {
+        "name": "check_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "หัวข้อตรวจ",
+        "nullable": false,
+        "default": null,
+        "ref": "mst_verification_check"
+      },
+      {
+        "name": "label_snapshot",
+        "type": "VARCHAR(255)",
+        "description": "ชื่อหัวข้อขณะตรวจ",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "is_passed",
+        "type": "BOOLEAN",
+        "description": "ผ่านตรวจ",
+        "nullable": false,
+        "default": "0",
+        "ref": null
+      },
+      {
+        "name": "is_applicable",
+        "type": "BOOLEAN",
+        "description": "เกี่ยวข้อง",
+        "nullable": false,
+        "default": "1",
+        "ref": null
+      },
+      {
+        "name": "remark",
+        "type": "TEXT",
+        "description": "หมายเหตุ",
+        "nullable": true,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "created_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาสร้าง UTC",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6)",
+        "ref": null
+      },
+      {
+        "name": "created_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้สร้าง",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "updated_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาแก้ไขล่าสุด UTC",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6)",
+        "ref": null
+      },
+      {
+        "name": "updated_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้แก้ไขล่าสุด",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "row_version",
+        "type": "INT UNSIGNED",
+        "description": "เลขเวอร์ชันสำหรับ optimistic locking",
+        "nullable": false,
+        "default": "1",
+        "ref": null
+      }
+    ],
+    "unique": [
+      [
+        "verification_id",
+        "check_id"
+      ]
+    ],
+    "idx": [],
+    "checks": [],
+    "mutable": true,
+    "column_names": {
+      "verification_id": "iav_id",
+      "check_id": "mvc_id"
+    }
+  },
+  "info_approval_request": {
+    "prefix": "iar",
+    "module": "Workflow",
+    "description": "คำขออนุมัติแบบ snapshot ทุก attempt",
+    "columns": [
+      {
+        "name": "id",
+        "type": "BIGINT UNSIGNED",
+        "description": "รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK",
+        "nullable": false,
+        "default": "AUTO_INCREMENT",
+        "ref": null
+      },
+      {
+        "name": "document_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "เอกสารเป้าหมาย",
+        "nullable": false,
+        "default": null,
+        "ref": "info_document"
+      },
+      {
+        "name": "workflow_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "นิยาม version ต้นทาง",
+        "nullable": false,
+        "default": null,
+        "ref": "sys_workflow"
+      },
+      {
+        "name": "attempt",
+        "type": "INT UNSIGNED",
+        "description": "รอบส่งอนุมัติ",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "workflow_name_snapshot",
+        "type": "VARCHAR(255)",
+        "description": "ชื่อ workflow ขณะส่ง",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "status",
+        "type": "ENUM('PENDING','RETURNED','REJECTED','APPROVED','CANCELLED')",
+        "description": "สถานะคำขอ",
+        "nullable": false,
+        "default": "'PENDING'",
+        "ref": null
+      },
+      {
+        "name": "current_sequence",
+        "type": "INT UNSIGNED",
+        "description": "ขั้นปัจจุบัน",
+        "nullable": false,
+        "default": "1",
+        "ref": null
+      },
+      {
+        "name": "submitted_at",
+        "type": "DATETIME(6)",
+        "description": "เวลาส่ง",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "submitted_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้ส่ง",
+        "nullable": false,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "created_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาสร้าง UTC",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6)",
+        "ref": null
+      },
+      {
+        "name": "created_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้สร้าง",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "updated_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาแก้ไขล่าสุด UTC",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6)",
+        "ref": null
+      },
+      {
+        "name": "updated_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้แก้ไขล่าสุด",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "row_version",
+        "type": "INT UNSIGNED",
+        "description": "เลขเวอร์ชันสำหรับ optimistic locking",
+        "nullable": false,
+        "default": "1",
+        "ref": null
+      }
+    ],
+    "unique": [
+      [
+        "document_id",
+        "attempt"
+      ]
+    ],
+    "idx": [
+      [
+        "status",
+        "submitted_at"
+      ]
+    ],
+    "checks": [],
+    "mutable": true,
+    "column_names": {
+      "document_id": "idoc_id",
+      "workflow_id": "sw_id",
+      "submitted_by": "su_id"
+    }
+  },
+  "info_approval_step": {
+    "prefix": "ias",
+    "module": "Workflow",
+    "description": "ขั้นตอนจริงและ assignee ณ เวลาส่ง",
+    "columns": [
+      {
+        "name": "id",
+        "type": "BIGINT UNSIGNED",
+        "description": "รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK",
+        "nullable": false,
+        "default": "AUTO_INCREMENT",
+        "ref": null
+      },
+      {
+        "name": "request_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "คำขอ",
+        "nullable": false,
+        "default": null,
+        "ref": "info_approval_request"
+      },
+      {
+        "name": "workflow_step_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "นิยามขั้น",
+        "nullable": false,
+        "default": null,
+        "ref": "sys_workflow_step"
+      },
+      {
+        "name": "sequence",
+        "type": "INT UNSIGNED",
+        "description": "ลำดับ",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "name_snapshot",
+        "type": "VARCHAR(255)",
+        "description": "ชื่อขั้นขณะส่ง",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "action",
+        "type": "ENUM('APPROVE','REVIEW','ACKNOWLEDGE')",
+        "description": "action",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "assigned_user_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้อนุมัติที่ resolve แล้ว",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "assigned_permission_group_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "กลุ่มสิทธิ์/Role ที่กำหนดผู้อนุมัติ",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_permission_group"
+      },
+      {
+        "name": "assignee_snapshot",
+        "type": "JSON",
+        "description": "ชื่อคน/บทบาท/dynamic resolver ที่ resolve แล้ว",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "is_required",
+        "type": "BOOLEAN",
+        "description": "จำเป็น",
+        "nullable": false,
+        "default": "1",
+        "ref": null
+      },
+      {
+        "name": "allow_return",
+        "type": "BOOLEAN",
+        "description": "ส่งกลับได้",
+        "nullable": false,
+        "default": "1",
+        "ref": null
+      },
+      {
+        "name": "allow_reject",
+        "type": "BOOLEAN",
+        "description": "ปฏิเสธได้",
+        "nullable": false,
+        "default": "1",
+        "ref": null
+      },
+      {
+        "name": "requires_dp_date",
+        "type": "BOOLEAN",
+        "description": "เก็บวันเริ่ม DP; ข้ามสำหรับ Customer",
+        "nullable": false,
+        "default": "0",
+        "ref": null
+      },
+      {
+        "name": "status",
+        "type": "ENUM('WAITING','PENDING','APPROVED','REVIEWED','ACKNOWLEDGED','RETURNED','REJECTED','SKIPPED')",
+        "description": "ผลปัจจุบัน",
+        "nullable": false,
+        "default": "'WAITING'",
+        "ref": null
+      },
+      {
+        "name": "decided_at",
+        "type": "DATETIME(6)",
+        "description": "เวลาตัดสิน",
+        "nullable": true,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "created_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาสร้าง UTC",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6)",
+        "ref": null
+      },
+      {
+        "name": "created_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้สร้าง",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "updated_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาแก้ไขล่าสุด UTC",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6)",
+        "ref": null
+      },
+      {
+        "name": "updated_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้แก้ไขล่าสุด",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "row_version",
+        "type": "INT UNSIGNED",
+        "description": "เลขเวอร์ชันสำหรับ optimistic locking",
+        "nullable": false,
+        "default": "1",
+        "ref": null
+      }
+    ],
+    "unique": [
+      [
+        "request_id",
+        "sequence"
+      ]
+    ],
+    "idx": [
+      [
+        "assigned_user_id",
+        "status"
+      ],
+      [
+        "assigned_permission_group_id",
+        "status"
+      ]
+    ],
+    "checks": [],
+    "mutable": true,
+    "column_names": {
+      "request_id": "iar_id",
+      "workflow_step_id": "sws_id",
+      "assigned_user_id": "su_id",
+      "assigned_permission_group_id": "spg_id"
+    }
+  },
+  "info_asset_depreciation": {
+    "prefix": "iad",
+    "module": "Accounting",
+    "description": "profile ค่าเสื่อมเฉพาะ Company Asset; snapshot อายุ ณ activation",
+    "columns": [
+      {
+        "name": "id",
+        "type": "BIGINT UNSIGNED",
+        "description": "รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK",
+        "nullable": false,
+        "default": "AUTO_INCREMENT",
+        "ref": null
+      },
+      {
+        "name": "asset_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "Asset",
+        "nullable": false,
+        "default": null,
+        "ref": "mst_asset"
+      },
+      {
+        "name": "acquisition_value",
+        "type": "DECIMAL(19,2)",
+        "description": "มูลค่า acquisition ของ Asset นี้",
+        "nullable": false,
+        "default": "0.00",
+        "ref": null
+      },
+      {
+        "name": "useful_life_months",
+        "type": "DECIMAL(9,2)",
+        "description": "อายุจาก Asset Type snapshot คูณ 12 ณ activation ตัวหารไม่ปัดเศษ",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "start_date",
+        "type": "DATE",
+        "description": "วันเริ่ม DP",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "stop_date",
+        "type": "DATE",
+        "description": "วันสิ้นสุด DP หลังขาย อาจก่อน start ถ้าขายเดือนแรกและไม่คิดเดือนขาย",
+        "nullable": true,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "rounding",
+        "type": "ENUM('ROUND_CUMULATIVE_2DP')",
+        "description": "คำนวณสะสมก่อนปัด 2 ตำแหน่ง งวดปัจจุบันเป็นผลต่างสะสม",
+        "nullable": false,
+        "default": "'ROUND_CUMULATIVE_2DP'",
+        "ref": null
+      },
+      {
+        "name": "value_source",
+        "type": "VARCHAR(100)",
+        "description": "แหล่งที่มามูลค่า",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "created_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาสร้าง UTC",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6)",
+        "ref": null
+      },
+      {
+        "name": "created_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้สร้าง",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "updated_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาแก้ไขล่าสุด UTC",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6)",
+        "ref": null
+      },
+      {
+        "name": "updated_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้แก้ไขล่าสุด",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "row_version",
+        "type": "INT UNSIGNED",
+        "description": "เลขเวอร์ชันสำหรับ optimistic locking",
+        "nullable": false,
+        "default": "1",
+        "ref": null
+      }
+    ],
+    "unique": [
+      [
+        "asset_id"
+      ]
+    ],
+    "idx": [],
+    "checks": [
+      "acquisition_value >= 0 AND useful_life_months > 0"
+    ],
+    "mutable": true,
+    "column_names": {
+      "asset_id": "ma_id"
+    }
+  },
+  "info_asset_transfer": {
+    "prefix": "iat",
+    "module": "Lifecycle",
+    "description": "ย้าย Asset ตาม approval workflow ไม่แก้ From ย้อนหลัง",
+    "columns": [
+      {
+        "name": "id",
+        "type": "BIGINT UNSIGNED",
+        "description": "รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK",
+        "nullable": false,
+        "default": "AUTO_INCREMENT",
+        "ref": null
+      },
+      {
+        "name": "document_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "Transfer document",
+        "nullable": false,
+        "default": null,
+        "ref": "info_document"
+      },
+      {
+        "name": "asset_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "Active Company Asset",
+        "nullable": false,
+        "default": null,
+        "ref": "mst_asset"
+      },
+      {
+        "name": "effective_on",
+        "type": "DATE",
+        "description": "วันที่มีผล",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "from_custodian_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "from ผู้ดูแล",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "from_department_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "from หน่วยงาน",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_department"
+      },
+      {
+        "name": "from_plant_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "from โรงงาน",
+        "nullable": true,
+        "default": null,
+        "ref": "mst_plant"
+      },
+      {
+        "name": "from_location_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "from สถานที่",
+        "nullable": true,
+        "default": null,
+        "ref": "mst_location"
+      },
+      {
+        "name": "from_line_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "from สายการผลิต",
+        "nullable": true,
+        "default": null,
+        "ref": "mst_line"
+      },
+      {
+        "name": "from_cost_center_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "from ศูนย์ต้นทุน",
+        "nullable": true,
+        "default": null,
+        "ref": "mst_cost_center"
+      },
+      {
+        "name": "from_area",
+        "type": "VARCHAR(255)",
+        "description": "from พื้นที่",
+        "nullable": true,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "from_snapshot",
+        "type": "JSON",
+        "description": "from รหัสและชื่อขณะส่ง ห้ามอ่านทับด้วย master ล่าสุด",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "to_custodian_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "to ผู้ดูแล",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "to_department_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "to หน่วยงาน",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_department"
+      },
+      {
+        "name": "to_plant_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "to โรงงาน",
+        "nullable": true,
+        "default": null,
+        "ref": "mst_plant"
+      },
+      {
+        "name": "to_location_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "to สถานที่",
+        "nullable": true,
+        "default": null,
+        "ref": "mst_location"
+      },
+      {
+        "name": "to_line_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "to สายการผลิต",
+        "nullable": true,
+        "default": null,
+        "ref": "mst_line"
+      },
+      {
+        "name": "to_cost_center_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "to ศูนย์ต้นทุน",
+        "nullable": true,
+        "default": null,
+        "ref": "mst_cost_center"
+      },
+      {
+        "name": "to_area",
+        "type": "VARCHAR(255)",
+        "description": "to พื้นที่",
+        "nullable": true,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "to_snapshot",
+        "type": "JSON",
+        "description": "to รหัสและชื่อขณะส่ง ห้ามอ่านทับด้วย master ล่าสุด",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "completed_at",
+        "type": "DATETIME(6)",
+        "description": "เวลาย้ายสำเร็จ",
+        "nullable": true,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "created_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาสร้าง UTC",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6)",
+        "ref": null
+      },
+      {
+        "name": "created_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้สร้าง",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "updated_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาแก้ไขล่าสุด UTC",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6)",
+        "ref": null
+      },
+      {
+        "name": "updated_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้แก้ไขล่าสุด",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "row_version",
+        "type": "INT UNSIGNED",
+        "description": "เลขเวอร์ชันสำหรับ optimistic locking",
+        "nullable": false,
+        "default": "1",
+        "ref": null
+      }
+    ],
+    "unique": [
+      [
+        "document_id"
+      ]
+    ],
+    "idx": [
+      [
+        "asset_id",
+        "effective_on"
+      ]
+    ],
+    "checks": [],
+    "mutable": true,
+    "column_names": {
+      "document_id": "idoc_id",
+      "asset_id": "ma_id",
+      "from_custodian_id": "from_su_id",
+      "from_department_id": "from_sd_id",
+      "from_plant_id": "from_mp_id",
+      "from_location_id": "from_ml_id",
+      "from_line_id": "from_mli_id",
+      "from_cost_center_id": "from_mcc_id",
+      "to_custodian_id": "to_su_id",
+      "to_department_id": "to_sd_id",
+      "to_plant_id": "to_mp_id",
+      "to_location_id": "to_ml_id",
+      "to_line_id": "to_mli_id",
+      "to_cost_center_id": "to_mcc_id"
+    }
+  },
+  "info_asset_work": {
+    "prefix": "iaw",
+    "module": "Lifecycle",
+    "description": "ประวัติงาน Existing Asset ที่เกิดจาก Proposal ของ MIS ไม่สร้างคำขอซื้อภายใน",
+    "columns": [
+      {
+        "name": "id",
+        "type": "BIGINT UNSIGNED",
+        "description": "รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK",
+        "nullable": false,
+        "default": "AUTO_INCREMENT",
+        "ref": null
+      },
+      {
+        "name": "acquisition_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "งาน acquisition จากรายการ Proposal ภายนอก",
+        "nullable": false,
+        "default": null,
+        "ref": "info_asset_acquisition"
+      },
+      {
+        "name": "source_asset_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "work target ที่เลือก",
+        "nullable": false,
+        "default": null,
+        "ref": "mst_asset"
+      },
+      {
+        "name": "result_asset_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "Sub Asset ใหม่ ถ้า capitalized",
+        "nullable": true,
+        "default": null,
+        "ref": "mst_asset"
+      },
+      {
+        "name": "work_type",
+        "type": "ENUM('ADDITION_SUB_ASSET','MODIFICATION','MAINTENANCE')",
+        "description": "work type ต้นฉบับ",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "treatment",
+        "type": "ENUM('CAPITALIZED_SUB_ASSET','EXPENSE')",
+        "description": "ผล classification",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "status",
+        "type": "ENUM('DRAFT','PROPOSAL','PURCHASING','GR_RECEIVED','HOLD','ACTIVATING','COMPLETED','CANCELLED')",
+        "description": "สถานะงาน",
+        "nullable": false,
+        "default": "'DRAFT'",
+        "ref": null
+      },
+      {
+        "name": "maintenance_type",
+        "type": "VARCHAR(255)",
+        "description": "ชนิดซ่อมถ้าเป็น Maintenance",
+        "nullable": true,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "vendor_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้รับงาน",
+        "nullable": true,
+        "default": null,
+        "ref": "mst_vendor"
+      },
+      {
+        "name": "responsible_team",
+        "type": "VARCHAR(255)",
+        "description": "ทีมรับผิดชอบ",
+        "nullable": true,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "result",
+        "type": "TEXT",
+        "description": "ผลดำเนินงาน",
+        "nullable": true,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "total_cost",
+        "type": "DECIMAL(19,2)",
+        "description": "ต้นทุนฐานรวมต้นทุน scoped",
+        "nullable": false,
+        "default": "0.00",
+        "ref": null
+      },
+      {
+        "name": "completed_on",
+        "type": "DATE",
+        "description": "วันที่สำเร็จ",
+        "nullable": true,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "created_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาสร้าง UTC",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6)",
+        "ref": null
+      },
+      {
+        "name": "created_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้สร้าง",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "updated_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาแก้ไขล่าสุด UTC",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6)",
+        "ref": null
+      },
+      {
+        "name": "updated_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้แก้ไขล่าสุด",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "row_version",
+        "type": "INT UNSIGNED",
+        "description": "เลขเวอร์ชันสำหรับ optimistic locking",
+        "nullable": false,
+        "default": "1",
+        "ref": null
+      }
+    ],
+    "unique": [
+      [
+        "acquisition_id"
+      ]
+    ],
+    "idx": [
+      [
+        "source_asset_id",
+        "status"
+      ]
+    ],
+    "checks": [
+      "(treatment = 'EXPENSE' AND result_asset_id IS NULL AND total_cost <= 50000) OR (treatment = 'CAPITALIZED_SUB_ASSET' AND result_asset_id IS NOT NULL AND total_cost > 50000)"
+    ],
+    "mutable": true,
+    "column_names": {
+      "acquisition_id": "iaa_id",
+      "source_asset_id": "source_ma_id",
+      "result_asset_id": "result_ma_id",
+      "vendor_id": "mv_id"
+    }
+  },
+  "info_sale_proposal": {
+    "prefix": "isp",
+    "module": "Disposal",
+    "description": "Sale Proposal reference หลังอนุมัติ ไม่สร้าง sale workflow ใหม่",
+    "columns": [
+      {
+        "name": "id",
+        "type": "BIGINT UNSIGNED",
+        "description": "รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK",
+        "nullable": false,
+        "default": "AUTO_INCREMENT",
+        "ref": null
+      },
+      {
+        "name": "document_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "Sale Proposal reference",
+        "nullable": false,
+        "default": null,
+        "ref": "info_document"
+      },
+      {
+        "name": "buyer_name",
+        "type": "VARCHAR(255)",
+        "description": "ผู้ซื้อ",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "buyer_detail",
+        "type": "JSON",
+        "description": "ที่อยู่และเลขภาษีถ้ามี",
+        "nullable": true,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "approved_at",
+        "type": "DATETIME(6)",
+        "description": "เวลาอนุมัติอ้างอิง",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "external_status",
+        "type": "VARCHAR(80)",
+        "description": "สถานะจากระบบขาย",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "created_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาสร้าง UTC",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6)",
+        "ref": null
+      },
+      {
+        "name": "created_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้สร้าง",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "updated_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาแก้ไขล่าสุด UTC",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6)",
+        "ref": null
+      },
+      {
+        "name": "updated_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้แก้ไขล่าสุด",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "row_version",
+        "type": "INT UNSIGNED",
+        "description": "เลขเวอร์ชันสำหรับ optimistic locking",
+        "nullable": false,
+        "default": "1",
+        "ref": null
+      }
+    ],
+    "unique": [
+      [
+        "document_id"
+      ]
+    ],
+    "idx": [],
+    "checks": [],
+    "mutable": true,
+    "column_names": {
+      "document_id": "idoc_id"
+    }
+  },
+  "info_tax_invoice": {
+    "prefix": "iti",
+    "module": "Disposal",
+    "description": "e-Tax reference แยกจาก purchasing Invoice",
+    "columns": [
+      {
+        "name": "id",
+        "type": "BIGINT UNSIGNED",
+        "description": "รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK",
+        "nullable": false,
+        "default": "AUTO_INCREMENT",
+        "ref": null
+      },
+      {
+        "name": "document_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "e-Tax document",
+        "nullable": false,
+        "default": null,
+        "ref": "info_document"
+      },
+      {
+        "name": "sale_proposal_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "Sale Proposal",
+        "nullable": false,
+        "default": null,
+        "ref": "info_sale_proposal"
+      },
+      {
+        "name": "issued_on",
+        "type": "DATE",
+        "description": "วันที่ออก",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "buyer_name_snapshot",
+        "type": "VARCHAR(255)",
+        "description": "ชื่อผู้ซื้อขณะออก",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "amount_before_vat",
+        "type": "DECIMAL(19,2)",
+        "description": "ยอดก่อน VAT",
+        "nullable": false,
+        "default": "0.00",
+        "ref": null
+      },
+      {
+        "name": "vat_amount",
+        "type": "DECIMAL(19,2)",
+        "description": "VAT อ้างอิง",
+        "nullable": false,
+        "default": "0.00",
+        "ref": null
+      },
+      {
+        "name": "created_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาสร้าง UTC",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6)",
+        "ref": null
+      },
+      {
+        "name": "created_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้สร้าง",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "updated_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาแก้ไขล่าสุด UTC",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6)",
+        "ref": null
+      },
+      {
+        "name": "updated_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้แก้ไขล่าสุด",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "row_version",
+        "type": "INT UNSIGNED",
+        "description": "เลขเวอร์ชันสำหรับ optimistic locking",
+        "nullable": false,
+        "default": "1",
+        "ref": null
+      }
+    ],
+    "unique": [
+      [
+        "document_id"
+      ]
+    ],
+    "idx": [],
+    "checks": [],
+    "mutable": true,
+    "column_names": {
+      "document_id": "idoc_id",
+      "sale_proposal_id": "isp_id"
+    }
+  },
+  "info_sale_item": {
+    "prefix": "isi",
+    "module": "Disposal",
+    "description": "Asset ระบุในเอกสารขาย รองรับหลาย Asset ต่อ e-Tax",
+    "columns": [
+      {
+        "name": "id",
+        "type": "BIGINT UNSIGNED",
+        "description": "รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK",
+        "nullable": false,
+        "default": "AUTO_INCREMENT",
+        "ref": null
+      },
+      {
+        "name": "sale_proposal_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "Sale Proposal",
+        "nullable": false,
+        "default": null,
+        "ref": "info_sale_proposal"
+      },
+      {
+        "name": "tax_invoice_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "e-Tax",
+        "nullable": true,
+        "default": null,
+        "ref": "info_tax_invoice"
+      },
+      {
+        "name": "asset_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "Asset ที่เลือกขาย",
+        "nullable": false,
+        "default": null,
+        "ref": "mst_asset"
+      },
+      {
+        "name": "allocated_sale_amount",
+        "type": "DECIMAL(19,2)",
+        "description": "ยอดขายที่จัดสรรต่อ Asset",
+        "nullable": true,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "created_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาสร้าง UTC",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6)",
+        "ref": null
+      },
+      {
+        "name": "created_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้สร้าง",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "updated_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาแก้ไขล่าสุด UTC",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6)",
+        "ref": null
+      },
+      {
+        "name": "updated_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้แก้ไขล่าสุด",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "row_version",
+        "type": "INT UNSIGNED",
+        "description": "เลขเวอร์ชันสำหรับ optimistic locking",
+        "nullable": false,
+        "default": "1",
+        "ref": null
+      }
+    ],
+    "unique": [
+      [
+        "sale_proposal_id",
+        "asset_id"
+      ]
+    ],
+    "idx": [],
+    "checks": [],
+    "mutable": true,
+    "column_names": {
+      "sale_proposal_id": "isp_id",
+      "tax_invoice_id": "iti_id",
+      "asset_id": "ma_id"
+    }
+  },
+  "info_asset_disposal": {
+    "prefix": "iads",
+    "module": "Disposal",
+    "description": "derecognition ต่อ Asset พร้อม financial snapshot ถาวร",
+    "columns": [
+      {
+        "name": "id",
+        "type": "BIGINT UNSIGNED",
+        "description": "รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK",
+        "nullable": false,
+        "default": "AUTO_INCREMENT",
+        "ref": null
+      },
+      {
+        "name": "document_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "Disposal document",
+        "nullable": false,
+        "default": null,
+        "ref": "info_document"
+      },
+      {
+        "name": "asset_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "Asset ที่ขาย",
+        "nullable": false,
+        "default": null,
+        "ref": "mst_asset"
+      },
+      {
+        "name": "sale_item_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "เอกสารขายที่ระบุ Asset",
+        "nullable": false,
+        "default": null,
+        "ref": "info_sale_item"
+      },
+      {
+        "name": "buyer_snapshot",
+        "type": "VARCHAR(255)",
+        "description": "ผู้ซื้อ",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "sale_proposal_no_snapshot",
+        "type": "VARCHAR(100)",
+        "description": "เลข Sale Proposal",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "tax_invoice_no_snapshot",
+        "type": "VARCHAR(100)",
+        "description": "เลข e-Tax",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "verified_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้ Verify Sale",
+        "nullable": false,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "verified_at",
+        "type": "DATETIME(6)",
+        "description": "เวลา Verify Sale",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "sold_on",
+        "type": "DATE",
+        "description": "วัน sale/derecognition",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "final_month_convention",
+        "type": "ENUM('INCLUDE_SALE_MONTH','EXCLUDE_SALE_MONTH')",
+        "description": "ต้องเลือกทุกครั้ง ไม่มีค่า default",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "depreciation_stop_date",
+        "type": "DATE",
+        "description": "วันสิ้นสุด DP ที่คำนวณ",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "sale_amount",
+        "type": "DECIMAL(19,2)",
+        "description": "ราคาขายถ้ามี",
+        "nullable": true,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "acquisition_value_snapshot",
+        "type": "DECIMAL(19,2)",
+        "description": "มูลค่าก่อนขาย",
+        "nullable": false,
+        "default": "0.00",
+        "ref": null
+      },
+      {
+        "name": "accumulated_dp_snapshot",
+        "type": "DECIMAL(19,2)",
+        "description": "DP สะสมก่อนตัดจำหน่าย",
+        "nullable": false,
+        "default": "0.00",
+        "ref": null
+      },
+      {
+        "name": "net_book_value_snapshot",
+        "type": "DECIMAL(19,2)",
+        "description": "มูลค่าสุทธิก่อนตัดจำหน่าย",
+        "nullable": false,
+        "default": "0.00",
+        "ref": null
+      },
+      {
+        "name": "useful_life_months_snapshot",
+        "type": "DECIMAL(9,2)",
+        "description": "อายุ ณ ขาย",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "financial_snapshot",
+        "type": "JSON",
+        "description": "รายละเอียดสูตรงวด/ต้นทุน/DP เพิ่มเติม",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "assignment_snapshot",
+        "type": "JSON",
+        "description": "assignment และ hierarchy ณ ขาย",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "completed_at",
+        "type": "DATETIME(6)",
+        "description": "เวลาบันทึกขาย",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "created_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาสร้าง UTC",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6)",
+        "ref": null
+      },
+      {
+        "name": "created_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้สร้าง",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "updated_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาแก้ไขล่าสุด UTC",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6)",
+        "ref": null
+      },
+      {
+        "name": "updated_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้แก้ไขล่าสุด",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "row_version",
+        "type": "INT UNSIGNED",
+        "description": "เลขเวอร์ชันสำหรับ optimistic locking",
+        "nullable": false,
+        "default": "1",
+        "ref": null
+      }
+    ],
+    "unique": [
+      [
+        "document_id"
+      ],
+      [
+        "asset_id"
+      ]
+    ],
+    "idx": [],
+    "checks": [
+      "sale_amount IS NULL OR sale_amount >= 0",
+      "acquisition_value_snapshot >= 0 AND accumulated_dp_snapshot >= 0 AND accumulated_dp_snapshot <= acquisition_value_snapshot",
+      "net_book_value_snapshot = acquisition_value_snapshot - accumulated_dp_snapshot"
+    ],
+    "mutable": true,
+    "column_names": {
+      "document_id": "idoc_id",
+      "asset_id": "ma_id",
+      "sale_item_id": "isi_id",
+      "verified_by": "su_id"
+    }
+  },
+  "info_asset_issue": {
+    "prefix": "iais",
+    "module": "Asset",
+    "description": "รายงานปัญหา Asset แยกจาก MIS spare part issue",
+    "columns": [
+      {
+        "name": "id",
+        "type": "BIGINT UNSIGNED",
+        "description": "รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK",
+        "nullable": false,
+        "default": "AUTO_INCREMENT",
+        "ref": null
+      },
+      {
+        "name": "document_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "Issue report document",
+        "nullable": false,
+        "default": null,
+        "ref": "info_document"
+      },
+      {
+        "name": "asset_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "Asset",
+        "nullable": false,
+        "default": null,
+        "ref": "mst_asset"
+      },
+      {
+        "name": "reporter_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้รายงาน",
+        "nullable": false,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "title",
+        "type": "VARCHAR(255)",
+        "description": "หัวข้อ",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "description",
+        "type": "TEXT",
+        "description": "รายละเอียด",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "priority",
+        "type": "VARCHAR(40)",
+        "description": "ความสำคัญ",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "resolution",
+        "type": "TEXT",
+        "description": "การแก้ไข",
+        "nullable": true,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "resolved_at",
+        "type": "DATETIME(6)",
+        "description": "เวลาแก้เสร็จ",
+        "nullable": true,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "created_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาสร้าง UTC",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6)",
+        "ref": null
+      },
+      {
+        "name": "created_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้สร้าง",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "updated_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาแก้ไขล่าสุด UTC",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6)",
+        "ref": null
+      },
+      {
+        "name": "updated_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้แก้ไขล่าสุด",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "row_version",
+        "type": "INT UNSIGNED",
+        "description": "เลขเวอร์ชันสำหรับ optimistic locking",
+        "nullable": false,
+        "default": "1",
+        "ref": null
+      }
+    ],
+    "unique": [
+      [
+        "document_id"
+      ]
+    ],
+    "idx": [],
+    "checks": [],
+    "mutable": true,
+    "column_names": {
+      "document_id": "idoc_id",
+      "asset_id": "ma_id",
+      "reporter_id": "su_id"
+    }
+  },
+  "info_notification": {
+    "prefix": "inot",
+    "module": "System",
+    "description": "แจ้งเตือนที่อ่านแล้วเปลี่ยนสถานะได้",
+    "columns": [
+      {
+        "name": "id",
+        "type": "BIGINT UNSIGNED",
+        "description": "รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK",
+        "nullable": false,
+        "default": "AUTO_INCREMENT",
+        "ref": null
+      },
+      {
+        "name": "user_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้รับ",
+        "nullable": false,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "document_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "เอกสารอ้างอิง",
+        "nullable": true,
+        "default": null,
+        "ref": "info_document"
+      },
+      {
+        "name": "asset_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "Asset อ้างอิง",
+        "nullable": true,
+        "default": null,
+        "ref": "mst_asset"
+      },
+      {
+        "name": "message",
+        "type": "VARCHAR(255)",
+        "description": "ข้อความ",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "read_at",
+        "type": "DATETIME(6)",
+        "description": "เวลาอ่าน",
+        "nullable": true,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "created_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาสร้าง UTC",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6)",
+        "ref": null
+      },
+      {
+        "name": "created_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้สร้าง",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "updated_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาแก้ไขล่าสุด UTC",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6)",
+        "ref": null
+      },
+      {
+        "name": "updated_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้แก้ไขล่าสุด",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "row_version",
+        "type": "INT UNSIGNED",
+        "description": "เลขเวอร์ชันสำหรับ optimistic locking",
+        "nullable": false,
+        "default": "1",
+        "ref": null
+      }
+    ],
+    "unique": [],
+    "idx": [
+      [
+        "user_id",
+        "read_at"
+      ]
+    ],
+    "checks": [],
+    "mutable": true,
+    "column_names": {
+      "user_id": "su_id",
+      "document_id": "idoc_id",
+      "asset_id": "ma_id"
+    }
+  },
+  "log_approval_action": {
+    "prefix": "laa",
+    "module": "Log",
+    "description": "การตัดสินใจ approval ภายใน Asset เท่านั้น ไม่สร้าง MIS approval instance",
+    "columns": [
+      {
+        "name": "id",
+        "type": "BIGINT UNSIGNED",
+        "description": "รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK",
+        "nullable": false,
+        "default": "AUTO_INCREMENT",
+        "ref": null
+      },
+      {
+        "name": "step_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "ขั้นจริง",
+        "nullable": false,
+        "default": null,
+        "ref": "info_approval_step"
+      },
+      {
+        "name": "actor_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้กระทำ",
+        "nullable": false,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "actor_name_snapshot",
+        "type": "VARCHAR(255)",
+        "description": "ชื่อผู้กระทำ",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "action",
+        "type": "ENUM('APPROVE','REVIEW','ACKNOWLEDGE','RETURN','REJECT','CANCEL','SUBMIT')",
+        "description": "action",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "acted_at",
+        "type": "DATETIME(6)",
+        "description": "เวลากระทำ UTC",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "remark",
+        "type": "TEXT",
+        "description": "ความเห็น",
+        "nullable": true,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "context_snapshot",
+        "type": "JSON",
+        "description": "assignee/version/ค่าที่อนุมัติ",
+        "nullable": true,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "recorded_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาบันทึก UTC เพิ่มอย่างเดียว",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6)",
+        "ref": null
+      }
+    ],
+    "unique": [],
+    "idx": [
+      [
+        "step_id",
+        "acted_at"
+      ]
+    ],
+    "checks": [],
+    "mutable": false,
+    "column_names": {
+      "step_id": "ias_id",
+      "actor_id": "su_id"
+    }
+  },
+  "log_asset_event": {
+    "prefix": "lae",
+    "module": "Log",
+    "description": "Timeline ธุรกิจ รวม MIS; แสดง Main รวม events ของลูกโดย query",
+    "columns": [
+      {
+        "name": "id",
+        "type": "BIGINT UNSIGNED",
+        "description": "รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK",
+        "nullable": false,
+        "default": "AUTO_INCREMENT",
+        "ref": null
+      },
+      {
+        "name": "asset_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "Asset เจ้าของ event",
+        "nullable": false,
+        "default": null,
+        "ref": "mst_asset"
+      },
+      {
+        "name": "main_asset_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "Main ณ เวลาเกิดเหตุ รวมตัวเองสำหรับ Main",
+        "nullable": false,
+        "default": null,
+        "ref": "mst_asset"
+      },
+      {
+        "name": "document_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "เอกสารต้นทาง",
+        "nullable": true,
+        "default": null,
+        "ref": "info_document"
+      },
+      {
+        "name": "acquisition_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "acquisition ที่เกิดจาก MIS",
+        "nullable": true,
+        "default": null,
+        "ref": "info_asset_acquisition"
+      },
+      {
+        "name": "origin",
+        "type": "ENUM('ASSET','MIS','ETAX','IMPORT')",
+        "description": "ต้นทาง",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "event_type",
+        "type": "VARCHAR(80)",
+        "description": "ชนิด event",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "from_status",
+        "type": "VARCHAR(80)",
+        "description": "สถานะก่อน",
+        "nullable": true,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "to_status",
+        "type": "VARCHAR(80)",
+        "description": "สถานะหลัง",
+        "nullable": true,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "actor_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้กระทำ",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "actor_name_snapshot",
+        "type": "VARCHAR(255)",
+        "description": "ชื่อผู้กระทำ",
+        "nullable": true,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "occurred_at",
+        "type": "DATETIME(6)",
+        "description": "เวลาธุรกิจ UTC",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "idempotency_key",
+        "type": "VARCHAR(150)",
+        "description": "คีย์ป้องกัน event ซ้ำ",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "snapshot",
+        "type": "JSON",
+        "description": "ข้อมูลสำคัญของเหตุการณ์",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "recorded_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาบันทึก UTC เพิ่มอย่างเดียว",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6)",
+        "ref": null
+      }
+    ],
+    "unique": [
+      [
+        "idempotency_key"
+      ]
+    ],
+    "idx": [
+      [
+        "asset_id",
+        "occurred_at"
+      ],
+      [
+        "main_asset_id",
+        "occurred_at"
+      ]
+    ],
+    "checks": [],
+    "mutable": false,
+    "column_names": {
+      "asset_id": "ma_id",
+      "main_asset_id": "main_ma_id",
+      "document_id": "idoc_id",
+      "acquisition_id": "iaa_id",
+      "actor_id": "su_id"
+    }
+  },
+  "log_audit": {
+    "prefix": "la",
+    "module": "Log",
+    "description": "Audit เฉพาะ user-driven non-MIS ห้าม credentials/attachment body",
+    "columns": [
+      {
+        "name": "id",
+        "type": "BIGINT UNSIGNED",
+        "description": "รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK",
+        "nullable": false,
+        "default": "AUTO_INCREMENT",
+        "ref": null
+      },
+      {
+        "name": "actor_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้กระทำ",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "actor_name_snapshot",
+        "type": "VARCHAR(255)",
+        "description": "ชื่อผู้กระทำ",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "module",
+        "type": "VARCHAR(80)",
+        "description": "module",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "action",
+        "type": "VARCHAR(80)",
+        "description": "CREATE / UPDATE / APPROVE ฯลฯ",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "record_table",
+        "type": "VARCHAR(100)",
+        "description": "ชื่อตารางต้นทาง",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "record_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "ID ต้นทาง ไม่ทำ FK เพื่อคง audit หลังข้อมูลเปลี่ยน",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "record_ref",
+        "type": "VARCHAR(150)",
+        "description": "เลขอ้างอิง ณ เวลานั้น",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "correlation_id",
+        "type": "VARCHAR(100)",
+        "description": "request ID",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "occurred_at",
+        "type": "DATETIME(6)",
+        "description": "เวลากระทำ UTC",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "recorded_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาบันทึก UTC เพิ่มอย่างเดียว",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6)",
+        "ref": null
+      }
+    ],
+    "unique": [],
+    "idx": [
+      [
+        "module",
+        "action",
+        "occurred_at"
+      ],
+      [
+        "actor_id",
+        "occurred_at"
+      ],
+      [
+        "record_table",
+        "record_id"
+      ],
+      [
+        "occurred_at"
+      ]
+    ],
+    "checks": [],
+    "mutable": false,
+    "column_names": {
+      "actor_id": "su_id"
+    }
+  },
+  "log_audit_change": {
+    "prefix": "lac",
+    "module": "Log",
+    "description": "ฟิลด์ before/after ของ audit เพิ่มอย่างเดียว",
+    "columns": [
+      {
+        "name": "id",
+        "type": "BIGINT UNSIGNED",
+        "description": "รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK",
+        "nullable": false,
+        "default": "AUTO_INCREMENT",
+        "ref": null
+      },
+      {
+        "name": "audit_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "audit event",
+        "nullable": false,
+        "default": null,
+        "ref": "log_audit"
+      },
+      {
+        "name": "field_name",
+        "type": "VARCHAR(100)",
+        "description": "ชื่อคอลัมน์",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "before_value",
+        "type": "JSON",
+        "description": "ค่าก่อน NULL ได้",
+        "nullable": true,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "after_value",
+        "type": "JSON",
+        "description": "ค่าหลัง NULL ได้",
+        "nullable": true,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "recorded_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาบันทึก UTC เพิ่มอย่างเดียว",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6)",
+        "ref": null
+      }
+    ],
+    "unique": [
+      [
+        "audit_id",
+        "field_name"
+      ]
+    ],
+    "idx": [],
+    "checks": [],
+    "mutable": false,
+    "column_names": {
+      "audit_id": "la_id"
+    }
+  },
+  "log_receiving_validation": {
+    "prefix": "lrv",
+    "module": "Log",
+    "description": "ประวัติประเมิน receiving แต่ละครั้ง ไม่ใช่ Audit Log",
+    "columns": [
+      {
+        "name": "id",
+        "type": "BIGINT UNSIGNED",
+        "description": "รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK",
+        "nullable": false,
+        "default": "AUTO_INCREMENT",
+        "ref": null
+      },
+      {
+        "name": "po_reference_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "PO reference",
+        "nullable": false,
+        "default": null,
+        "ref": "info_mis_document_reference"
+      },
+      {
+        "name": "po_item_key",
+        "type": "VARCHAR(150)",
+        "description": "PO item key",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "acquisition_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "acquisition ที่ตรวจรับ",
+        "nullable": false,
+        "default": null,
+        "ref": "info_asset_acquisition"
+      },
+      {
+        "name": "gr_reference_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "GR reference ที่กระตุ้นผล",
+        "nullable": true,
+        "default": null,
+        "ref": "info_mis_document_reference"
+      },
+      {
+        "name": "result",
+        "type": "VARCHAR(40)",
+        "description": "PENDING / PARTIAL / COMPLETE / HOLD",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "checks_snapshot",
+        "type": "JSON",
+        "description": "PO/Invoice/GR/acceptance/quantity; ไม่มี amount equality",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "idempotency_key",
+        "type": "VARCHAR(150)",
+        "description": "คีย์การตรวจต่อ version",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "recorded_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาบันทึก UTC เพิ่มอย่างเดียว",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6)",
+        "ref": null
+      }
+    ],
+    "unique": [
+      [
+        "idempotency_key"
+      ]
+    ],
+    "idx": [],
+    "checks": [],
+    "mutable": false,
+    "column_names": {
+      "po_reference_id": "po_imdr_id",
+      "acquisition_id": "iaa_id",
+      "gr_reference_id": "gr_imdr_id"
+    }
+  },
+  "log_depreciation_period": {
+    "prefix": "ldp",
+    "module": "Log",
+    "description": "snapshot รายเดือนแบบ append-only รวม disposal removal และ correction version",
+    "columns": [
+      {
+        "name": "id",
+        "type": "BIGINT UNSIGNED",
+        "description": "รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK",
+        "nullable": false,
+        "default": "AUTO_INCREMENT",
+        "ref": null
+      },
+      {
+        "name": "asset_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "Company Asset",
+        "nullable": false,
+        "default": null,
+        "ref": "mst_asset"
+      },
+      {
+        "name": "period_month",
+        "type": "DATE",
+        "description": "วันแรกเดือนรายงาน",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "revision",
+        "type": "INT UNSIGNED",
+        "description": "revision เพิ่มใหม่เมื่อปรับปรุง",
+        "nullable": false,
+        "default": "1",
+        "ref": null
+      },
+      {
+        "name": "supersedes_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "snapshot เดิมที่แทนที่",
+        "nullable": true,
+        "default": null,
+        "ref": "log_depreciation_period"
+      },
+      {
+        "name": "opening_cost",
+        "type": "DECIMAL(19,2)",
+        "description": "ต้นทุนต้นงวด",
+        "nullable": false,
+        "default": "0.00",
+        "ref": null
+      },
+      {
+        "name": "opening_accumulated_dp",
+        "type": "DECIMAL(19,2)",
+        "description": "DP สะสมต้นงวด",
+        "nullable": false,
+        "default": "0.00",
+        "ref": null
+      },
+      {
+        "name": "addition_cost",
+        "type": "DECIMAL(19,2)",
+        "description": "ต้นทุนเพิ่มเฉพาะ record นี้",
+        "nullable": false,
+        "default": "0.00",
+        "ref": null
+      },
+      {
+        "name": "period_dp",
+        "type": "DECIMAL(19,2)",
+        "description": "DP เดือนนี้",
+        "nullable": false,
+        "default": "0.00",
+        "ref": null
+      },
+      {
+        "name": "disposal_cost",
+        "type": "DECIMAL(19,2)",
+        "description": "ต้นทุนที่ตัดออกในเดือนขาย",
+        "nullable": false,
+        "default": "0.00",
+        "ref": null
+      },
+      {
+        "name": "disposal_accumulated_dp",
+        "type": "DECIMAL(19,2)",
+        "description": "DP สะสมที่ตัดออก",
+        "nullable": false,
+        "default": "0.00",
+        "ref": null
+      },
+      {
+        "name": "closing_cost",
+        "type": "DECIMAL(19,2)",
+        "description": "ต้นทุนปลายงวด",
+        "nullable": false,
+        "default": "0.00",
+        "ref": null
+      },
+      {
+        "name": "closing_accumulated_dp",
+        "type": "DECIMAL(19,2)",
+        "description": "DP สะสมปลายงวด",
+        "nullable": false,
+        "default": "0.00",
+        "ref": null
+      },
+      {
+        "name": "closing_net_book_value",
+        "type": "DECIMAL(19,2)",
+        "description": "มูลค่าสุทธิปลายงวด",
+        "nullable": false,
+        "default": "0.00",
+        "ref": null
+      },
+      {
+        "name": "disposal_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "disposal ถ้ามี",
+        "nullable": true,
+        "default": null,
+        "ref": "info_asset_disposal"
+      },
+      {
+        "name": "actor_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้สั่งรายงาน/ปิดงวด",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "recorded_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาบันทึก UTC เพิ่มอย่างเดียว",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6)",
+        "ref": null
+      }
+    ],
+    "unique": [
+      [
+        "asset_id",
+        "period_month",
+        "revision"
+      ]
+    ],
+    "idx": [
+      [
+        "period_month",
+        "asset_id"
+      ]
+    ],
+    "checks": [
+      "DAY(period_month) = 1",
+      "closing_cost = opening_cost + addition_cost - disposal_cost",
+      "closing_accumulated_dp = opening_accumulated_dp + period_dp - disposal_accumulated_dp",
+      "closing_net_book_value = closing_cost - closing_accumulated_dp",
+      "closing_cost >= 0 AND closing_accumulated_dp >= 0 AND closing_accumulated_dp <= closing_cost"
+    ],
+    "mutable": false,
+    "column_names": {
+      "asset_id": "ma_id",
+      "supersedes_id": "supersedes_ldp_id",
+      "disposal_id": "iads_id",
+      "actor_id": "su_id"
+    }
+  },
+  "log_integration_message": {
+    "prefix": "lim",
+    "module": "Log",
+    "description": "ผลรับส่ง integration แต่ละ attempt append-only ไม่ใช่ payload credentials",
+    "columns": [
+      {
+        "name": "id",
+        "type": "BIGINT UNSIGNED",
+        "description": "รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK",
+        "nullable": false,
+        "default": "AUTO_INCREMENT",
+        "ref": null
+      },
+      {
+        "name": "source",
+        "type": "VARCHAR(80)",
+        "description": "ระบบต้นทาง",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "message_key",
+        "type": "VARCHAR(150)",
+        "description": "คีย์ต้นทาง",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "attempt",
+        "type": "INT UNSIGNED",
+        "description": "ลำดับพยายาม",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "direction",
+        "type": "VARCHAR(10)",
+        "description": "IN / OUT",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "result",
+        "type": "VARCHAR(40)",
+        "description": "RECEIVED / SUCCESS / FAILED / DUPLICATE",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "payload_digest",
+        "type": "CHAR(64)",
+        "description": "hash payload",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "error_summary",
+        "type": "TEXT",
+        "description": "สรุป error ที่ตัด secrets",
+        "nullable": true,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "document_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "เอกสารที่เกี่ยวข้อง",
+        "nullable": true,
+        "default": null,
+        "ref": "info_document"
+      },
+      {
+        "name": "recorded_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาบันทึก UTC เพิ่มอย่างเดียว",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6)",
+        "ref": null
+      }
+    ],
+    "unique": [
+      [
+        "source",
+        "message_key",
+        "attempt"
+      ]
+    ],
+    "idx": [],
+    "checks": [],
+    "mutable": false,
+    "column_names": {
+      "document_id": "idoc_id"
+    }
+  },
+  "info_integration_inbox": {
+    "prefix": "iii",
+    "module": "Integration",
+    "description": "deduplication และสถานะ processing ของ event ต้นทาง",
+    "columns": [
+      {
+        "name": "id",
+        "type": "BIGINT UNSIGNED",
+        "description": "รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK",
+        "nullable": false,
+        "default": "AUTO_INCREMENT",
+        "ref": null
+      },
+      {
+        "name": "source",
+        "type": "VARCHAR(80)",
+        "description": "ระบบต้นทาง",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "message_key",
+        "type": "VARCHAR(150)",
+        "description": "คีย์ต้นทาง",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "status",
+        "type": "ENUM('PENDING','PROCESSING','SUCCEEDED','FAILED')",
+        "description": "สถานะ",
+        "nullable": false,
+        "default": "'PENDING'",
+        "ref": null
+      },
+      {
+        "name": "payload",
+        "type": "JSON",
+        "description": "ข้อมูลธุรกิจผ่าน validation ห้าม credentials",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "processed_at",
+        "type": "DATETIME(6)",
+        "description": "เวลาสำเร็จ",
+        "nullable": true,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "created_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาสร้าง UTC",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6)",
+        "ref": null
+      },
+      {
+        "name": "created_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้สร้าง",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "updated_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาแก้ไขล่าสุด UTC",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6)",
+        "ref": null
+      },
+      {
+        "name": "updated_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้แก้ไขล่าสุด",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "row_version",
+        "type": "INT UNSIGNED",
+        "description": "เลขเวอร์ชันสำหรับ optimistic locking",
+        "nullable": false,
+        "default": "1",
+        "ref": null
+      }
+    ],
+    "unique": [
+      [
+        "source",
+        "message_key"
+      ]
+    ],
+    "idx": [],
+    "checks": [],
+    "mutable": true
+  },
+  "info_integration_outbox": {
+    "prefix": "iio",
+    "module": "Integration",
+    "description": "outbox เขียนพร้อมธุรกรรม แล้วส่งภายหลัง",
+    "columns": [
+      {
+        "name": "id",
+        "type": "BIGINT UNSIGNED",
+        "description": "รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK",
+        "nullable": false,
+        "default": "AUTO_INCREMENT",
+        "ref": null
+      },
+      {
+        "name": "event_key",
+        "type": "VARCHAR(150)",
+        "description": "idempotency key",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "document_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "เอกสาร",
+        "nullable": true,
+        "default": null,
+        "ref": "info_document"
+      },
+      {
+        "name": "event_type",
+        "type": "VARCHAR(100)",
+        "description": "ประเภท event",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "payload",
+        "type": "JSON",
+        "description": "ข้อมูลส่งไม่รวม credentials",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "published_at",
+        "type": "DATETIME(6)",
+        "description": "เวลาส่งสำเร็จ",
+        "nullable": true,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "attempts",
+        "type": "INT UNSIGNED",
+        "description": "จำนวนพยายาม",
+        "nullable": false,
+        "default": "0",
+        "ref": null
+      },
+      {
+        "name": "created_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาสร้าง UTC",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6)",
+        "ref": null
+      },
+      {
+        "name": "created_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้สร้าง",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "updated_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาแก้ไขล่าสุด UTC",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6)",
+        "ref": null
+      },
+      {
+        "name": "updated_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้แก้ไขล่าสุด",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "row_version",
+        "type": "INT UNSIGNED",
+        "description": "เลขเวอร์ชันสำหรับ optimistic locking",
+        "nullable": false,
+        "default": "1",
+        "ref": null
+      }
+    ],
+    "unique": [
+      [
+        "event_key"
+      ]
+    ],
+    "idx": [
+      [
+        "published_at",
+        "created_at"
+      ]
+    ],
+    "checks": [],
+    "mutable": true,
+    "column_names": {
+      "document_id": "idoc_id"
+    }
+  },
+  "info_mis_document_reference": {
+    "prefix": "imdr",
+    "module": "Integration",
+    "description": "สำเนาอ้างอิงเอกสาร MIS แบบอ่านอย่างเดียว อัปเดตโดย integration เท่านั้น",
+    "columns": [
+      {
+        "name": "id",
+        "type": "BIGINT UNSIGNED",
+        "description": "รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK",
+        "nullable": false,
+        "default": "AUTO_INCREMENT",
+        "ref": null
+      },
+      {
+        "name": "source",
+        "type": "VARCHAR(80)",
+        "description": "ระบบต้นทาง",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "external_key",
+        "type": "VARCHAR(150)",
+        "description": "รหัสเอกสารถาวรจากต้นทาง",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "kind",
+        "type": "ENUM('PROPOSAL','PR','PO','INVOICE','GR','DELIVERY','SPARE_ISSUE')",
+        "description": "ชนิดเอกสารอ้างอิง",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "no",
+        "type": "VARCHAR(100)",
+        "description": "เลขเอกสารแสดงผล ไม่ใช้เป็น FK",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "status",
+        "type": "VARCHAR(80)",
+        "description": "สถานะที่ได้รับจากต้นทาง",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "po_reference_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "PO ต้นทางสำหรับ Invoice/GR/Delivery",
+        "nullable": true,
+        "default": null,
+        "ref": "info_mis_document_reference"
+      },
+      {
+        "name": "vendor_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้ขายอ้างอิง",
+        "nullable": true,
+        "default": null,
+        "ref": "mst_vendor"
+      },
+      {
+        "name": "document_date",
+        "type": "DATE",
+        "description": "วันที่ต้นทาง",
+        "nullable": true,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "document_exists",
+        "type": "BOOLEAN",
+        "description": "MIS ยืนยันมีเอกสารจริง",
+        "nullable": false,
+        "default": "0",
+        "ref": null
+      },
+      {
+        "name": "file_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "ไฟล์สำเนาถ้ามี ไม่บังคับต้องดาวน์โหลด",
+        "nullable": true,
+        "default": null,
+        "ref": "info_file"
+      },
+      {
+        "name": "external_url",
+        "type": "VARCHAR(500)",
+        "description": "ลิงก์เอกสารที่ไม่ใส่ credentials",
+        "nullable": true,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "external_version",
+        "type": "VARCHAR(100)",
+        "description": "version ต้นทาง",
+        "nullable": true,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "synced_at",
+        "type": "DATETIME(6)",
+        "description": "เวลารับข้อมูลล่าสุด",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "created_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาสร้าง UTC",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6)",
+        "ref": null
+      },
+      {
+        "name": "created_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้สร้าง",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "updated_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาแก้ไขล่าสุด UTC",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6)",
+        "ref": null
+      },
+      {
+        "name": "updated_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้แก้ไขล่าสุด",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "row_version",
+        "type": "INT UNSIGNED",
+        "description": "เลขเวอร์ชันสำหรับ optimistic locking",
+        "nullable": false,
+        "default": "1",
+        "ref": null
+      }
+    ],
+    "unique": [
+      [
+        "source",
+        "kind",
+        "external_key"
+      ],
+      [
+        "id",
+        "po_reference_id"
+      ]
+    ],
+    "idx": [
+      [
+        "kind",
+        "no"
+      ],
+      [
+        "po_reference_id"
+      ]
+    ],
+    "checks": [
+      "kind NOT IN ('INVOICE','GR','DELIVERY') OR po_reference_id IS NOT NULL",
+      "kind <> 'PO' OR po_reference_id IS NULL"
+    ],
+    "mutable": true,
+    "column_names": {
+      "po_reference_id": "po_imdr_id",
+      "vendor_id": "mv_id",
+      "file_id": "ifile_id"
+    }
+  },
+  "info_rfq_reference": {
+    "prefix": "irfr",
+    "module": "Integration",
+    "description": "รายการ RFQ สำหรับ selector และเติม Model/Part โดยไม่สร้าง RFQ workflow",
+    "columns": [
+      {
+        "name": "id",
+        "type": "BIGINT UNSIGNED",
+        "description": "รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK",
+        "nullable": false,
+        "default": "AUTO_INCREMENT",
+        "ref": null
+      },
+      {
+        "name": "source",
+        "type": "VARCHAR(80)",
+        "description": "ระบบต้นทาง",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "external_key",
+        "type": "VARCHAR(150)",
+        "description": "รหัส RFQ ต้นทาง",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "item_key",
+        "type": "VARCHAR(150)",
+        "description": "รหัสรายการ RFQ ต้นทาง",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "rfq_no",
+        "type": "VARCHAR(100)",
+        "description": "เลข RFQ",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "name",
+        "type": "VARCHAR(255)",
+        "description": "ชื่อรายการ",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "model",
+        "type": "VARCHAR(255)",
+        "description": "รุ่นที่เติมตอนเลือก RFQ",
+        "nullable": true,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "part_no",
+        "type": "VARCHAR(255)",
+        "description": "เลข part ที่เติมตอนเลือก RFQ",
+        "nullable": true,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "is_available",
+        "type": "BOOLEAN",
+        "description": "เปิดให้เลือก",
+        "nullable": false,
+        "default": "1",
+        "ref": null
+      },
+      {
+        "name": "synced_at",
+        "type": "DATETIME(6)",
+        "description": "เวลารับล่าสุด",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "created_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาสร้าง UTC",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6)",
+        "ref": null
+      },
+      {
+        "name": "created_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้สร้าง",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "updated_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาแก้ไขล่าสุด UTC",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6)",
+        "ref": null
+      },
+      {
+        "name": "updated_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้แก้ไขล่าสุด",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "row_version",
+        "type": "INT UNSIGNED",
+        "description": "เลขเวอร์ชันสำหรับ optimistic locking",
+        "nullable": false,
+        "default": "1",
+        "ref": null
+      }
+    ],
+    "unique": [
+      [
+        "source",
+        "external_key",
+        "item_key"
+      ]
+    ],
+    "idx": [],
+    "checks": [],
+    "mutable": true
+  },
+  "info_asset_acquisition": {
+    "prefix": "iaa",
+    "module": "Asset",
+    "description": "ข้อมูล acquisition ต่อรายการ Proposal จาก MIS รวมกรณี Expense ที่ไม่มี Asset ใหม่",
+    "columns": [
+      {
+        "name": "id",
+        "type": "BIGINT UNSIGNED",
+        "description": "รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK",
+        "nullable": false,
+        "default": "AUTO_INCREMENT",
+        "ref": null
+      },
+      {
+        "name": "proposal_reference_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "Proposal reference",
+        "nullable": false,
+        "default": null,
+        "ref": "info_mis_document_reference"
+      },
+      {
+        "name": "proposal_item_key",
+        "type": "VARCHAR(150)",
+        "description": "รหัสรายการ Proposal ต้นทาง",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "selected_asset_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "Draft หรือ Active work target ที่ MIS เลือก",
+        "nullable": false,
+        "default": null,
+        "ref": "mst_asset"
+      },
+      {
+        "name": "asset_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "Asset ผลลัพธ์ที่จะ activate; NULL สำหรับ Expense",
+        "nullable": true,
+        "default": null,
+        "ref": "mst_asset"
+      },
+      {
+        "name": "project_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "โครงการ",
+        "nullable": false,
+        "default": null,
+        "ref": "mst_project"
+      },
+      {
+        "name": "ownership",
+        "type": "ENUM('COMPANY','CUSTOMER')",
+        "description": "ownership ที่ได้รับจาก Proposal",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "selection",
+        "type": "ENUM('NEW','EXISTING')",
+        "description": "ชนิดรายการต้นทาง",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "work_type",
+        "type": "ENUM('ADDITION_SUB_ASSET','MODIFICATION','MAINTENANCE')",
+        "description": "work type ต้นฉบับ",
+        "nullable": true,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "treatment",
+        "type": "ENUM('NEW_ASSET','CAPITALIZED_SUB_ASSET','EXPENSE')",
+        "description": "การจัดประเภทของรายการ",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "title",
+        "type": "VARCHAR(255)",
+        "description": "หัวข้อหรือ component name",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "detail",
+        "type": "TEXT",
+        "description": "รายละเอียดงาน",
+        "nullable": true,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "account_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "บัญชีอ้างอิง",
+        "nullable": true,
+        "default": null,
+        "ref": "mst_account"
+      },
+      {
+        "name": "budget_type",
+        "type": "ENUM('CAPITAL_EXPENDITURE','EXPENSE')",
+        "description": "Budget Type ต้นทาง",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "base_amount",
+        "type": "DECIMAL(19,2)",
+        "description": "ราคาฐานเฉพาะรายการ",
+        "nullable": false,
+        "default": "0.00",
+        "ref": null
+      },
+      {
+        "name": "total_amount",
+        "type": "DECIMAL(19,2)",
+        "description": "ฐานรวมต้นทุน scoped; ตรวจยอดรวมที่ integration",
+        "nullable": false,
+        "default": "0.00",
+        "ref": null
+      },
+      {
+        "name": "currency",
+        "type": "CHAR(3)",
+        "description": "สกุลเงินตามกฎปัจจุบัน",
+        "nullable": false,
+        "default": "'THB'",
+        "ref": null
+      },
+      {
+        "name": "status",
+        "type": "ENUM('DRAFT','PURCHASING','WAITING_DELIVERY','RECEIVING','GR_RECEIVED','READY_FOR_VERIFICATION','ACTIVATING','COMPLETED','HOLD','CANCELLED')",
+        "description": "สถานะ acquisition ของ Asset",
+        "nullable": false,
+        "default": "'DRAFT'",
+        "ref": null
+      },
+      {
+        "name": "external_version",
+        "type": "VARCHAR(100)",
+        "description": "version ของรายการต้นทาง",
+        "nullable": true,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "synced_at",
+        "type": "DATETIME(6)",
+        "description": "เวลารับล่าสุด",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "completed_at",
+        "type": "DATETIME(6)",
+        "description": "เวลางานสำเร็จ",
+        "nullable": true,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "created_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาสร้าง UTC",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6)",
+        "ref": null
+      },
+      {
+        "name": "created_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้สร้าง",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "updated_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาแก้ไขล่าสุด UTC",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6)",
+        "ref": null
+      },
+      {
+        "name": "updated_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้แก้ไขล่าสุด",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "row_version",
+        "type": "INT UNSIGNED",
+        "description": "เลขเวอร์ชันสำหรับ optimistic locking",
+        "nullable": false,
+        "default": "1",
+        "ref": null
+      }
+    ],
+    "unique": [
+      [
+        "proposal_reference_id",
+        "proposal_item_key"
+      ],
+      [
+        "proposal_reference_id",
+        "selected_asset_id"
+      ]
+    ],
+    "idx": [
+      [
+        "asset_id"
+      ],
+      [
+        "selected_asset_id",
+        "status"
+      ]
+    ],
+    "checks": [
+      "currency = 'THB'",
+      "base_amount >= 0 AND total_amount >= base_amount",
+      "(selection = 'NEW' AND work_type IS NULL AND treatment = 'NEW_ASSET' AND asset_id IS NOT NULL) OR (selection = 'EXISTING' AND work_type IS NOT NULL AND ((treatment = 'EXPENSE' AND asset_id IS NULL AND total_amount <= 50000) OR (treatment = 'CAPITALIZED_SUB_ASSET' AND asset_id IS NOT NULL AND total_amount > 50000)))",
+      "ownership <> 'CUSTOMER' OR selection = 'NEW'"
+    ],
+    "mutable": true,
+    "column_names": {
+      "proposal_reference_id": "imdr_id",
+      "selected_asset_id": "selected_ma_id",
+      "asset_id": "ma_id",
+      "project_id": "mprj_id",
+      "account_id": "mac_id"
+    }
+  },
+  "info_asset_acquisition_cost": {
+    "prefix": "iaac",
+    "module": "Asset",
+    "description": "ต้นทุนเพิ่มเติมราย acquisition ที่รับจาก MIS ไม่ใช่ตารางสร้างต้นทุนจัดซื้อ",
+    "columns": [
+      {
+        "name": "id",
+        "type": "BIGINT UNSIGNED",
+        "description": "รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK",
+        "nullable": false,
+        "default": "AUTO_INCREMENT",
+        "ref": null
+      },
+      {
+        "name": "acquisition_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "รายการ acquisition",
+        "nullable": false,
+        "default": null,
+        "ref": "info_asset_acquisition"
+      },
+      {
+        "name": "external_cost_key",
+        "type": "VARCHAR(150)",
+        "description": "รหัสแถวต้นทุนจาก MIS",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "cost_type_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "ชนิดต้นทุน",
+        "nullable": false,
+        "default": null,
+        "ref": "mst_cost_type"
+      },
+      {
+        "name": "account_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "บัญชีอ้างอิง",
+        "nullable": true,
+        "default": null,
+        "ref": "mst_account"
+      },
+      {
+        "name": "description",
+        "type": "VARCHAR(255)",
+        "description": "รายละเอียด",
+        "nullable": true,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "amount",
+        "type": "DECIMAL(19,2)",
+        "description": "ยอดต้นทุนเพิ่มเติมของรายการ",
+        "nullable": false,
+        "default": "0.00",
+        "ref": null
+      },
+      {
+        "name": "created_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาสร้าง UTC",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6)",
+        "ref": null
+      },
+      {
+        "name": "created_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้สร้าง",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "updated_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาแก้ไขล่าสุด UTC",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6)",
+        "ref": null
+      },
+      {
+        "name": "updated_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้แก้ไขล่าสุด",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "row_version",
+        "type": "INT UNSIGNED",
+        "description": "เลขเวอร์ชันสำหรับ optimistic locking",
+        "nullable": false,
+        "default": "1",
+        "ref": null
+      }
+    ],
+    "unique": [
+      [
+        "acquisition_id",
+        "external_cost_key"
+      ]
+    ],
+    "idx": [],
+    "checks": [
+      "amount >= 0"
+    ],
+    "mutable": true,
+    "column_names": {
+      "acquisition_id": "iaa_id",
+      "cost_type_id": "mct_id",
+      "account_id": "mac_id"
+    }
+  },
+  "info_asset_acquisition_document": {
+    "prefix": "iaad",
+    "module": "Asset",
+    "description": "เชื่อม acquisition กับเอกสาร MIS และ item scope รองรับหลาย PO/Invoice/GR",
+    "columns": [
+      {
+        "name": "id",
+        "type": "BIGINT UNSIGNED",
+        "description": "รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK",
+        "nullable": false,
+        "default": "AUTO_INCREMENT",
+        "ref": null
+      },
+      {
+        "name": "acquisition_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "acquisition",
+        "nullable": false,
+        "default": null,
+        "ref": "info_asset_acquisition"
+      },
+      {
+        "name": "reference_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "เอกสารอ้างอิง",
+        "nullable": false,
+        "default": null,
+        "ref": "info_mis_document_reference"
+      },
+      {
+        "name": "document_item_key",
+        "type": "VARCHAR(150)",
+        "description": "รหัส item ต้นทาง ใช้ HEADER หากเป็นระดับเอกสาร",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "po_reference_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "PO scope สำหรับ Invoice/GR/Delivery; NULL สำหรับ Proposal/PR/PO",
+        "nullable": true,
+        "default": null,
+        "ref": "info_mis_document_reference"
+      },
+      {
+        "name": "po_item_key",
+        "type": "VARCHAR(150)",
+        "description": "PO item ที่เกี่ยวข้อง ใช้ HEADER เมื่อยังไม่จัดสรร",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "ordered_quantity",
+        "type": "DECIMAL(18,4)",
+        "description": "จำนวนสั่งเฉพาะ link ของ PO item",
+        "nullable": true,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "received_quantity",
+        "type": "DECIMAL(18,4)",
+        "description": "จำนวนรับเฉพาะ link ของ GR item",
+        "nullable": true,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "accepted_quantity",
+        "type": "DECIMAL(18,4)",
+        "description": "จำนวนรับผ่านตรวจเฉพาะ GR item",
+        "nullable": true,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "allocated_amount",
+        "type": "DECIMAL(19,2)",
+        "description": "มูลค่าจัดสรรเฉพาะ PO scope ห้ามรวมยอดซ้ำจากเอกสารทุกชนิด",
+        "nullable": true,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "purchasing_accepted",
+        "type": "BOOLEAN",
+        "description": "Purchasing ยืนยันรับเฉพาะ GR",
+        "nullable": false,
+        "default": "0",
+        "ref": null
+      },
+      {
+        "name": "owner_accepted",
+        "type": "BOOLEAN",
+        "description": "Owner ยืนยันรับเฉพาะ GR",
+        "nullable": false,
+        "default": "0",
+        "ref": null
+      },
+      {
+        "name": "accepted_at",
+        "type": "DATETIME(6)",
+        "description": "เวลายืนยันรับ",
+        "nullable": true,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "acceptance",
+        "type": "ENUM('PENDING','ACCEPTED','FAILED')",
+        "description": "ผล physical acceptance ที่ MIS ส่ง",
+        "nullable": false,
+        "default": "'PENDING'",
+        "ref": null
+      },
+      {
+        "name": "synced_at",
+        "type": "DATETIME(6)",
+        "description": "เวลารับล่าสุด",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "created_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาสร้าง UTC",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6)",
+        "ref": null
+      },
+      {
+        "name": "created_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้สร้าง",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "updated_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาแก้ไขล่าสุด UTC",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6)",
+        "ref": null
+      },
+      {
+        "name": "updated_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้แก้ไขล่าสุด",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "row_version",
+        "type": "INT UNSIGNED",
+        "description": "เลขเวอร์ชันสำหรับ optimistic locking",
+        "nullable": false,
+        "default": "1",
+        "ref": null
+      }
+    ],
+    "unique": [
+      [
+        "acquisition_id",
+        "reference_id",
+        "document_item_key",
+        "po_item_key"
+      ]
+    ],
+    "idx": [],
+    "checks": [
+      "ordered_quantity IS NULL OR ordered_quantity >= 0",
+      "received_quantity IS NULL OR received_quantity >= 0",
+      "accepted_quantity IS NULL OR (received_quantity IS NOT NULL AND accepted_quantity >= 0 AND accepted_quantity <= received_quantity)",
+      "allocated_amount IS NULL OR allocated_amount >= 0"
+    ],
+    "mutable": true,
+    "column_names": {
+      "acquisition_id": "iaa_id",
+      "reference_id": "imdr_id",
+      "po_reference_id": "po_imdr_id"
+    }
+  },
+  "info_asset_spare_usage": {
+    "prefix": "iasu",
+    "module": "Asset",
+    "description": "ประวัติใช้อะไหล่สำเร็จจาก MIS ไม่เก็บใบเบิก workflow หรือ stock balance",
+    "columns": [
+      {
+        "name": "id",
+        "type": "BIGINT UNSIGNED",
+        "description": "รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK",
+        "nullable": false,
+        "default": "AUTO_INCREMENT",
+        "ref": null
+      },
+      {
+        "name": "source",
+        "type": "VARCHAR(80)",
+        "description": "ระบบต้นทาง",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "issue_key",
+        "type": "VARCHAR(150)",
+        "description": "รหัสใบเบิกต้นทาง",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "issue_item_key",
+        "type": "VARCHAR(150)",
+        "description": "รหัสรายการเบิกต้นทาง",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "issue_reference_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "เอกสารใบเบิกอ้างอิง",
+        "nullable": false,
+        "default": null,
+        "ref": "info_mis_document_reference"
+      },
+      {
+        "name": "asset_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "Asset ที่ใช้อะไหล่",
+        "nullable": false,
+        "default": null,
+        "ref": "mst_asset"
+      },
+      {
+        "name": "part_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "part อ้างอิงถ้ามี",
+        "nullable": true,
+        "default": null,
+        "ref": "mst_part"
+      },
+      {
+        "name": "part_no_snapshot",
+        "type": "VARCHAR(150)",
+        "description": "เลข part ขณะเบิก",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "part_name_snapshot",
+        "type": "VARCHAR(255)",
+        "description": "ชื่อ part ขณะเบิก",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "uom_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "หน่วย",
+        "nullable": false,
+        "default": null,
+        "ref": "mst_uom"
+      },
+      {
+        "name": "quantity",
+        "type": "DECIMAL(18,4)",
+        "description": "จำนวนใช้สุทธิหลังคืนตาม MIS",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "total_cost",
+        "type": "DECIMAL(19,2)",
+        "description": "ต้นทุนใช้สุทธิจาก MIS ไม่ตีราคา stock เอง",
+        "nullable": false,
+        "default": "0.00",
+        "ref": null
+      },
+      {
+        "name": "issued_on",
+        "type": "DATE",
+        "description": "วันที่เบิก",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "status",
+        "type": "ENUM('COMPLETED','REVERSED')",
+        "description": "สถานะต้นทาง",
+        "nullable": false,
+        "default": "'COMPLETED'",
+        "ref": null
+      },
+      {
+        "name": "external_version",
+        "type": "VARCHAR(100)",
+        "description": "version ต้นทาง",
+        "nullable": true,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "synced_at",
+        "type": "DATETIME(6)",
+        "description": "เวลารับล่าสุด",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "created_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาสร้าง UTC",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6)",
+        "ref": null
+      },
+      {
+        "name": "created_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้สร้าง",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "updated_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาแก้ไขล่าสุด UTC",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6)",
+        "ref": null
+      },
+      {
+        "name": "updated_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้แก้ไขล่าสุด",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "row_version",
+        "type": "INT UNSIGNED",
+        "description": "เลขเวอร์ชันสำหรับ optimistic locking",
+        "nullable": false,
+        "default": "1",
+        "ref": null
+      }
+    ],
+    "unique": [
+      [
+        "source",
+        "issue_key",
+        "issue_item_key"
+      ]
+    ],
+    "idx": [
+      [
+        "asset_id",
+        "issued_on"
+      ]
+    ],
+    "checks": [
+      "quantity >= 0 AND total_cost >= 0"
+    ],
+    "mutable": true,
+    "column_names": {
+      "issue_reference_id": "imdr_id",
+      "asset_id": "ma_id",
+      "part_id": "mpt_id",
+      "uom_id": "mu_id"
+    }
+  },
+  "sys_users": {
+    "prefix": "su",
+    "module": "System",
+    "description": "ผู้ใช้งาน แต่ละคนสังกัดหนึ่ง permission group และหนึ่ง department",
+    "columns": [
+      {
+        "name": "id",
+        "type": "BIGINT UNSIGNED",
+        "description": "รหัสภายในถาวร",
+        "nullable": false,
+        "default": "AUTO_INCREMENT",
+        "ref": null
+      },
+      {
+        "name": "permission_group_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "กลุ่มสิทธิ์/Role",
+        "nullable": false,
+        "default": null,
+        "ref": "sys_permission_group"
+      },
+      {
+        "name": "username",
+        "type": "VARCHAR(100)",
+        "description": "ชื่อเข้าสู่ระบบ",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "employee_code",
+        "type": "VARCHAR(80)",
+        "description": "รหัสพนักงาน",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "password",
+        "type": "VARCHAR(255)",
+        "description": "รหัสผ่านที่จัดเก็บเป็น password hash เท่านั้น ห้ามเก็บ plaintext",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "firstname",
+        "type": "VARCHAR(120)",
+        "description": "ชื่อ",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "lastname",
+        "type": "VARCHAR(120)",
+        "description": "นามสกุล",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "email",
+        "type": "VARCHAR(255)",
+        "description": "อีเมล",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "department_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "หน่วยงาน",
+        "nullable": false,
+        "default": null,
+        "ref": "sys_department"
+      },
+      {
+        "name": "sign_path",
+        "type": "VARCHAR(500)",
+        "description": "object key ของไฟล์ลายเซ็น",
+        "nullable": true,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "status",
+        "type": "BOOLEAN",
+        "description": "สถานะผู้ใช้",
+        "nullable": false,
+        "default": "'1'",
+        "ref": null
+      },
+      {
+        "name": "created_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาสร้าง UTC",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6)",
+        "ref": null
+      },
+      {
+        "name": "created_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้บันทึก",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "updated_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาแก้ไข UTC",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6)",
+        "ref": null
+      },
+      {
+        "name": "updated_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้บันทึก",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      }
+    ],
+    "unique": [
+      [
+        "username"
+      ],
+      [
+        "employee_code"
+      ]
+    ],
+    "idx": [
+      [
+        "permission_group_id",
+        "status"
+      ],
+      [
+        "department_id",
+        "status"
+      ],
+      [
+        "email"
+      ]
+    ],
+    "checks": [],
+    "mutable": true,
+    "column_names": {
+      "permission_group_id": "spg_id",
+      "department_id": "sd_id"
+    }
+  },
+  "sys_submenu": {
+    "prefix": "ss",
+    "module": "System",
+    "description": "เมนูย่อยและ route ใต้เมนูหลัก",
+    "columns": [
+      {
+        "name": "id",
+        "type": "BIGINT UNSIGNED",
+        "description": "รหัสภายในถาวร",
+        "nullable": false,
+        "default": "AUTO_INCREMENT",
+        "ref": null
+      },
+      {
+        "name": "menu_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "เมนูหลัก",
+        "nullable": false,
+        "default": null,
+        "ref": "sys_menu"
+      },
+      {
+        "name": "name",
+        "type": "VARCHAR(160)",
+        "description": "ชื่อเมนูย่อย",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "link",
+        "type": "VARCHAR(255)",
+        "description": "route หรือ path",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "order",
+        "type": "INT UNSIGNED",
+        "description": "ลำดับเมนูย่อย",
+        "nullable": false,
+        "default": "0",
+        "ref": null
+      },
+      {
+        "name": "status",
+        "type": "BOOLEAN",
+        "description": "สถานะเมนูย่อย",
+        "nullable": false,
+        "default": "'1'",
+        "ref": null
+      },
+      {
+        "name": "created_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาสร้าง UTC",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6)",
+        "ref": null
+      },
+      {
+        "name": "created_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้บันทึก",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "updated_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาแก้ไข UTC",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6)",
+        "ref": null
+      },
+      {
+        "name": "updated_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้บันทึก",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      }
+    ],
+    "unique": [],
+    "idx": [
+      [
+        "menu_id",
+        "status"
+      ]
+    ],
+    "checks": [],
+    "mutable": true,
+    "column_names": {
+      "menu_id": "sm_id"
+    }
+  },
+  "sys_permission_group": {
+    "prefix": "spg",
+    "module": "System",
+    "description": "กลุ่มสิทธิ์ที่ทำหน้าที่เป็น Role สำหรับกำหนดสิทธิ์เข้าถึงเมนู",
+    "columns": [
+      {
+        "name": "id",
+        "type": "BIGINT UNSIGNED",
+        "description": "รหัสภายในถาวร",
+        "nullable": false,
+        "default": "AUTO_INCREMENT",
+        "ref": null
+      },
+      {
+        "name": "name",
+        "type": "VARCHAR(120)",
+        "description": "ชื่อกลุ่มสิทธิ์/Role",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "status",
+        "type": "BOOLEAN",
+        "description": "สถานะกลุ่มสิทธิ์",
+        "nullable": false,
+        "default": "'1'",
+        "ref": null
+      },
+      {
+        "name": "created_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาสร้าง UTC",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6)",
+        "ref": null
+      },
+      {
+        "name": "created_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้บันทึก",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "updated_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาแก้ไข UTC",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6)",
+        "ref": null
+      },
+      {
+        "name": "updated_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้บันทึก",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      }
+    ],
+    "unique": [
+      [
+        "name"
+      ]
+    ],
+    "idx": [],
+    "checks": [],
+    "mutable": true
+  },
+  "sys_permission_detail": {
+    "prefix": "spd",
+    "module": "System",
+    "description": "รายละเอียดสิทธิ์เข้าถึง submenu ที่กำหนดให้แต่ละ permission group",
+    "columns": [
+      {
+        "name": "id",
+        "type": "BIGINT UNSIGNED",
+        "description": "รหัสภายในถาวร",
+        "nullable": false,
+        "default": "AUTO_INCREMENT",
+        "ref": null
+      },
+      {
+        "name": "permission_group_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "กลุ่มสิทธิ์/Role",
+        "nullable": false,
+        "default": null,
+        "ref": "sys_permission_group"
+      },
+      {
+        "name": "submenu_id",
+        "type": "BIGINT UNSIGNED",
+        "description": "เมนูย่อยที่อนุญาต",
+        "nullable": false,
+        "default": null,
+        "ref": "sys_submenu"
+      },
+      {
+        "name": "order",
+        "type": "INT UNSIGNED",
+        "description": "ลำดับสิทธิ์",
+        "nullable": false,
+        "default": "0",
+        "ref": null
+      },
+      {
+        "name": "status",
+        "type": "BOOLEAN",
+        "description": "อนุญาตเมนูย่อยนี้",
+        "nullable": false,
+        "default": "'1'",
+        "ref": null
+      },
+      {
+        "name": "created_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาสร้าง UTC",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6)",
+        "ref": null
+      },
+      {
+        "name": "created_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้บันทึก",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "updated_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาแก้ไข UTC",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6)",
+        "ref": null
+      },
+      {
+        "name": "updated_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้บันทึก",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      }
+    ],
+    "unique": [
+      [
+        "permission_group_id",
+        "submenu_id"
+      ]
+    ],
+    "idx": [
+      [
+        "submenu_id",
+        "status"
+      ]
+    ],
+    "checks": [],
+    "mutable": true,
+    "column_names": {
+      "permission_group_id": "spg_id",
+      "submenu_id": "ss_id"
+    }
+  },
+  "sys_department": {
+    "prefix": "sd",
+    "module": "System",
+    "description": "หน่วยงานตามรหัส plant และ department",
+    "columns": [
+      {
+        "name": "id",
+        "type": "BIGINT UNSIGNED",
+        "description": "รหัสภายในถาวร",
+        "nullable": false,
+        "default": "AUTO_INCREMENT",
+        "ref": null
+      },
+      {
+        "name": "plant_cd",
+        "type": "VARCHAR(40)",
+        "description": "รหัส Plant ตาม master ภายนอก",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "code",
+        "type": "VARCHAR(80)",
+        "description": "รหัสหน่วยงาน",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "name",
+        "type": "VARCHAR(160)",
+        "description": "ชื่อหน่วยงาน",
+        "nullable": false,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "aname",
+        "type": "VARCHAR(160)",
+        "description": "ชื่อหน่วยงานอีกภาษาหรือชื่อย่อ",
+        "nullable": true,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "email",
+        "type": "VARCHAR(255)",
+        "description": "อีเมลหน่วยงาน",
+        "nullable": true,
+        "default": null,
+        "ref": null
+      },
+      {
+        "name": "status",
+        "type": "BOOLEAN",
+        "description": "สถานะหน่วยงาน",
+        "nullable": false,
+        "default": "'1'",
+        "ref": null
+      },
+      {
+        "name": "created_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาสร้าง UTC",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6)",
+        "ref": null
+      },
+      {
+        "name": "created_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้บันทึก",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      },
+      {
+        "name": "updated_at",
+        "type": "DATETIME(6)",
+        "description": "วันเวลาแก้ไข UTC",
+        "nullable": false,
+        "default": "CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6)",
+        "ref": null
+      },
+      {
+        "name": "updated_by",
+        "type": "BIGINT UNSIGNED",
+        "description": "ผู้บันทึก",
+        "nullable": true,
+        "default": null,
+        "ref": "sys_users"
+      }
+    ],
+    "unique": [
+      [
+        "plant_cd",
+        "code"
+      ]
+    ],
+    "idx": [
+      [
+        "name",
+        "status"
+      ]
+    ],
+    "checks": [],
+    "mutable": true
+  }
+}

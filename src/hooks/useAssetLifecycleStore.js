@@ -1,3 +1,4 @@
+import { remapAssetReferences } from '../utils/assetNumberUtils.js'
 import { isCustomerAsset } from '../utils/assetOwnershipUtils.js'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { mergeDemoLifecycleEvents } from '../data/mockLifecycleEvents.js'
@@ -47,6 +48,10 @@ export function useAssetLifecycleStore(assets) {
     }
   }, [lifecycleEvents])
 
+  const remapAssetIds = useCallback((mapping) => {
+    setLifecycleEvents((current) => remapAssetReferences(current, mapping))
+  }, [])
+
   const addLifecycleEvent = useCallback((event) => {
     if (isCustomerAsset(assets.find((asset) => asset.assetId === event.assetId))) throw new Error('Customer Assets cannot have lifecycle events.')
     const record = {
@@ -85,5 +90,5 @@ export function useAssetLifecycleStore(assets) {
     setLifecycleEvents((current) => [...events, ...current])
   }, [assets])
 
-  return { lifecycleEvents, addLifecycleEvent, addLifecycleEvents, updateLifecycleEvent, addProposalEvents }
+  return { remapAssetIds, lifecycleEvents, addLifecycleEvent, addLifecycleEvents, updateLifecycleEvent, addProposalEvents }
 }

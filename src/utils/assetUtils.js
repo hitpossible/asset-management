@@ -1,3 +1,4 @@
+import { formatPower } from './powerUtils.js'
 import { getAssetOwnership } from './assetOwnershipUtils.js'
 const DATE_FORMATTER = new Intl.DateTimeFormat('en-GB', {
   day: '2-digit',
@@ -69,19 +70,21 @@ export function summarizeAssets(assets) {
 }
 
 export function downloadAssetCsv(assets) {
-  const headings = ['Asset No.', 'Asset name', 'Asset ownership', 'Customer name', 'Asset class', 'Model', 'Custodian', 'Plant', 'Location', 'Line', 'Power', 'Area', 'Target SOP', 'Status']
+  const headings = ['Asset No. / Draft reference', 'Asset name', 'Asset ownership', 'Customer name', 'Asset class', 'RFQ No.', 'Model', 'Part number', 'Custodian', 'Plant', 'Location', 'Line', 'Power', 'Area', 'Target SOP', 'Status']
   const rows = assets.map((asset) => [
     asset.assetId,
     asset.name,
     getAssetOwnership(asset),
     asset.customerName || '',
     asset.assetClass,
+    asset.rfqNo || '',
     asset.model,
+    asset.partNo || '',
     asset.custodian,
     asset.plant,
     asset.location,
     asset.line,
-    asset.power,
+    formatPower(asset.power, asset.powerUnit),
     asset.area,
     asset.targetSop,
     asset.status,

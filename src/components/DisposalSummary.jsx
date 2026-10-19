@@ -5,23 +5,30 @@ import StatusBadge from './StatusBadge.jsx'
 export const disposalMoney = (value) => value == null ? 'Not recorded' : `฿ ${new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(value)}`
 
 export default function DisposalSummary({ record }) {
-  const link = record.invoiceItemAssetLink
+  const link = record.saleAssetLink || record.invoiceItemAssetLink
   const financial = record.financialSnapshot || {}
+  const isNewSaleLink = Boolean(record.saleAssetLink)
+  const gainLossLabel = record.gainLossResult === 'Profit'
+    ? `กำไร ${disposalMoney(record.gainLossAmount ?? Math.abs(record.gainLossValue))}`
+    : record.gainLossResult === 'Loss'
+      ? `ขาดทุน ${disposalMoney(record.gainLossAmount ?? Math.abs(record.gainLossValue))}`
+      : record.gainLossResult === 'Break-even' ? 'เท่าทุน' : '—'
   return <section className="mis-reference-panel disposal-summary">
     <div className="mis-reference-heading"><div><h3>Disposal history · Sale</h3><p>{record.transactionNo || 'Derecognition preview'}</p></div><StatusBadge status={record.completedAt ? 'Sold' : 'Sale Verified'} /></div>
     <div className="detail-grid">
-      {link ? <DetailValue label="Invoice Item ↔ Asset" value={`${link.taxInvoiceNo} · Item ${link.invoiceItemNo} ↔ ${link.assetId} · ${link.assetName}`} /> : null}
+      {link ? <DetailValue label={isNewSaleLink ? 'Tax Invoice ↔ Asset' : 'Invoice Item ↔ Asset'} value={isNewSaleLink ? `${link.taxInvoiceNo} ↔ ${link.assetId} · ${link.assetName}` : `${link.taxInvoiceNo} · Item ${link.invoiceItemNo} ↔ ${link.assetId} · ${link.assetName}`} /> : null}
       <DetailValue label="Buyer" value={record.buyer} />
       <DetailValue label="Sale Proposal (Approved)" value={record.saleProposalNo} />
       <DetailValue label="Tax Invoice (e-Tax)" value={record.taxInvoiceNo} />
       <DetailValue label="Tax Invoice date" value={formatDate(record.taxInvoiceDate || record.soldOn)} />
-      <DetailValue label="Sale verified by" value={record.verifiedBy} />
       <DetailValue label="Sale / Derecognition date" value={formatDate(record.soldOn)} />
-      <DetailValue label={link ? 'Invoice Item amount · e-Tax reference' : 'Tax Invoice amount · reference'} value={disposalMoney(link?.itemAmount ?? record.saleAmount)} />
+      {isNewSaleLink ? <DetailValue label="Invoice amount before VAT" value={disposalMoney(record.invoiceAmountBeforeVat)} /> : null}
+      <DetailValue label={isNewSaleLink ? 'Sale amount allocated to this Asset' : link ? 'Invoice Item amount · e-Tax reference' : 'Tax Invoice amount · reference'} value={disposalMoney(link?.allocatedAmount ?? link?.itemAmount ?? record.saleAmount)} />
+      {isNewSaleLink ? <DetailValue label="Gain / (loss) on sale" value={gainLossLabel} /> : null}
       {link ? <DetailValue label="Invoice total · e-Tax" value={disposalMoney(link.invoiceTotalAmount)} /> : null}
       <DetailValue label="Historical acquisition value" value={disposalMoney(financial.assetValue)} />
       <DetailValue label="Accumulated DP at sale" value={disposalMoney(financial.accumulatedDepreciation)} />
-      <DetailValue label="NBV at sale" value={disposalMoney(financial.netBookValue)} />
+      <DetailValue label={isNewSaleLink ? 'Net Value at sale' : 'NBV at sale'} value={disposalMoney(financial.netBookValue)} />
       <DetailValue label="Last depreciation month" value={record.depreciationStopDate?.slice(0, 7)} />
       <DetailValue label="Recorded by" value={record.actor} />
       {record.completedAt ? <DetailValue label="Recorded at (ICT)" value={new Intl.DateTimeFormat('en-GB', { timeZone: 'Asia/Bangkok', dateStyle: 'medium', timeStyle: 'short' }).format(new Date(record.completedAt))} /> : null}

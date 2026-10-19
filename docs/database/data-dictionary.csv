@@ -1,0 +1,788 @@
+﻿table,prefix,module,column,type,nullable,default,key,references,description_th
+sys_menu,sm,System,sm_id,BIGINT UNSIGNED,NO,AUTO_INCREMENT,PK,,รหัสภายในถาวร
+sys_menu,sm,System,sm_name,VARCHAR(120),NO,,,,ชื่อเมนู
+sys_menu,sm,System,sm_icon,VARCHAR(80),YES,,,,ชื่อไอคอน
+sys_menu,sm,System,sm_order,INT UNSIGNED,NO,0,,,ลำดับเมนูหลัก
+sys_menu,sm,System,sm_status,BOOLEAN,NO,'1',,,สถานะเมนู
+sys_menu,sm,System,sm_created_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6),,,วันเวลาสร้าง UTC
+sys_menu,sm,System,sm_created_by,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้สร้าง
+sys_menu,sm,System,sm_updated_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),,,วันเวลาแก้ไขล่าสุด UTC
+sys_menu,sm,System,sm_updated_by,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้แก้ไขล่าสุด
+sys_setting,sst,System,sst_id,BIGINT UNSIGNED,NO,AUTO_INCREMENT,PK,,รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK
+sys_setting,sst,System,sst_key,VARCHAR(100),NO,,,,ชื่อค่า
+sys_setting,sst,System,sst_value,JSON,NO,,,,ค่าที่ตั้ง
+sys_setting,sst,System,sst_description,VARCHAR(255),YES,,,,คำอธิบาย
+sys_setting,sst,System,sst_created_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6),,,วันเวลาสร้าง UTC
+sys_setting,sst,System,sst_created_by,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้สร้าง
+sys_setting,sst,System,sst_updated_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),,,วันเวลาแก้ไขล่าสุด UTC
+sys_setting,sst,System,sst_updated_by,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้แก้ไขล่าสุด
+sys_setting,sst,System,sst_row_version,INT UNSIGNED,NO,1,,,เลขเวอร์ชันสำหรับ optimistic locking
+sys_number_sequence,sns,System,sns_id,BIGINT UNSIGNED,NO,AUTO_INCREMENT,PK,,รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK
+sys_number_sequence,sns,System,sns_scope,VARCHAR(150),NO,,,,namespace เช่น ASSET:ME:2026 หรือ CHILD:<main_id>
+sys_number_sequence,sns,System,sns_last_value,BIGINT UNSIGNED,NO,0,,,เลขที่ใช้ล่าสุด ห้ามลดหรือใช้ซ้ำ
+sys_number_sequence,sns,System,sns_created_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6),,,วันเวลาสร้าง UTC
+sys_number_sequence,sns,System,sns_created_by,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้สร้าง
+sys_number_sequence,sns,System,sns_updated_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),,,วันเวลาแก้ไขล่าสุด UTC
+sys_number_sequence,sns,System,sns_updated_by,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้แก้ไขล่าสุด
+sys_number_sequence,sns,System,sns_row_version,INT UNSIGNED,NO,1,,,เลขเวอร์ชันสำหรับ optimistic locking
+sys_workflow,sw,System,sw_id,BIGINT UNSIGNED,NO,AUTO_INCREMENT,PK,,รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK
+sys_workflow,sw,System,sw_code,VARCHAR(80),NO,,,,รหัส workflow
+sys_workflow,sw,System,sw_version,INT UNSIGNED,NO,1,,,เวอร์ชัน
+sys_workflow,sw,System,sw_name,VARCHAR(255),NO,,,,ชื่อ workflow
+sys_workflow,sw,System,sw_process,VARCHAR(80),NO,,,,กระบวนการภายใน Asset เช่น TRANSFER / ACTIVATION
+sys_workflow,sw,System,sw_is_active,BOOLEAN,NO,1,,,เปิดใช้
+sys_workflow,sw,System,sw_created_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6),,,วันเวลาสร้าง UTC
+sys_workflow,sw,System,sw_created_by,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้สร้าง
+sys_workflow,sw,System,sw_updated_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),,,วันเวลาแก้ไขล่าสุด UTC
+sys_workflow,sw,System,sw_updated_by,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้แก้ไขล่าสุด
+sys_workflow,sw,System,sw_row_version,INT UNSIGNED,NO,1,,,เลขเวอร์ชันสำหรับ optimistic locking
+sys_workflow_step,sws,System,sws_id,BIGINT UNSIGNED,NO,AUTO_INCREMENT,PK,,รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK
+sys_workflow_step,sws,System,sw_id,BIGINT UNSIGNED,NO,,,sys_workflow.sw_id,workflow
+sys_workflow_step,sws,System,sws_sequence,INT UNSIGNED,NO,,,,ลำดับ
+sys_workflow_step,sws,System,sws_code,VARCHAR(80),NO,,,,รหัสขั้น
+sys_workflow_step,sws,System,sws_name,VARCHAR(255),NO,,,,ชื่อขั้น
+sys_workflow_step,sws,System,sws_action,"ENUM('APPROVE','REVIEW','ACKNOWLEDGE')",NO,,,,ชนิดการตัดสินใจ
+sys_workflow_step,sws,System,sws_assignee_type,"ENUM('USER','ROLE','DYNAMIC')",NO,,,,วิธีหาผู้อนุมัติ
+sys_workflow_step,sws,System,su_id,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้อนุมัติระบุคน
+sys_workflow_step,sws,System,spg_id,BIGINT UNSIGNED,YES,,,sys_permission_group.spg_id,กลุ่มสิทธิ์/Role ที่กำหนดผู้อนุมัติ
+sys_workflow_step,sws,System,sws_resolver,VARCHAR(100),YES,,,,ตัวแก้แบบ dynamic เช่น SOURCE_AREA_OWNER
+sys_workflow_step,sws,System,sws_is_required,BOOLEAN,NO,1,,,จำเป็น
+sys_workflow_step,sws,System,sws_allow_return,BOOLEAN,NO,1,,,อนุญาตส่งกลับ
+sys_workflow_step,sws,System,sws_allow_reject,BOOLEAN,NO,1,,,อนุญาตปฏิเสธ
+sys_workflow_step,sws,System,sws_requires_dp_date,BOOLEAN,NO,0,,,ขั้นกำหนดวันเริ่มค่าเสื่อม
+sys_workflow_step,sws,System,sws_created_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6),,,วันเวลาสร้าง UTC
+sys_workflow_step,sws,System,sws_created_by,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้สร้าง
+sys_workflow_step,sws,System,sws_updated_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),,,วันเวลาแก้ไขล่าสุด UTC
+sys_workflow_step,sws,System,sws_updated_by,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้แก้ไขล่าสุด
+sys_workflow_step,sws,System,sws_row_version,INT UNSIGNED,NO,1,,,เลขเวอร์ชันสำหรับ optimistic locking
+sys_workflow_assignment,swa,System,swa_id,BIGINT UNSIGNED,NO,AUTO_INCREMENT,PK,,รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK
+sys_workflow_assignment,swa,System,swa_process,VARCHAR(80),NO,,,,กระบวนการ
+sys_workflow_assignment,swa,System,sw_id,BIGINT UNSIGNED,NO,,,sys_workflow.sw_id,workflow ที่ใช้
+sys_workflow_assignment,swa,System,swa_created_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6),,,วันเวลาสร้าง UTC
+sys_workflow_assignment,swa,System,swa_created_by,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้สร้าง
+sys_workflow_assignment,swa,System,swa_updated_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),,,วันเวลาแก้ไขล่าสุด UTC
+sys_workflow_assignment,swa,System,swa_updated_by,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้แก้ไขล่าสุด
+sys_workflow_assignment,swa,System,swa_row_version,INT UNSIGNED,NO,1,,,เลขเวอร์ชันสำหรับ optimistic locking
+sys_responsibility,sres,System,sres_id,BIGINT UNSIGNED,NO,AUTO_INCREMENT,PK,,รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK
+sys_responsibility,sres,System,sd_id,BIGINT UNSIGNED,NO,,,sys_department.sd_id,หน่วยงาน
+sys_responsibility,sres,System,sres_duty,VARCHAR(80),NO,,,,หน้าที่ เช่น AREA_OWNER / DEPARTMENT_LEADER
+sys_responsibility,sres,System,su_id,BIGINT UNSIGNED,NO,,,sys_users.su_id,ผู้รับผิดชอบ
+sys_responsibility,sres,System,sres_created_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6),,,วันเวลาสร้าง UTC
+sys_responsibility,sres,System,sres_created_by,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้สร้าง
+sys_responsibility,sres,System,sres_updated_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),,,วันเวลาแก้ไขล่าสุด UTC
+sys_responsibility,sres,System,sres_updated_by,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้แก้ไขล่าสุด
+sys_responsibility,sres,System,sres_row_version,INT UNSIGNED,NO,1,,,เลขเวอร์ชันสำหรับ optimistic locking
+mst_plant,mp,Master,mp_id,BIGINT UNSIGNED,NO,AUTO_INCREMENT,PK,,รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK
+mst_plant,mp,Master,mp_code,VARCHAR(80),NO,,,,รหัสอ้างอิง
+mst_plant,mp,Master,mp_name,VARCHAR(200),NO,,,,ชื่อ
+mst_plant,mp,Master,mp_is_active,BOOLEAN,NO,1,,,เปิดใช้งาน
+mst_plant,mp,Master,mp_created_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6),,,วันเวลาสร้าง UTC
+mst_plant,mp,Master,mp_created_by,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้สร้าง
+mst_plant,mp,Master,mp_updated_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),,,วันเวลาแก้ไขล่าสุด UTC
+mst_plant,mp,Master,mp_updated_by,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้แก้ไขล่าสุด
+mst_plant,mp,Master,mp_row_version,INT UNSIGNED,NO,1,,,เลขเวอร์ชันสำหรับ optimistic locking
+mst_location,ml,Master,ml_id,BIGINT UNSIGNED,NO,AUTO_INCREMENT,PK,,รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK
+mst_location,ml,Master,ml_code,VARCHAR(80),NO,,,,รหัสอ้างอิง
+mst_location,ml,Master,ml_name,VARCHAR(200),NO,,,,ชื่อ
+mst_location,ml,Master,mp_id,BIGINT UNSIGNED,NO,,,mst_plant.mp_id,โรงงาน
+mst_location,ml,Master,ml_is_active,BOOLEAN,NO,1,,,เปิดใช้งาน
+mst_location,ml,Master,ml_created_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6),,,วันเวลาสร้าง UTC
+mst_location,ml,Master,ml_created_by,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้สร้าง
+mst_location,ml,Master,ml_updated_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),,,วันเวลาแก้ไขล่าสุด UTC
+mst_location,ml,Master,ml_updated_by,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้แก้ไขล่าสุด
+mst_location,ml,Master,ml_row_version,INT UNSIGNED,NO,1,,,เลขเวอร์ชันสำหรับ optimistic locking
+mst_line,mli,Master,mli_id,BIGINT UNSIGNED,NO,AUTO_INCREMENT,PK,,รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK
+mst_line,mli,Master,mli_code,VARCHAR(80),NO,,,,รหัสอ้างอิง
+mst_line,mli,Master,mli_name,VARCHAR(200),NO,,,,ชื่อ
+mst_line,mli,Master,ml_id,BIGINT UNSIGNED,NO,,,mst_location.ml_id,สถานที่
+mst_line,mli,Master,mli_is_active,BOOLEAN,NO,1,,,เปิดใช้งาน
+mst_line,mli,Master,mli_created_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6),,,วันเวลาสร้าง UTC
+mst_line,mli,Master,mli_created_by,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้สร้าง
+mst_line,mli,Master,mli_updated_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),,,วันเวลาแก้ไขล่าสุด UTC
+mst_line,mli,Master,mli_updated_by,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้แก้ไขล่าสุด
+mst_line,mli,Master,mli_row_version,INT UNSIGNED,NO,1,,,เลขเวอร์ชันสำหรับ optimistic locking
+mst_cost_center,mcc,Master,mcc_id,BIGINT UNSIGNED,NO,AUTO_INCREMENT,PK,,รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK
+mst_cost_center,mcc,Master,mcc_code,VARCHAR(80),NO,,,,รหัสอ้างอิง
+mst_cost_center,mcc,Master,mcc_name,VARCHAR(200),NO,,,,ชื่อ
+mst_cost_center,mcc,Master,sd_id,BIGINT UNSIGNED,YES,,,sys_department.sd_id,หน่วยงาน
+mst_cost_center,mcc,Master,mcc_is_active,BOOLEAN,NO,1,,,เปิดใช้งาน
+mst_cost_center,mcc,Master,mcc_created_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6),,,วันเวลาสร้าง UTC
+mst_cost_center,mcc,Master,mcc_created_by,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้สร้าง
+mst_cost_center,mcc,Master,mcc_updated_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),,,วันเวลาแก้ไขล่าสุด UTC
+mst_cost_center,mcc,Master,mcc_updated_by,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้แก้ไขล่าสุด
+mst_cost_center,mcc,Master,mcc_row_version,INT UNSIGNED,NO,1,,,เลขเวอร์ชันสำหรับ optimistic locking
+mst_project,mprj,Master,mprj_id,BIGINT UNSIGNED,NO,AUTO_INCREMENT,PK,,รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK
+mst_project,mprj,Master,mprj_code,VARCHAR(80),NO,,,,รหัสอ้างอิง
+mst_project,mprj,Master,mprj_name,VARCHAR(200),NO,,,,ชื่อ
+mst_project,mprj,Master,mprj_detail,TEXT,YES,,,,รายละเอียด
+mst_project,mprj,Master,sd_id,BIGINT UNSIGNED,YES,,,sys_department.sd_id,หน่วยงาน
+mst_project,mprj,Master,mprj_is_active,BOOLEAN,NO,1,,,เปิดใช้งาน
+mst_project,mprj,Master,mprj_created_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6),,,วันเวลาสร้าง UTC
+mst_project,mprj,Master,mprj_created_by,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้สร้าง
+mst_project,mprj,Master,mprj_updated_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),,,วันเวลาแก้ไขล่าสุด UTC
+mst_project,mprj,Master,mprj_updated_by,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้แก้ไขล่าสุด
+mst_project,mprj,Master,mprj_row_version,INT UNSIGNED,NO,1,,,เลขเวอร์ชันสำหรับ optimistic locking
+mst_customer,mc,Master,mc_id,BIGINT UNSIGNED,NO,AUTO_INCREMENT,PK,,รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK
+mst_customer,mc,Master,mc_code,VARCHAR(80),NO,,,,รหัสอ้างอิง
+mst_customer,mc,Master,mc_name,VARCHAR(200),NO,,,,ชื่อ
+mst_customer,mc,Master,mc_tax_id,VARCHAR(40),YES,,,,เลขผู้เสียภาษี
+mst_customer,mc,Master,mc_is_active,BOOLEAN,NO,1,,,เปิดใช้งาน
+mst_customer,mc,Master,mc_created_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6),,,วันเวลาสร้าง UTC
+mst_customer,mc,Master,mc_created_by,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้สร้าง
+mst_customer,mc,Master,mc_updated_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),,,วันเวลาแก้ไขล่าสุด UTC
+mst_customer,mc,Master,mc_updated_by,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้แก้ไขล่าสุด
+mst_customer,mc,Master,mc_row_version,INT UNSIGNED,NO,1,,,เลขเวอร์ชันสำหรับ optimistic locking
+mst_vendor,mv,Master,mv_id,BIGINT UNSIGNED,NO,AUTO_INCREMENT,PK,,รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK
+mst_vendor,mv,Master,mv_code,VARCHAR(80),NO,,,,รหัสอ้างอิง
+mst_vendor,mv,Master,mv_name,VARCHAR(200),NO,,,,ชื่อ
+mst_vendor,mv,Master,mv_tax_id,VARCHAR(40),YES,,,,เลขภาษี
+mst_vendor,mv,Master,mv_contact,VARCHAR(255),YES,,,,ผู้ติดต่อ
+mst_vendor,mv,Master,mv_address,TEXT,YES,,,,ที่อยู่
+mst_vendor,mv,Master,mv_payment_terms,VARCHAR(255),YES,,,,เงื่อนไขชำระเงิน
+mst_vendor,mv,Master,mv_is_active,BOOLEAN,NO,1,,,เปิดใช้งาน
+mst_vendor,mv,Master,mv_created_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6),,,วันเวลาสร้าง UTC
+mst_vendor,mv,Master,mv_created_by,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้สร้าง
+mst_vendor,mv,Master,mv_updated_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),,,วันเวลาแก้ไขล่าสุด UTC
+mst_vendor,mv,Master,mv_updated_by,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้แก้ไขล่าสุด
+mst_vendor,mv,Master,mv_row_version,INT UNSIGNED,NO,1,,,เลขเวอร์ชันสำหรับ optimistic locking
+mst_asset_group,mag,Master,mag_id,BIGINT UNSIGNED,NO,AUTO_INCREMENT,PK,,รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK
+mst_asset_group,mag,Master,mag_code,VARCHAR(80),NO,,,,รหัสอ้างอิง
+mst_asset_group,mag,Master,mag_name,VARCHAR(200),NO,,,,ชื่อ
+mst_asset_group,mag,Master,mag_is_active,BOOLEAN,NO,1,,,เปิดใช้งาน
+mst_asset_group,mag,Master,mag_created_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6),,,วันเวลาสร้าง UTC
+mst_asset_group,mag,Master,mag_created_by,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้สร้าง
+mst_asset_group,mag,Master,mag_updated_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),,,วันเวลาแก้ไขล่าสุด UTC
+mst_asset_group,mag,Master,mag_updated_by,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้แก้ไขล่าสุด
+mst_asset_group,mag,Master,mag_row_version,INT UNSIGNED,NO,1,,,เลขเวอร์ชันสำหรับ optimistic locking
+mst_asset_type,mat,Master,mat_id,BIGINT UNSIGNED,NO,AUTO_INCREMENT,PK,,รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK
+mst_asset_type,mat,Master,mat_code,VARCHAR(80),NO,,,,รหัสอ้างอิง
+mst_asset_type,mat,Master,mat_name,VARCHAR(200),NO,,,,ชื่อ
+mst_asset_type,mat,Master,mag_id,BIGINT UNSIGNED,NO,,,mst_asset_group.mag_id,กลุ่ม
+mst_asset_type,mat,Master,mat_useful_life_years,"DECIMAL(7,2)",NO,,,,อายุใช้งานปัจจุบัน ต้องมากกว่า 0
+mst_asset_type,mat,Master,mat_show_technical_fields,BOOLEAN,NO,0,,,แสดง RFQ Model Part Area Power สำหรับ ME/MD
+mst_asset_type,mat,Master,mat_is_active,BOOLEAN,NO,1,,,เปิดใช้งาน
+mst_asset_type,mat,Master,mat_created_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6),,,วันเวลาสร้าง UTC
+mst_asset_type,mat,Master,mat_created_by,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้สร้าง
+mst_asset_type,mat,Master,mat_updated_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),,,วันเวลาแก้ไขล่าสุด UTC
+mst_asset_type,mat,Master,mat_updated_by,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้แก้ไขล่าสุด
+mst_asset_type,mat,Master,mat_row_version,INT UNSIGNED,NO,1,,,เลขเวอร์ชันสำหรับ optimistic locking
+mst_account,mac,Master,mac_id,BIGINT UNSIGNED,NO,AUTO_INCREMENT,PK,,รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK
+mst_account,mac,Master,mac_code,VARCHAR(80),NO,,,,รหัสอ้างอิง
+mst_account,mac,Master,mac_name,VARCHAR(200),NO,,,,ชื่อ
+mst_account,mac,Master,mac_is_active,BOOLEAN,NO,1,,,เปิดใช้งาน
+mst_account,mac,Master,mac_created_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6),,,วันเวลาสร้าง UTC
+mst_account,mac,Master,mac_created_by,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้สร้าง
+mst_account,mac,Master,mac_updated_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),,,วันเวลาแก้ไขล่าสุด UTC
+mst_account,mac,Master,mac_updated_by,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้แก้ไขล่าสุด
+mst_account,mac,Master,mac_row_version,INT UNSIGNED,NO,1,,,เลขเวอร์ชันสำหรับ optimistic locking
+mst_cost_type,mct,Master,mct_id,BIGINT UNSIGNED,NO,AUTO_INCREMENT,PK,,รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK
+mst_cost_type,mct,Master,mct_code,VARCHAR(80),NO,,,,รหัสอ้างอิง
+mst_cost_type,mct,Master,mct_name,VARCHAR(200),NO,,,,ชื่อ
+mst_cost_type,mct,Master,mct_is_active,BOOLEAN,NO,1,,,เปิดใช้งาน
+mst_cost_type,mct,Master,mct_created_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6),,,วันเวลาสร้าง UTC
+mst_cost_type,mct,Master,mct_created_by,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้สร้าง
+mst_cost_type,mct,Master,mct_updated_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),,,วันเวลาแก้ไขล่าสุด UTC
+mst_cost_type,mct,Master,mct_updated_by,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้แก้ไขล่าสุด
+mst_cost_type,mct,Master,mct_row_version,INT UNSIGNED,NO,1,,,เลขเวอร์ชันสำหรับ optimistic locking
+mst_uom,mu,Master,mu_id,BIGINT UNSIGNED,NO,AUTO_INCREMENT,PK,,รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK
+mst_uom,mu,Master,mu_code,VARCHAR(80),NO,,,,รหัสอ้างอิง
+mst_uom,mu,Master,mu_name,VARCHAR(200),NO,,,,ชื่อ
+mst_uom,mu,Master,mu_is_active,BOOLEAN,NO,1,,,เปิดใช้งาน
+mst_uom,mu,Master,mu_created_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6),,,วันเวลาสร้าง UTC
+mst_uom,mu,Master,mu_created_by,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้สร้าง
+mst_uom,mu,Master,mu_updated_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),,,วันเวลาแก้ไขล่าสุด UTC
+mst_uom,mu,Master,mu_updated_by,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้แก้ไขล่าสุด
+mst_uom,mu,Master,mu_row_version,INT UNSIGNED,NO,1,,,เลขเวอร์ชันสำหรับ optimistic locking
+mst_part,mpt,Master,mpt_id,BIGINT UNSIGNED,NO,AUTO_INCREMENT,PK,,รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK
+mst_part,mpt,Master,mpt_code,VARCHAR(80),NO,,,,รหัสอ้างอิง
+mst_part,mpt,Master,mpt_name,VARCHAR(200),NO,,,,ชื่อ
+mst_part,mpt,Master,mpt_model,VARCHAR(255),YES,,,,รุ่น
+mst_part,mpt,Master,mpt_part_no,VARCHAR(255),YES,,,,เลขชิ้นส่วน
+mst_part,mpt,Master,mu_id,BIGINT UNSIGNED,NO,,,mst_uom.mu_id,หน่วยนับ
+mst_part,mpt,Master,mpt_is_active,BOOLEAN,NO,1,,,เปิดใช้งาน
+mst_part,mpt,Master,mpt_created_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6),,,วันเวลาสร้าง UTC
+mst_part,mpt,Master,mpt_created_by,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้สร้าง
+mst_part,mpt,Master,mpt_updated_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),,,วันเวลาแก้ไขล่าสุด UTC
+mst_part,mpt,Master,mpt_updated_by,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้แก้ไขล่าสุด
+mst_part,mpt,Master,mpt_row_version,INT UNSIGNED,NO,1,,,เลขเวอร์ชันสำหรับ optimistic locking
+info_document,idoc,Document,idoc_id,BIGINT UNSIGNED,NO,AUTO_INCREMENT,PK,,รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK
+info_document,idoc,Document,idoc_no,VARCHAR(100),NO,,,,เลขเอกสาร
+info_document,idoc,Document,idoc_kind,"ENUM('VERIFICATION','TRANSFER','DISPOSAL','ASSET_ISSUE','SALE_PROPOSAL','TAX_INVOICE')",NO,,,,ประเภทเอกสาร
+info_document,idoc,Document,idoc_status,VARCHAR(80),NO,,,,สถานะเฉพาะประเภทเอกสาร
+info_document,idoc,Document,idoc_origin,"ENUM('ASSET','MIS','ETAX','IMPORT')",NO,,,,ต้นทางงาน ใช้ตัดสิน audit
+info_document,idoc,Document,idoc_document_date,DATE,NO,,,,วันที่เอกสาร
+info_document,idoc,Document,idoc_external_key,VARCHAR(150),YES,,,,รหัสต้นทางสำหรับ deduplication
+info_document,idoc,Document,idoc_remark,TEXT,YES,,,,หมายเหตุ
+info_document,idoc,Document,idoc_created_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6),,,วันเวลาสร้าง UTC
+info_document,idoc,Document,idoc_created_by,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้สร้าง
+info_document,idoc,Document,idoc_updated_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),,,วันเวลาแก้ไขล่าสุด UTC
+info_document,idoc,Document,idoc_updated_by,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้แก้ไขล่าสุด
+info_document,idoc,Document,idoc_row_version,INT UNSIGNED,NO,1,,,เลขเวอร์ชันสำหรับ optimistic locking
+info_file,ifile,Document,ifile_id,BIGINT UNSIGNED,NO,AUTO_INCREMENT,PK,,รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK
+info_file,ifile,Document,ifile_storage_key,VARCHAR(500),NO,,,,object key ไม่เก็บ URL ที่มี token
+info_file,ifile,Document,ifile_original_name,VARCHAR(255),NO,,,,ชื่อไฟล์
+info_file,ifile,Document,ifile_mime_type,VARCHAR(100),NO,,,,MIME type
+info_file,ifile,Document,ifile_size_bytes,BIGINT UNSIGNED,NO,,,,ขนาด bytes
+info_file,ifile,Document,ifile_sha256,CHAR(64),YES,,,,checksum
+info_file,ifile,Document,ifile_created_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6),,,วันเวลาสร้าง UTC
+info_file,ifile,Document,ifile_created_by,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้สร้าง
+info_file,ifile,Document,ifile_updated_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),,,วันเวลาแก้ไขล่าสุด UTC
+info_file,ifile,Document,ifile_updated_by,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้แก้ไขล่าสุด
+info_file,ifile,Document,ifile_row_version,INT UNSIGNED,NO,1,,,เลขเวอร์ชันสำหรับ optimistic locking
+info_document_file,idf,Document,idf_id,BIGINT UNSIGNED,NO,AUTO_INCREMENT,PK,,รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK
+info_document_file,idf,Document,idoc_id,BIGINT UNSIGNED,NO,,,info_document.idoc_id,เอกสาร
+info_document_file,idf,Document,ifile_id,BIGINT UNSIGNED,NO,,,info_file.ifile_id,ไฟล์
+info_document_file,idf,Document,idf_purpose,VARCHAR(80),NO,,,,INVOICE / MACHINE_PHOTO / ASSET_PLATE / CONTROL_SHEET เป็นต้น
+info_document_file,idf,Document,idf_created_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6),,,วันเวลาสร้าง UTC
+info_document_file,idf,Document,idf_created_by,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้สร้าง
+info_document_file,idf,Document,idf_updated_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),,,วันเวลาแก้ไขล่าสุด UTC
+info_document_file,idf,Document,idf_updated_by,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้แก้ไขล่าสุด
+info_document_file,idf,Document,idf_row_version,INT UNSIGNED,NO,1,,,เลขเวอร์ชันสำหรับ optimistic locking
+mst_asset,ma,Asset,ma_id,BIGINT UNSIGNED,NO,AUTO_INCREMENT,PK,,รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK
+mst_asset,ma,Asset,ma_temporary_ref,VARCHAR(100),NO,,,,เลข Draft ถาวร แม้ได้เลขจริงแล้ว
+mst_asset,ma,Asset,ma_no,VARCHAR(100),YES,,,,เลข Asset จริง NULL จน Proposal Approved
+mst_asset,ma,Asset,ma_name,VARCHAR(255),NO,,,,ชื่อ Asset
+mst_asset,ma,Asset,ma_ownership,"ENUM('COMPANY','CUSTOMER')",NO,'COMPANY',,,ประเภทเจ้าของ
+mst_asset,ma,Asset,mc_id,BIGINT UNSIGNED,YES,,,mst_customer.mc_id,เจ้าของ Customer Asset
+mst_asset,ma,Asset,ma_customer_name_snapshot,VARCHAR(255),YES,,,,ชื่อลูกค้าที่บันทึกบน Asset
+mst_asset,ma,Asset,parent_ma_id,BIGINT UNSIGNED,YES,,,mst_asset.ma_id,Main Asset เท่านั้น NULL สำหรับ Main
+mst_asset,ma,Asset,source_ma_id,BIGINT UNSIGNED,YES,,,mst_asset.ma_id,Asset ที่ถูกเลือกเป็น work target แยกจาก parent
+mst_asset,ma,Asset,ma_child_suffix,INT UNSIGNED,YES,,,,suffix ที่ได้รับเมื่ออนุมัติ Proposal
+mst_asset,ma,Asset,mat_id,BIGINT UNSIGNED,NO,,,mst_asset_type.mat_id,ประเภท Asset
+mst_asset,ma,Asset,mprj_id,BIGINT UNSIGNED,YES,,,mst_project.mprj_id,โครงการ
+mst_asset,ma,Asset,irfr_id,BIGINT UNSIGNED,YES,,,info_rfq_reference.irfr_id,RFQ item reference จาก MIS ที่เลือก
+mst_asset,ma,Asset,ma_model,VARCHAR(255),YES,,,,รุ่นสุดท้ายที่ผู้ใช้แก้ได้
+mst_asset,ma,Asset,ma_part_no,VARCHAR(255),YES,,,,เลข part สุดท้าย
+mst_asset,ma,Asset,su_id,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้ดูแล
+mst_asset,ma,Asset,sd_id,BIGINT UNSIGNED,YES,,,sys_department.sd_id,หน่วยงาน
+mst_asset,ma,Asset,mp_id,BIGINT UNSIGNED,YES,,,mst_plant.mp_id,โรงงาน
+mst_asset,ma,Asset,ml_id,BIGINT UNSIGNED,YES,,,mst_location.ml_id,สถานที่
+mst_asset,ma,Asset,mli_id,BIGINT UNSIGNED,YES,,,mst_line.mli_id,สายการผลิต
+mst_asset,ma,Asset,mcc_id,BIGINT UNSIGNED,YES,,,mst_cost_center.mcc_id,ศูนย์ต้นทุน
+mst_asset,ma,Asset,ma_area,VARCHAR(255),YES,,,,พื้นที่ รองรับข้อความเดิม
+mst_asset,ma,Asset,ma_area_m2,"DECIMAL(12,4)",YES,,,,ขนาดพื้นที่ m2 ถ้ามี
+mst_asset,ma,Asset,ma_power,VARCHAR(255),YES,,,,ค่า Power เดิมหรือข้อความไฟฟ้า
+mst_asset,ma,Asset,ma_power_unit,VARCHAR(30),YES,,,,หน่วย Power
+mst_asset,ma,Asset,ma_target_sop,DATE,YES,,,,Target SOP
+mst_asset,ma,Asset,ma_confirmed_sop,DATE,YES,,,,SOP ที่ตรวจยืนยัน
+mst_asset,ma,Asset,ma_maker,VARCHAR(255),YES,,,,ผู้ผลิต
+mst_asset,ma,Asset,ma_serial_no,VARCHAR(150),YES,,,,serial number
+mst_asset,ma,Asset,ma_investment_no,VARCHAR(100),YES,,,,เลขลงทุน
+mst_asset,ma,Asset,ma_manufacturing_date,DATE,YES,,,,วันที่ผลิต
+mst_asset,ma,Asset,ma_registration_date,DATE,YES,,,,วันที่ขึ้นทะเบียน
+mst_asset,ma,Asset,ma_acquisition_date,DATE,YES,,,,วันที่ได้มา
+mst_asset,ma,Asset,ma_warranty_until,DATE,YES,,,,สิ้นสุดประกัน
+mst_asset,ma,Asset,ma_special_control,VARCHAR(80),YES,,,,BOI / EL / Other
+mst_asset,ma,Asset,ma_condition,VARCHAR(80),YES,,,,Purchase / Leasing / Rental / Other
+mst_asset,ma,Asset,ma_status,"ENUM('Draft','Purchasing','Waiting Delivery','Waiting Invoice','Waiting GR','Receiving Validation','Ready for Verification','Verification In Progress','Pending Asset Team Leader Approval','Pending Accounting Review','Pending Accounting Approval','Pending Activation Approval','Active','Returned for Correction','On Hold','Cancelled','Sold')",NO,'Draft',,,สถานะ Asset
+mst_asset,ma,Asset,ma_activated_at,DATETIME(6),YES,,,,วันที่ Active
+mst_asset,ma,Asset,ma_notes,TEXT,YES,,,,หมายเหตุ
+mst_asset,ma,Asset,ma_created_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6),,,วันเวลาสร้าง UTC
+mst_asset,ma,Asset,ma_created_by,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้สร้าง
+mst_asset,ma,Asset,ma_updated_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),,,วันเวลาแก้ไขล่าสุด UTC
+mst_asset,ma,Asset,ma_updated_by,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้แก้ไขล่าสุด
+mst_asset,ma,Asset,ma_row_version,INT UNSIGNED,NO,1,,,เลขเวอร์ชันสำหรับ optimistic locking
+info_asset_file,iaf,Asset,iaf_id,BIGINT UNSIGNED,NO,AUTO_INCREMENT,PK,,รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK
+info_asset_file,iaf,Asset,ma_id,BIGINT UNSIGNED,NO,,,mst_asset.ma_id,Asset
+info_asset_file,iaf,Asset,ifile_id,BIGINT UNSIGNED,NO,,,info_file.ifile_id,ไฟล์
+info_asset_file,iaf,Asset,iaf_purpose,VARCHAR(80),NO,,,,หน้าที่ไฟล์
+info_asset_file,iaf,Asset,iaf_created_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6),,,วันเวลาสร้าง UTC
+info_asset_file,iaf,Asset,iaf_created_by,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้สร้าง
+info_asset_file,iaf,Asset,iaf_updated_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),,,วันเวลาแก้ไขล่าสุด UTC
+info_asset_file,iaf,Asset,iaf_updated_by,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้แก้ไขล่าสุด
+info_asset_file,iaf,Asset,iaf_row_version,INT UNSIGNED,NO,1,,,เลขเวอร์ชันสำหรับ optimistic locking
+info_receiving_validation,irv,Asset,irv_id,BIGINT UNSIGNED,NO,AUTO_INCREMENT,PK,,รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK
+info_receiving_validation,irv,Asset,imdr_id,BIGINT UNSIGNED,NO,,,info_mis_document_reference.imdr_id,PO reference ใน MIS
+info_receiving_validation,irv,Asset,irv_po_item_key,VARCHAR(150),NO,,,,PO item key ต้นทาง
+info_receiving_validation,irv,Asset,irv_ordered_quantity,"DECIMAL(18,4)",NO,0,,,จำนวนสั่งในขอบเขตนี้
+info_receiving_validation,irv,Asset,irv_accepted_quantity,"DECIMAL(18,4)",NO,0,,,จำนวนรับสะสมที่ผ่านตรวจจาก MIS
+info_receiving_validation,irv,Asset,iaa_id,BIGINT UNSIGNED,NO,,,info_asset_acquisition.iaa_id,รายการ acquisition ที่ตรวจรับ
+info_receiving_validation,irv,Asset,irv_po_valid,BOOLEAN,NO,0,,,PO ใช้รับได้
+info_receiving_validation,irv,Asset,irv_invoice_valid,BOOLEAN,NO,0,,,มีเอกสาร Invoice และ PO ตรงกัน
+info_receiving_validation,irv,Asset,irv_gr_valid,BOOLEAN,NO,0,,,มี GR และ PO ตรงกัน
+info_receiving_validation,irv,Asset,irv_purchasing_accepted,BOOLEAN,NO,0,,,Purchasing ยืนยัน
+info_receiving_validation,irv,Asset,irv_owner_accepted,BOOLEAN,NO,0,,,Owner ยืนยัน
+info_receiving_validation,irv,Asset,irv_result,"ENUM('PENDING','PARTIAL','COMPLETE','HOLD')",NO,,,,ผลรวมรับ; ไม่ใช้ Invoice amounts
+info_receiving_validation,irv,Asset,irv_validated_at,DATETIME(6),YES,,,,เวลาประเมินผล
+info_receiving_validation,irv,Asset,irv_reason,TEXT,YES,,,,เหตุผล hold
+info_receiving_validation,irv,Asset,irv_created_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6),,,วันเวลาสร้าง UTC
+info_receiving_validation,irv,Asset,irv_created_by,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้สร้าง
+info_receiving_validation,irv,Asset,irv_updated_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),,,วันเวลาแก้ไขล่าสุด UTC
+info_receiving_validation,irv,Asset,irv_updated_by,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้แก้ไขล่าสุด
+info_receiving_validation,irv,Asset,irv_row_version,INT UNSIGNED,NO,1,,,เลขเวอร์ชันสำหรับ optimistic locking
+mst_verification_check,mvc,Master,mvc_id,BIGINT UNSIGNED,NO,AUTO_INCREMENT,PK,,รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK
+mst_verification_check,mvc,Master,mvc_code,VARCHAR(80),NO,,,,รหัสอ้างอิง
+mst_verification_check,mvc,Master,mvc_name,VARCHAR(200),NO,,,,ชื่อ
+mst_verification_check,mvc,Master,mvc_is_active,BOOLEAN,NO,1,,,เปิดใช้งาน
+mst_verification_check,mvc,Master,mvc_created_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6),,,วันเวลาสร้าง UTC
+mst_verification_check,mvc,Master,mvc_created_by,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้สร้าง
+mst_verification_check,mvc,Master,mvc_updated_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),,,วันเวลาแก้ไขล่าสุด UTC
+mst_verification_check,mvc,Master,mvc_updated_by,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้แก้ไขล่าสุด
+mst_verification_check,mvc,Master,mvc_row_version,INT UNSIGNED,NO,1,,,เลขเวอร์ชันสำหรับ optimistic locking
+info_asset_verification,iav,Asset,iav_id,BIGINT UNSIGNED,NO,AUTO_INCREMENT,PK,,รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK
+info_asset_verification,iav,Asset,idoc_id,BIGINT UNSIGNED,NO,,,info_document.idoc_id,Verification document
+info_asset_verification,iav,Asset,ma_id,BIGINT UNSIGNED,NO,,,mst_asset.ma_id,Asset
+info_asset_verification,iav,Asset,iav_revision,INT UNSIGNED,NO,,,,รอบตรวจ
+info_asset_verification,iav,Asset,iav_result,"ENUM('PENDING','COMPLETE','MISMATCH')",NO,'PENDING',,,ผลตรวจ
+info_asset_verification,iav,Asset,iav_confirmed_sop,DATE,YES,,,,SOP ยืนยัน
+info_asset_verification,iav,Asset,iav_required_info_complete,BOOLEAN,NO,0,,,ข้อมูลจำเป็นครบ
+info_asset_verification,iav,Asset,iav_special_plate_na,BOOLEAN,NO,0,,,ไม่ใช้ special plate
+info_asset_verification,iav,Asset,iav_form_snapshot,JSON,YES,,,,ข้อมูลฟอร์มและค่าทางเทคนิคที่ตรวจแล้ว
+info_asset_verification,iav,Asset,iav_remark,TEXT,YES,,,,ข้อสังเกต
+info_asset_verification,iav,Asset,iav_submitted_at,DATETIME(6),YES,,,,เวลาส่งอนุมัติ
+info_asset_verification,iav,Asset,iav_created_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6),,,วันเวลาสร้าง UTC
+info_asset_verification,iav,Asset,iav_created_by,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้สร้าง
+info_asset_verification,iav,Asset,iav_updated_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),,,วันเวลาแก้ไขล่าสุด UTC
+info_asset_verification,iav,Asset,iav_updated_by,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้แก้ไขล่าสุด
+info_asset_verification,iav,Asset,iav_row_version,INT UNSIGNED,NO,1,,,เลขเวอร์ชันสำหรับ optimistic locking
+info_verification_check,ivc,Asset,ivc_id,BIGINT UNSIGNED,NO,AUTO_INCREMENT,PK,,รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK
+info_verification_check,ivc,Asset,iav_id,BIGINT UNSIGNED,NO,,,info_asset_verification.iav_id,verification
+info_verification_check,ivc,Asset,mvc_id,BIGINT UNSIGNED,NO,,,mst_verification_check.mvc_id,หัวข้อตรวจ
+info_verification_check,ivc,Asset,ivc_label_snapshot,VARCHAR(255),NO,,,,ชื่อหัวข้อขณะตรวจ
+info_verification_check,ivc,Asset,ivc_is_passed,BOOLEAN,NO,0,,,ผ่านตรวจ
+info_verification_check,ivc,Asset,ivc_is_applicable,BOOLEAN,NO,1,,,เกี่ยวข้อง
+info_verification_check,ivc,Asset,ivc_remark,TEXT,YES,,,,หมายเหตุ
+info_verification_check,ivc,Asset,ivc_created_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6),,,วันเวลาสร้าง UTC
+info_verification_check,ivc,Asset,ivc_created_by,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้สร้าง
+info_verification_check,ivc,Asset,ivc_updated_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),,,วันเวลาแก้ไขล่าสุด UTC
+info_verification_check,ivc,Asset,ivc_updated_by,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้แก้ไขล่าสุด
+info_verification_check,ivc,Asset,ivc_row_version,INT UNSIGNED,NO,1,,,เลขเวอร์ชันสำหรับ optimistic locking
+info_approval_request,iar,Workflow,iar_id,BIGINT UNSIGNED,NO,AUTO_INCREMENT,PK,,รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK
+info_approval_request,iar,Workflow,idoc_id,BIGINT UNSIGNED,NO,,,info_document.idoc_id,เอกสารเป้าหมาย
+info_approval_request,iar,Workflow,sw_id,BIGINT UNSIGNED,NO,,,sys_workflow.sw_id,นิยาม version ต้นทาง
+info_approval_request,iar,Workflow,iar_attempt,INT UNSIGNED,NO,,,,รอบส่งอนุมัติ
+info_approval_request,iar,Workflow,iar_workflow_name_snapshot,VARCHAR(255),NO,,,,ชื่อ workflow ขณะส่ง
+info_approval_request,iar,Workflow,iar_status,"ENUM('PENDING','RETURNED','REJECTED','APPROVED','CANCELLED')",NO,'PENDING',,,สถานะคำขอ
+info_approval_request,iar,Workflow,iar_current_sequence,INT UNSIGNED,NO,1,,,ขั้นปัจจุบัน
+info_approval_request,iar,Workflow,iar_submitted_at,DATETIME(6),NO,,,,เวลาส่ง
+info_approval_request,iar,Workflow,su_id,BIGINT UNSIGNED,NO,,,sys_users.su_id,ผู้ส่ง
+info_approval_request,iar,Workflow,iar_created_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6),,,วันเวลาสร้าง UTC
+info_approval_request,iar,Workflow,iar_created_by,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้สร้าง
+info_approval_request,iar,Workflow,iar_updated_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),,,วันเวลาแก้ไขล่าสุด UTC
+info_approval_request,iar,Workflow,iar_updated_by,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้แก้ไขล่าสุด
+info_approval_request,iar,Workflow,iar_row_version,INT UNSIGNED,NO,1,,,เลขเวอร์ชันสำหรับ optimistic locking
+info_approval_step,ias,Workflow,ias_id,BIGINT UNSIGNED,NO,AUTO_INCREMENT,PK,,รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK
+info_approval_step,ias,Workflow,iar_id,BIGINT UNSIGNED,NO,,,info_approval_request.iar_id,คำขอ
+info_approval_step,ias,Workflow,sws_id,BIGINT UNSIGNED,NO,,,sys_workflow_step.sws_id,นิยามขั้น
+info_approval_step,ias,Workflow,ias_sequence,INT UNSIGNED,NO,,,,ลำดับ
+info_approval_step,ias,Workflow,ias_name_snapshot,VARCHAR(255),NO,,,,ชื่อขั้นขณะส่ง
+info_approval_step,ias,Workflow,ias_action,"ENUM('APPROVE','REVIEW','ACKNOWLEDGE')",NO,,,,action
+info_approval_step,ias,Workflow,su_id,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้อนุมัติที่ resolve แล้ว
+info_approval_step,ias,Workflow,spg_id,BIGINT UNSIGNED,YES,,,sys_permission_group.spg_id,กลุ่มสิทธิ์/Role ที่กำหนดผู้อนุมัติ
+info_approval_step,ias,Workflow,ias_assignee_snapshot,JSON,NO,,,,ชื่อคน/บทบาท/dynamic resolver ที่ resolve แล้ว
+info_approval_step,ias,Workflow,ias_is_required,BOOLEAN,NO,1,,,จำเป็น
+info_approval_step,ias,Workflow,ias_allow_return,BOOLEAN,NO,1,,,ส่งกลับได้
+info_approval_step,ias,Workflow,ias_allow_reject,BOOLEAN,NO,1,,,ปฏิเสธได้
+info_approval_step,ias,Workflow,ias_requires_dp_date,BOOLEAN,NO,0,,,เก็บวันเริ่ม DP; ข้ามสำหรับ Customer
+info_approval_step,ias,Workflow,ias_status,"ENUM('WAITING','PENDING','APPROVED','REVIEWED','ACKNOWLEDGED','RETURNED','REJECTED','SKIPPED')",NO,'WAITING',,,ผลปัจจุบัน
+info_approval_step,ias,Workflow,ias_decided_at,DATETIME(6),YES,,,,เวลาตัดสิน
+info_approval_step,ias,Workflow,ias_created_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6),,,วันเวลาสร้าง UTC
+info_approval_step,ias,Workflow,ias_created_by,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้สร้าง
+info_approval_step,ias,Workflow,ias_updated_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),,,วันเวลาแก้ไขล่าสุด UTC
+info_approval_step,ias,Workflow,ias_updated_by,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้แก้ไขล่าสุด
+info_approval_step,ias,Workflow,ias_row_version,INT UNSIGNED,NO,1,,,เลขเวอร์ชันสำหรับ optimistic locking
+info_asset_depreciation,iad,Accounting,iad_id,BIGINT UNSIGNED,NO,AUTO_INCREMENT,PK,,รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK
+info_asset_depreciation,iad,Accounting,ma_id,BIGINT UNSIGNED,NO,,,mst_asset.ma_id,Asset
+info_asset_depreciation,iad,Accounting,iad_acquisition_value,"DECIMAL(19,2)",NO,0.00,,,มูลค่า acquisition ของ Asset นี้
+info_asset_depreciation,iad,Accounting,iad_useful_life_months,"DECIMAL(9,2)",NO,,,,อายุจาก Asset Type snapshot คูณ 12 ณ activation ตัวหารไม่ปัดเศษ
+info_asset_depreciation,iad,Accounting,iad_start_date,DATE,NO,,,,วันเริ่ม DP
+info_asset_depreciation,iad,Accounting,iad_stop_date,DATE,YES,,,,วันสิ้นสุด DP หลังขาย อาจก่อน start ถ้าขายเดือนแรกและไม่คิดเดือนขาย
+info_asset_depreciation,iad,Accounting,iad_rounding,ENUM('ROUND_CUMULATIVE_2DP'),NO,'ROUND_CUMULATIVE_2DP',,,คำนวณสะสมก่อนปัด 2 ตำแหน่ง งวดปัจจุบันเป็นผลต่างสะสม
+info_asset_depreciation,iad,Accounting,iad_value_source,VARCHAR(100),NO,,,,แหล่งที่มามูลค่า
+info_asset_depreciation,iad,Accounting,iad_created_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6),,,วันเวลาสร้าง UTC
+info_asset_depreciation,iad,Accounting,iad_created_by,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้สร้าง
+info_asset_depreciation,iad,Accounting,iad_updated_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),,,วันเวลาแก้ไขล่าสุด UTC
+info_asset_depreciation,iad,Accounting,iad_updated_by,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้แก้ไขล่าสุด
+info_asset_depreciation,iad,Accounting,iad_row_version,INT UNSIGNED,NO,1,,,เลขเวอร์ชันสำหรับ optimistic locking
+info_asset_transfer,iat,Lifecycle,iat_id,BIGINT UNSIGNED,NO,AUTO_INCREMENT,PK,,รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK
+info_asset_transfer,iat,Lifecycle,idoc_id,BIGINT UNSIGNED,NO,,,info_document.idoc_id,Transfer document
+info_asset_transfer,iat,Lifecycle,ma_id,BIGINT UNSIGNED,NO,,,mst_asset.ma_id,Active Company Asset
+info_asset_transfer,iat,Lifecycle,iat_effective_on,DATE,NO,,,,วันที่มีผล
+info_asset_transfer,iat,Lifecycle,from_su_id,BIGINT UNSIGNED,YES,,,sys_users.su_id,from ผู้ดูแล
+info_asset_transfer,iat,Lifecycle,from_sd_id,BIGINT UNSIGNED,YES,,,sys_department.sd_id,from หน่วยงาน
+info_asset_transfer,iat,Lifecycle,from_mp_id,BIGINT UNSIGNED,YES,,,mst_plant.mp_id,from โรงงาน
+info_asset_transfer,iat,Lifecycle,from_ml_id,BIGINT UNSIGNED,YES,,,mst_location.ml_id,from สถานที่
+info_asset_transfer,iat,Lifecycle,from_mli_id,BIGINT UNSIGNED,YES,,,mst_line.mli_id,from สายการผลิต
+info_asset_transfer,iat,Lifecycle,from_mcc_id,BIGINT UNSIGNED,YES,,,mst_cost_center.mcc_id,from ศูนย์ต้นทุน
+info_asset_transfer,iat,Lifecycle,iat_from_area,VARCHAR(255),YES,,,,from พื้นที่
+info_asset_transfer,iat,Lifecycle,iat_from_snapshot,JSON,NO,,,,from รหัสและชื่อขณะส่ง ห้ามอ่านทับด้วย master ล่าสุด
+info_asset_transfer,iat,Lifecycle,to_su_id,BIGINT UNSIGNED,YES,,,sys_users.su_id,to ผู้ดูแล
+info_asset_transfer,iat,Lifecycle,to_sd_id,BIGINT UNSIGNED,YES,,,sys_department.sd_id,to หน่วยงาน
+info_asset_transfer,iat,Lifecycle,to_mp_id,BIGINT UNSIGNED,YES,,,mst_plant.mp_id,to โรงงาน
+info_asset_transfer,iat,Lifecycle,to_ml_id,BIGINT UNSIGNED,YES,,,mst_location.ml_id,to สถานที่
+info_asset_transfer,iat,Lifecycle,to_mli_id,BIGINT UNSIGNED,YES,,,mst_line.mli_id,to สายการผลิต
+info_asset_transfer,iat,Lifecycle,to_mcc_id,BIGINT UNSIGNED,YES,,,mst_cost_center.mcc_id,to ศูนย์ต้นทุน
+info_asset_transfer,iat,Lifecycle,iat_to_area,VARCHAR(255),YES,,,,to พื้นที่
+info_asset_transfer,iat,Lifecycle,iat_to_snapshot,JSON,NO,,,,to รหัสและชื่อขณะส่ง ห้ามอ่านทับด้วย master ล่าสุด
+info_asset_transfer,iat,Lifecycle,iat_completed_at,DATETIME(6),YES,,,,เวลาย้ายสำเร็จ
+info_asset_transfer,iat,Lifecycle,iat_created_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6),,,วันเวลาสร้าง UTC
+info_asset_transfer,iat,Lifecycle,iat_created_by,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้สร้าง
+info_asset_transfer,iat,Lifecycle,iat_updated_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),,,วันเวลาแก้ไขล่าสุด UTC
+info_asset_transfer,iat,Lifecycle,iat_updated_by,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้แก้ไขล่าสุด
+info_asset_transfer,iat,Lifecycle,iat_row_version,INT UNSIGNED,NO,1,,,เลขเวอร์ชันสำหรับ optimistic locking
+info_asset_work,iaw,Lifecycle,iaw_id,BIGINT UNSIGNED,NO,AUTO_INCREMENT,PK,,รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK
+info_asset_work,iaw,Lifecycle,iaa_id,BIGINT UNSIGNED,NO,,,info_asset_acquisition.iaa_id,งาน acquisition จากรายการ Proposal ภายนอก
+info_asset_work,iaw,Lifecycle,source_ma_id,BIGINT UNSIGNED,NO,,,mst_asset.ma_id,work target ที่เลือก
+info_asset_work,iaw,Lifecycle,result_ma_id,BIGINT UNSIGNED,YES,,,mst_asset.ma_id,Sub Asset ใหม่ ถ้า capitalized
+info_asset_work,iaw,Lifecycle,iaw_work_type,"ENUM('ADDITION_SUB_ASSET','MODIFICATION','MAINTENANCE')",NO,,,,work type ต้นฉบับ
+info_asset_work,iaw,Lifecycle,iaw_treatment,"ENUM('CAPITALIZED_SUB_ASSET','EXPENSE')",NO,,,,ผล classification
+info_asset_work,iaw,Lifecycle,iaw_status,"ENUM('DRAFT','PROPOSAL','PURCHASING','GR_RECEIVED','HOLD','ACTIVATING','COMPLETED','CANCELLED')",NO,'DRAFT',,,สถานะงาน
+info_asset_work,iaw,Lifecycle,iaw_maintenance_type,VARCHAR(255),YES,,,,ชนิดซ่อมถ้าเป็น Maintenance
+info_asset_work,iaw,Lifecycle,mv_id,BIGINT UNSIGNED,YES,,,mst_vendor.mv_id,ผู้รับงาน
+info_asset_work,iaw,Lifecycle,iaw_responsible_team,VARCHAR(255),YES,,,,ทีมรับผิดชอบ
+info_asset_work,iaw,Lifecycle,iaw_result,TEXT,YES,,,,ผลดำเนินงาน
+info_asset_work,iaw,Lifecycle,iaw_total_cost,"DECIMAL(19,2)",NO,0.00,,,ต้นทุนฐานรวมต้นทุน scoped
+info_asset_work,iaw,Lifecycle,iaw_completed_on,DATE,YES,,,,วันที่สำเร็จ
+info_asset_work,iaw,Lifecycle,iaw_created_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6),,,วันเวลาสร้าง UTC
+info_asset_work,iaw,Lifecycle,iaw_created_by,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้สร้าง
+info_asset_work,iaw,Lifecycle,iaw_updated_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),,,วันเวลาแก้ไขล่าสุด UTC
+info_asset_work,iaw,Lifecycle,iaw_updated_by,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้แก้ไขล่าสุด
+info_asset_work,iaw,Lifecycle,iaw_row_version,INT UNSIGNED,NO,1,,,เลขเวอร์ชันสำหรับ optimistic locking
+info_sale_proposal,isp,Disposal,isp_id,BIGINT UNSIGNED,NO,AUTO_INCREMENT,PK,,รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK
+info_sale_proposal,isp,Disposal,idoc_id,BIGINT UNSIGNED,NO,,,info_document.idoc_id,Sale Proposal reference
+info_sale_proposal,isp,Disposal,isp_buyer_name,VARCHAR(255),NO,,,,ผู้ซื้อ
+info_sale_proposal,isp,Disposal,isp_buyer_detail,JSON,YES,,,,ที่อยู่และเลขภาษีถ้ามี
+info_sale_proposal,isp,Disposal,isp_approved_at,DATETIME(6),NO,,,,เวลาอนุมัติอ้างอิง
+info_sale_proposal,isp,Disposal,isp_external_status,VARCHAR(80),NO,,,,สถานะจากระบบขาย
+info_sale_proposal,isp,Disposal,isp_created_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6),,,วันเวลาสร้าง UTC
+info_sale_proposal,isp,Disposal,isp_created_by,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้สร้าง
+info_sale_proposal,isp,Disposal,isp_updated_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),,,วันเวลาแก้ไขล่าสุด UTC
+info_sale_proposal,isp,Disposal,isp_updated_by,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้แก้ไขล่าสุด
+info_sale_proposal,isp,Disposal,isp_row_version,INT UNSIGNED,NO,1,,,เลขเวอร์ชันสำหรับ optimistic locking
+info_tax_invoice,iti,Disposal,iti_id,BIGINT UNSIGNED,NO,AUTO_INCREMENT,PK,,รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK
+info_tax_invoice,iti,Disposal,idoc_id,BIGINT UNSIGNED,NO,,,info_document.idoc_id,e-Tax document
+info_tax_invoice,iti,Disposal,isp_id,BIGINT UNSIGNED,NO,,,info_sale_proposal.isp_id,Sale Proposal
+info_tax_invoice,iti,Disposal,iti_issued_on,DATE,NO,,,,วันที่ออก
+info_tax_invoice,iti,Disposal,iti_buyer_name_snapshot,VARCHAR(255),NO,,,,ชื่อผู้ซื้อขณะออก
+info_tax_invoice,iti,Disposal,iti_amount_before_vat,"DECIMAL(19,2)",NO,0.00,,,ยอดก่อน VAT
+info_tax_invoice,iti,Disposal,iti_vat_amount,"DECIMAL(19,2)",NO,0.00,,,VAT อ้างอิง
+info_tax_invoice,iti,Disposal,iti_created_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6),,,วันเวลาสร้าง UTC
+info_tax_invoice,iti,Disposal,iti_created_by,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้สร้าง
+info_tax_invoice,iti,Disposal,iti_updated_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),,,วันเวลาแก้ไขล่าสุด UTC
+info_tax_invoice,iti,Disposal,iti_updated_by,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้แก้ไขล่าสุด
+info_tax_invoice,iti,Disposal,iti_row_version,INT UNSIGNED,NO,1,,,เลขเวอร์ชันสำหรับ optimistic locking
+info_sale_item,isi,Disposal,isi_id,BIGINT UNSIGNED,NO,AUTO_INCREMENT,PK,,รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK
+info_sale_item,isi,Disposal,isp_id,BIGINT UNSIGNED,NO,,,info_sale_proposal.isp_id,Sale Proposal
+info_sale_item,isi,Disposal,iti_id,BIGINT UNSIGNED,YES,,,info_tax_invoice.iti_id,e-Tax
+info_sale_item,isi,Disposal,ma_id,BIGINT UNSIGNED,NO,,,mst_asset.ma_id,Asset ที่เลือกขาย
+info_sale_item,isi,Disposal,isi_allocated_sale_amount,"DECIMAL(19,2)",YES,,,,ยอดขายที่จัดสรรต่อ Asset
+info_sale_item,isi,Disposal,isi_created_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6),,,วันเวลาสร้าง UTC
+info_sale_item,isi,Disposal,isi_created_by,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้สร้าง
+info_sale_item,isi,Disposal,isi_updated_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),,,วันเวลาแก้ไขล่าสุด UTC
+info_sale_item,isi,Disposal,isi_updated_by,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้แก้ไขล่าสุด
+info_sale_item,isi,Disposal,isi_row_version,INT UNSIGNED,NO,1,,,เลขเวอร์ชันสำหรับ optimistic locking
+info_asset_disposal,iads,Disposal,iads_id,BIGINT UNSIGNED,NO,AUTO_INCREMENT,PK,,รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK
+info_asset_disposal,iads,Disposal,idoc_id,BIGINT UNSIGNED,NO,,,info_document.idoc_id,Disposal document
+info_asset_disposal,iads,Disposal,ma_id,BIGINT UNSIGNED,NO,,,mst_asset.ma_id,Asset ที่ขาย
+info_asset_disposal,iads,Disposal,isi_id,BIGINT UNSIGNED,NO,,,info_sale_item.isi_id,เอกสารขายที่ระบุ Asset
+info_asset_disposal,iads,Disposal,iads_buyer_snapshot,VARCHAR(255),NO,,,,ผู้ซื้อ
+info_asset_disposal,iads,Disposal,iads_sale_proposal_no_snapshot,VARCHAR(100),NO,,,,เลข Sale Proposal
+info_asset_disposal,iads,Disposal,iads_tax_invoice_no_snapshot,VARCHAR(100),NO,,,,เลข e-Tax
+info_asset_disposal,iads,Disposal,su_id,BIGINT UNSIGNED,NO,,,sys_users.su_id,ผู้ Verify Sale
+info_asset_disposal,iads,Disposal,iads_verified_at,DATETIME(6),NO,,,,เวลา Verify Sale
+info_asset_disposal,iads,Disposal,iads_sold_on,DATE,NO,,,,วัน sale/derecognition
+info_asset_disposal,iads,Disposal,iads_final_month_convention,"ENUM('INCLUDE_SALE_MONTH','EXCLUDE_SALE_MONTH')",NO,,,,ต้องเลือกทุกครั้ง ไม่มีค่า default
+info_asset_disposal,iads,Disposal,iads_depreciation_stop_date,DATE,NO,,,,วันสิ้นสุด DP ที่คำนวณ
+info_asset_disposal,iads,Disposal,iads_sale_amount,"DECIMAL(19,2)",YES,,,,ราคาขายถ้ามี
+info_asset_disposal,iads,Disposal,iads_acquisition_value_snapshot,"DECIMAL(19,2)",NO,0.00,,,มูลค่าก่อนขาย
+info_asset_disposal,iads,Disposal,iads_accumulated_dp_snapshot,"DECIMAL(19,2)",NO,0.00,,,DP สะสมก่อนตัดจำหน่าย
+info_asset_disposal,iads,Disposal,iads_net_book_value_snapshot,"DECIMAL(19,2)",NO,0.00,,,มูลค่าสุทธิก่อนตัดจำหน่าย
+info_asset_disposal,iads,Disposal,iads_useful_life_months_snapshot,"DECIMAL(9,2)",NO,,,,อายุ ณ ขาย
+info_asset_disposal,iads,Disposal,iads_financial_snapshot,JSON,NO,,,,รายละเอียดสูตรงวด/ต้นทุน/DP เพิ่มเติม
+info_asset_disposal,iads,Disposal,iads_assignment_snapshot,JSON,NO,,,,assignment และ hierarchy ณ ขาย
+info_asset_disposal,iads,Disposal,iads_completed_at,DATETIME(6),NO,,,,เวลาบันทึกขาย
+info_asset_disposal,iads,Disposal,iads_created_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6),,,วันเวลาสร้าง UTC
+info_asset_disposal,iads,Disposal,iads_created_by,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้สร้าง
+info_asset_disposal,iads,Disposal,iads_updated_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),,,วันเวลาแก้ไขล่าสุด UTC
+info_asset_disposal,iads,Disposal,iads_updated_by,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้แก้ไขล่าสุด
+info_asset_disposal,iads,Disposal,iads_row_version,INT UNSIGNED,NO,1,,,เลขเวอร์ชันสำหรับ optimistic locking
+info_asset_issue,iais,Asset,iais_id,BIGINT UNSIGNED,NO,AUTO_INCREMENT,PK,,รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK
+info_asset_issue,iais,Asset,idoc_id,BIGINT UNSIGNED,NO,,,info_document.idoc_id,Issue report document
+info_asset_issue,iais,Asset,ma_id,BIGINT UNSIGNED,NO,,,mst_asset.ma_id,Asset
+info_asset_issue,iais,Asset,su_id,BIGINT UNSIGNED,NO,,,sys_users.su_id,ผู้รายงาน
+info_asset_issue,iais,Asset,iais_title,VARCHAR(255),NO,,,,หัวข้อ
+info_asset_issue,iais,Asset,iais_description,TEXT,NO,,,,รายละเอียด
+info_asset_issue,iais,Asset,iais_priority,VARCHAR(40),NO,,,,ความสำคัญ
+info_asset_issue,iais,Asset,iais_resolution,TEXT,YES,,,,การแก้ไข
+info_asset_issue,iais,Asset,iais_resolved_at,DATETIME(6),YES,,,,เวลาแก้เสร็จ
+info_asset_issue,iais,Asset,iais_created_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6),,,วันเวลาสร้าง UTC
+info_asset_issue,iais,Asset,iais_created_by,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้สร้าง
+info_asset_issue,iais,Asset,iais_updated_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),,,วันเวลาแก้ไขล่าสุด UTC
+info_asset_issue,iais,Asset,iais_updated_by,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้แก้ไขล่าสุด
+info_asset_issue,iais,Asset,iais_row_version,INT UNSIGNED,NO,1,,,เลขเวอร์ชันสำหรับ optimistic locking
+info_notification,inot,System,inot_id,BIGINT UNSIGNED,NO,AUTO_INCREMENT,PK,,รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK
+info_notification,inot,System,su_id,BIGINT UNSIGNED,NO,,,sys_users.su_id,ผู้รับ
+info_notification,inot,System,idoc_id,BIGINT UNSIGNED,YES,,,info_document.idoc_id,เอกสารอ้างอิง
+info_notification,inot,System,ma_id,BIGINT UNSIGNED,YES,,,mst_asset.ma_id,Asset อ้างอิง
+info_notification,inot,System,inot_message,VARCHAR(255),NO,,,,ข้อความ
+info_notification,inot,System,inot_read_at,DATETIME(6),YES,,,,เวลาอ่าน
+info_notification,inot,System,inot_created_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6),,,วันเวลาสร้าง UTC
+info_notification,inot,System,inot_created_by,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้สร้าง
+info_notification,inot,System,inot_updated_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),,,วันเวลาแก้ไขล่าสุด UTC
+info_notification,inot,System,inot_updated_by,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้แก้ไขล่าสุด
+info_notification,inot,System,inot_row_version,INT UNSIGNED,NO,1,,,เลขเวอร์ชันสำหรับ optimistic locking
+log_approval_action,laa,Log,laa_id,BIGINT UNSIGNED,NO,AUTO_INCREMENT,PK,,รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK
+log_approval_action,laa,Log,ias_id,BIGINT UNSIGNED,NO,,,info_approval_step.ias_id,ขั้นจริง
+log_approval_action,laa,Log,su_id,BIGINT UNSIGNED,NO,,,sys_users.su_id,ผู้กระทำ
+log_approval_action,laa,Log,laa_actor_name_snapshot,VARCHAR(255),NO,,,,ชื่อผู้กระทำ
+log_approval_action,laa,Log,laa_action,"ENUM('APPROVE','REVIEW','ACKNOWLEDGE','RETURN','REJECT','CANCEL','SUBMIT')",NO,,,,action
+log_approval_action,laa,Log,laa_acted_at,DATETIME(6),NO,,,,เวลากระทำ UTC
+log_approval_action,laa,Log,laa_remark,TEXT,YES,,,,ความเห็น
+log_approval_action,laa,Log,laa_context_snapshot,JSON,YES,,,,assignee/version/ค่าที่อนุมัติ
+log_approval_action,laa,Log,laa_recorded_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6),,,วันเวลาบันทึก UTC เพิ่มอย่างเดียว
+log_asset_event,lae,Log,lae_id,BIGINT UNSIGNED,NO,AUTO_INCREMENT,PK,,รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK
+log_asset_event,lae,Log,ma_id,BIGINT UNSIGNED,NO,,,mst_asset.ma_id,Asset เจ้าของ event
+log_asset_event,lae,Log,main_ma_id,BIGINT UNSIGNED,NO,,,mst_asset.ma_id,Main ณ เวลาเกิดเหตุ รวมตัวเองสำหรับ Main
+log_asset_event,lae,Log,idoc_id,BIGINT UNSIGNED,YES,,,info_document.idoc_id,เอกสารต้นทาง
+log_asset_event,lae,Log,iaa_id,BIGINT UNSIGNED,YES,,,info_asset_acquisition.iaa_id,acquisition ที่เกิดจาก MIS
+log_asset_event,lae,Log,lae_origin,"ENUM('ASSET','MIS','ETAX','IMPORT')",NO,,,,ต้นทาง
+log_asset_event,lae,Log,lae_event_type,VARCHAR(80),NO,,,,ชนิด event
+log_asset_event,lae,Log,lae_from_status,VARCHAR(80),YES,,,,สถานะก่อน
+log_asset_event,lae,Log,lae_to_status,VARCHAR(80),YES,,,,สถานะหลัง
+log_asset_event,lae,Log,su_id,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้กระทำ
+log_asset_event,lae,Log,lae_actor_name_snapshot,VARCHAR(255),YES,,,,ชื่อผู้กระทำ
+log_asset_event,lae,Log,lae_occurred_at,DATETIME(6),NO,,,,เวลาธุรกิจ UTC
+log_asset_event,lae,Log,lae_idempotency_key,VARCHAR(150),NO,,,,คีย์ป้องกัน event ซ้ำ
+log_asset_event,lae,Log,lae_snapshot,JSON,NO,,,,ข้อมูลสำคัญของเหตุการณ์
+log_asset_event,lae,Log,lae_recorded_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6),,,วันเวลาบันทึก UTC เพิ่มอย่างเดียว
+log_audit,la,Log,la_id,BIGINT UNSIGNED,NO,AUTO_INCREMENT,PK,,รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK
+log_audit,la,Log,su_id,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้กระทำ
+log_audit,la,Log,la_actor_name_snapshot,VARCHAR(255),NO,,,,ชื่อผู้กระทำ
+log_audit,la,Log,la_module,VARCHAR(80),NO,,,,module
+log_audit,la,Log,la_action,VARCHAR(80),NO,,,,CREATE / UPDATE / APPROVE ฯลฯ
+log_audit,la,Log,la_record_table,VARCHAR(100),NO,,,,ชื่อตารางต้นทาง
+log_audit,la,Log,la_record_id,BIGINT UNSIGNED,NO,,,,ID ต้นทาง ไม่ทำ FK เพื่อคง audit หลังข้อมูลเปลี่ยน
+log_audit,la,Log,la_record_ref,VARCHAR(150),NO,,,,เลขอ้างอิง ณ เวลานั้น
+log_audit,la,Log,la_correlation_id,VARCHAR(100),NO,,,,request ID
+log_audit,la,Log,la_occurred_at,DATETIME(6),NO,,,,เวลากระทำ UTC
+log_audit,la,Log,la_recorded_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6),,,วันเวลาบันทึก UTC เพิ่มอย่างเดียว
+log_audit_change,lac,Log,lac_id,BIGINT UNSIGNED,NO,AUTO_INCREMENT,PK,,รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK
+log_audit_change,lac,Log,la_id,BIGINT UNSIGNED,NO,,,log_audit.la_id,audit event
+log_audit_change,lac,Log,lac_field_name,VARCHAR(100),NO,,,,ชื่อคอลัมน์
+log_audit_change,lac,Log,lac_before_value,JSON,YES,,,,ค่าก่อน NULL ได้
+log_audit_change,lac,Log,lac_after_value,JSON,YES,,,,ค่าหลัง NULL ได้
+log_audit_change,lac,Log,lac_recorded_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6),,,วันเวลาบันทึก UTC เพิ่มอย่างเดียว
+log_receiving_validation,lrv,Log,lrv_id,BIGINT UNSIGNED,NO,AUTO_INCREMENT,PK,,รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK
+log_receiving_validation,lrv,Log,po_imdr_id,BIGINT UNSIGNED,NO,,,info_mis_document_reference.imdr_id,PO reference
+log_receiving_validation,lrv,Log,lrv_po_item_key,VARCHAR(150),NO,,,,PO item key
+log_receiving_validation,lrv,Log,iaa_id,BIGINT UNSIGNED,NO,,,info_asset_acquisition.iaa_id,acquisition ที่ตรวจรับ
+log_receiving_validation,lrv,Log,gr_imdr_id,BIGINT UNSIGNED,YES,,,info_mis_document_reference.imdr_id,GR reference ที่กระตุ้นผล
+log_receiving_validation,lrv,Log,lrv_result,VARCHAR(40),NO,,,,PENDING / PARTIAL / COMPLETE / HOLD
+log_receiving_validation,lrv,Log,lrv_checks_snapshot,JSON,NO,,,,PO/Invoice/GR/acceptance/quantity; ไม่มี amount equality
+log_receiving_validation,lrv,Log,lrv_idempotency_key,VARCHAR(150),NO,,,,คีย์การตรวจต่อ version
+log_receiving_validation,lrv,Log,lrv_recorded_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6),,,วันเวลาบันทึก UTC เพิ่มอย่างเดียว
+log_depreciation_period,ldp,Log,ldp_id,BIGINT UNSIGNED,NO,AUTO_INCREMENT,PK,,รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK
+log_depreciation_period,ldp,Log,ma_id,BIGINT UNSIGNED,NO,,,mst_asset.ma_id,Company Asset
+log_depreciation_period,ldp,Log,ldp_period_month,DATE,NO,,,,วันแรกเดือนรายงาน
+log_depreciation_period,ldp,Log,ldp_revision,INT UNSIGNED,NO,1,,,revision เพิ่มใหม่เมื่อปรับปรุง
+log_depreciation_period,ldp,Log,supersedes_ldp_id,BIGINT UNSIGNED,YES,,,log_depreciation_period.ldp_id,snapshot เดิมที่แทนที่
+log_depreciation_period,ldp,Log,ldp_opening_cost,"DECIMAL(19,2)",NO,0.00,,,ต้นทุนต้นงวด
+log_depreciation_period,ldp,Log,ldp_opening_accumulated_dp,"DECIMAL(19,2)",NO,0.00,,,DP สะสมต้นงวด
+log_depreciation_period,ldp,Log,ldp_addition_cost,"DECIMAL(19,2)",NO,0.00,,,ต้นทุนเพิ่มเฉพาะ record นี้
+log_depreciation_period,ldp,Log,ldp_period_dp,"DECIMAL(19,2)",NO,0.00,,,DP เดือนนี้
+log_depreciation_period,ldp,Log,ldp_disposal_cost,"DECIMAL(19,2)",NO,0.00,,,ต้นทุนที่ตัดออกในเดือนขาย
+log_depreciation_period,ldp,Log,ldp_disposal_accumulated_dp,"DECIMAL(19,2)",NO,0.00,,,DP สะสมที่ตัดออก
+log_depreciation_period,ldp,Log,ldp_closing_cost,"DECIMAL(19,2)",NO,0.00,,,ต้นทุนปลายงวด
+log_depreciation_period,ldp,Log,ldp_closing_accumulated_dp,"DECIMAL(19,2)",NO,0.00,,,DP สะสมปลายงวด
+log_depreciation_period,ldp,Log,ldp_closing_net_book_value,"DECIMAL(19,2)",NO,0.00,,,มูลค่าสุทธิปลายงวด
+log_depreciation_period,ldp,Log,iads_id,BIGINT UNSIGNED,YES,,,info_asset_disposal.iads_id,disposal ถ้ามี
+log_depreciation_period,ldp,Log,su_id,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้สั่งรายงาน/ปิดงวด
+log_depreciation_period,ldp,Log,ldp_recorded_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6),,,วันเวลาบันทึก UTC เพิ่มอย่างเดียว
+log_integration_message,lim,Log,lim_id,BIGINT UNSIGNED,NO,AUTO_INCREMENT,PK,,รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK
+log_integration_message,lim,Log,lim_source,VARCHAR(80),NO,,,,ระบบต้นทาง
+log_integration_message,lim,Log,lim_message_key,VARCHAR(150),NO,,,,คีย์ต้นทาง
+log_integration_message,lim,Log,lim_attempt,INT UNSIGNED,NO,,,,ลำดับพยายาม
+log_integration_message,lim,Log,lim_direction,VARCHAR(10),NO,,,,IN / OUT
+log_integration_message,lim,Log,lim_result,VARCHAR(40),NO,,,,RECEIVED / SUCCESS / FAILED / DUPLICATE
+log_integration_message,lim,Log,lim_payload_digest,CHAR(64),NO,,,,hash payload
+log_integration_message,lim,Log,lim_error_summary,TEXT,YES,,,,สรุป error ที่ตัด secrets
+log_integration_message,lim,Log,idoc_id,BIGINT UNSIGNED,YES,,,info_document.idoc_id,เอกสารที่เกี่ยวข้อง
+log_integration_message,lim,Log,lim_recorded_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6),,,วันเวลาบันทึก UTC เพิ่มอย่างเดียว
+info_integration_inbox,iii,Integration,iii_id,BIGINT UNSIGNED,NO,AUTO_INCREMENT,PK,,รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK
+info_integration_inbox,iii,Integration,iii_source,VARCHAR(80),NO,,,,ระบบต้นทาง
+info_integration_inbox,iii,Integration,iii_message_key,VARCHAR(150),NO,,,,คีย์ต้นทาง
+info_integration_inbox,iii,Integration,iii_status,"ENUM('PENDING','PROCESSING','SUCCEEDED','FAILED')",NO,'PENDING',,,สถานะ
+info_integration_inbox,iii,Integration,iii_payload,JSON,NO,,,,ข้อมูลธุรกิจผ่าน validation ห้าม credentials
+info_integration_inbox,iii,Integration,iii_processed_at,DATETIME(6),YES,,,,เวลาสำเร็จ
+info_integration_inbox,iii,Integration,iii_created_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6),,,วันเวลาสร้าง UTC
+info_integration_inbox,iii,Integration,iii_created_by,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้สร้าง
+info_integration_inbox,iii,Integration,iii_updated_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),,,วันเวลาแก้ไขล่าสุด UTC
+info_integration_inbox,iii,Integration,iii_updated_by,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้แก้ไขล่าสุด
+info_integration_inbox,iii,Integration,iii_row_version,INT UNSIGNED,NO,1,,,เลขเวอร์ชันสำหรับ optimistic locking
+info_integration_outbox,iio,Integration,iio_id,BIGINT UNSIGNED,NO,AUTO_INCREMENT,PK,,รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK
+info_integration_outbox,iio,Integration,iio_event_key,VARCHAR(150),NO,,,,idempotency key
+info_integration_outbox,iio,Integration,idoc_id,BIGINT UNSIGNED,YES,,,info_document.idoc_id,เอกสาร
+info_integration_outbox,iio,Integration,iio_event_type,VARCHAR(100),NO,,,,ประเภท event
+info_integration_outbox,iio,Integration,iio_payload,JSON,NO,,,,ข้อมูลส่งไม่รวม credentials
+info_integration_outbox,iio,Integration,iio_published_at,DATETIME(6),YES,,,,เวลาส่งสำเร็จ
+info_integration_outbox,iio,Integration,iio_attempts,INT UNSIGNED,NO,0,,,จำนวนพยายาม
+info_integration_outbox,iio,Integration,iio_created_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6),,,วันเวลาสร้าง UTC
+info_integration_outbox,iio,Integration,iio_created_by,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้สร้าง
+info_integration_outbox,iio,Integration,iio_updated_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),,,วันเวลาแก้ไขล่าสุด UTC
+info_integration_outbox,iio,Integration,iio_updated_by,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้แก้ไขล่าสุด
+info_integration_outbox,iio,Integration,iio_row_version,INT UNSIGNED,NO,1,,,เลขเวอร์ชันสำหรับ optimistic locking
+info_mis_document_reference,imdr,Integration,imdr_id,BIGINT UNSIGNED,NO,AUTO_INCREMENT,PK,,รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK
+info_mis_document_reference,imdr,Integration,imdr_source,VARCHAR(80),NO,,,,ระบบต้นทาง
+info_mis_document_reference,imdr,Integration,imdr_external_key,VARCHAR(150),NO,,,,รหัสเอกสารถาวรจากต้นทาง
+info_mis_document_reference,imdr,Integration,imdr_kind,"ENUM('PROPOSAL','PR','PO','INVOICE','GR','DELIVERY','SPARE_ISSUE')",NO,,,,ชนิดเอกสารอ้างอิง
+info_mis_document_reference,imdr,Integration,imdr_no,VARCHAR(100),NO,,,,เลขเอกสารแสดงผล ไม่ใช้เป็น FK
+info_mis_document_reference,imdr,Integration,imdr_status,VARCHAR(80),NO,,,,สถานะที่ได้รับจากต้นทาง
+info_mis_document_reference,imdr,Integration,po_imdr_id,BIGINT UNSIGNED,YES,,,info_mis_document_reference.imdr_id,PO ต้นทางสำหรับ Invoice/GR/Delivery
+info_mis_document_reference,imdr,Integration,mv_id,BIGINT UNSIGNED,YES,,,mst_vendor.mv_id,ผู้ขายอ้างอิง
+info_mis_document_reference,imdr,Integration,imdr_document_date,DATE,YES,,,,วันที่ต้นทาง
+info_mis_document_reference,imdr,Integration,imdr_document_exists,BOOLEAN,NO,0,,,MIS ยืนยันมีเอกสารจริง
+info_mis_document_reference,imdr,Integration,ifile_id,BIGINT UNSIGNED,YES,,,info_file.ifile_id,ไฟล์สำเนาถ้ามี ไม่บังคับต้องดาวน์โหลด
+info_mis_document_reference,imdr,Integration,imdr_external_url,VARCHAR(500),YES,,,,ลิงก์เอกสารที่ไม่ใส่ credentials
+info_mis_document_reference,imdr,Integration,imdr_external_version,VARCHAR(100),YES,,,,version ต้นทาง
+info_mis_document_reference,imdr,Integration,imdr_synced_at,DATETIME(6),NO,,,,เวลารับข้อมูลล่าสุด
+info_mis_document_reference,imdr,Integration,imdr_created_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6),,,วันเวลาสร้าง UTC
+info_mis_document_reference,imdr,Integration,imdr_created_by,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้สร้าง
+info_mis_document_reference,imdr,Integration,imdr_updated_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),,,วันเวลาแก้ไขล่าสุด UTC
+info_mis_document_reference,imdr,Integration,imdr_updated_by,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้แก้ไขล่าสุด
+info_mis_document_reference,imdr,Integration,imdr_row_version,INT UNSIGNED,NO,1,,,เลขเวอร์ชันสำหรับ optimistic locking
+info_rfq_reference,irfr,Integration,irfr_id,BIGINT UNSIGNED,NO,AUTO_INCREMENT,PK,,รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK
+info_rfq_reference,irfr,Integration,irfr_source,VARCHAR(80),NO,,,,ระบบต้นทาง
+info_rfq_reference,irfr,Integration,irfr_external_key,VARCHAR(150),NO,,,,รหัส RFQ ต้นทาง
+info_rfq_reference,irfr,Integration,irfr_item_key,VARCHAR(150),NO,,,,รหัสรายการ RFQ ต้นทาง
+info_rfq_reference,irfr,Integration,irfr_rfq_no,VARCHAR(100),NO,,,,เลข RFQ
+info_rfq_reference,irfr,Integration,irfr_name,VARCHAR(255),NO,,,,ชื่อรายการ
+info_rfq_reference,irfr,Integration,irfr_model,VARCHAR(255),YES,,,,รุ่นที่เติมตอนเลือก RFQ
+info_rfq_reference,irfr,Integration,irfr_part_no,VARCHAR(255),YES,,,,เลข part ที่เติมตอนเลือก RFQ
+info_rfq_reference,irfr,Integration,irfr_is_available,BOOLEAN,NO,1,,,เปิดให้เลือก
+info_rfq_reference,irfr,Integration,irfr_synced_at,DATETIME(6),NO,,,,เวลารับล่าสุด
+info_rfq_reference,irfr,Integration,irfr_created_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6),,,วันเวลาสร้าง UTC
+info_rfq_reference,irfr,Integration,irfr_created_by,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้สร้าง
+info_rfq_reference,irfr,Integration,irfr_updated_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),,,วันเวลาแก้ไขล่าสุด UTC
+info_rfq_reference,irfr,Integration,irfr_updated_by,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้แก้ไขล่าสุด
+info_rfq_reference,irfr,Integration,irfr_row_version,INT UNSIGNED,NO,1,,,เลขเวอร์ชันสำหรับ optimistic locking
+info_asset_acquisition,iaa,Asset,iaa_id,BIGINT UNSIGNED,NO,AUTO_INCREMENT,PK,,รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK
+info_asset_acquisition,iaa,Asset,imdr_id,BIGINT UNSIGNED,NO,,,info_mis_document_reference.imdr_id,Proposal reference
+info_asset_acquisition,iaa,Asset,iaa_proposal_item_key,VARCHAR(150),NO,,,,รหัสรายการ Proposal ต้นทาง
+info_asset_acquisition,iaa,Asset,selected_ma_id,BIGINT UNSIGNED,NO,,,mst_asset.ma_id,Draft หรือ Active work target ที่ MIS เลือก
+info_asset_acquisition,iaa,Asset,ma_id,BIGINT UNSIGNED,YES,,,mst_asset.ma_id,Asset ผลลัพธ์ที่จะ activate; NULL สำหรับ Expense
+info_asset_acquisition,iaa,Asset,mprj_id,BIGINT UNSIGNED,NO,,,mst_project.mprj_id,โครงการ
+info_asset_acquisition,iaa,Asset,iaa_ownership,"ENUM('COMPANY','CUSTOMER')",NO,,,,ownership ที่ได้รับจาก Proposal
+info_asset_acquisition,iaa,Asset,iaa_selection,"ENUM('NEW','EXISTING')",NO,,,,ชนิดรายการต้นทาง
+info_asset_acquisition,iaa,Asset,iaa_work_type,"ENUM('ADDITION_SUB_ASSET','MODIFICATION','MAINTENANCE')",YES,,,,work type ต้นฉบับ
+info_asset_acquisition,iaa,Asset,iaa_treatment,"ENUM('NEW_ASSET','CAPITALIZED_SUB_ASSET','EXPENSE')",NO,,,,การจัดประเภทของรายการ
+info_asset_acquisition,iaa,Asset,iaa_title,VARCHAR(255),NO,,,,หัวข้อหรือ component name
+info_asset_acquisition,iaa,Asset,iaa_detail,TEXT,YES,,,,รายละเอียดงาน
+info_asset_acquisition,iaa,Asset,mac_id,BIGINT UNSIGNED,YES,,,mst_account.mac_id,บัญชีอ้างอิง
+info_asset_acquisition,iaa,Asset,iaa_budget_type,"ENUM('CAPITAL_EXPENDITURE','EXPENSE')",NO,,,,Budget Type ต้นทาง
+info_asset_acquisition,iaa,Asset,iaa_base_amount,"DECIMAL(19,2)",NO,0.00,,,ราคาฐานเฉพาะรายการ
+info_asset_acquisition,iaa,Asset,iaa_total_amount,"DECIMAL(19,2)",NO,0.00,,,ฐานรวมต้นทุน scoped; ตรวจยอดรวมที่ integration
+info_asset_acquisition,iaa,Asset,iaa_currency,CHAR(3),NO,'THB',,,สกุลเงินตามกฎปัจจุบัน
+info_asset_acquisition,iaa,Asset,iaa_status,"ENUM('DRAFT','PURCHASING','WAITING_DELIVERY','RECEIVING','GR_RECEIVED','READY_FOR_VERIFICATION','ACTIVATING','COMPLETED','HOLD','CANCELLED')",NO,'DRAFT',,,สถานะ acquisition ของ Asset
+info_asset_acquisition,iaa,Asset,iaa_external_version,VARCHAR(100),YES,,,,version ของรายการต้นทาง
+info_asset_acquisition,iaa,Asset,iaa_synced_at,DATETIME(6),NO,,,,เวลารับล่าสุด
+info_asset_acquisition,iaa,Asset,iaa_completed_at,DATETIME(6),YES,,,,เวลางานสำเร็จ
+info_asset_acquisition,iaa,Asset,iaa_created_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6),,,วันเวลาสร้าง UTC
+info_asset_acquisition,iaa,Asset,iaa_created_by,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้สร้าง
+info_asset_acquisition,iaa,Asset,iaa_updated_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),,,วันเวลาแก้ไขล่าสุด UTC
+info_asset_acquisition,iaa,Asset,iaa_updated_by,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้แก้ไขล่าสุด
+info_asset_acquisition,iaa,Asset,iaa_row_version,INT UNSIGNED,NO,1,,,เลขเวอร์ชันสำหรับ optimistic locking
+info_asset_acquisition_cost,iaac,Asset,iaac_id,BIGINT UNSIGNED,NO,AUTO_INCREMENT,PK,,รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK
+info_asset_acquisition_cost,iaac,Asset,iaa_id,BIGINT UNSIGNED,NO,,,info_asset_acquisition.iaa_id,รายการ acquisition
+info_asset_acquisition_cost,iaac,Asset,iaac_external_cost_key,VARCHAR(150),NO,,,,รหัสแถวต้นทุนจาก MIS
+info_asset_acquisition_cost,iaac,Asset,mct_id,BIGINT UNSIGNED,NO,,,mst_cost_type.mct_id,ชนิดต้นทุน
+info_asset_acquisition_cost,iaac,Asset,mac_id,BIGINT UNSIGNED,YES,,,mst_account.mac_id,บัญชีอ้างอิง
+info_asset_acquisition_cost,iaac,Asset,iaac_description,VARCHAR(255),YES,,,,รายละเอียด
+info_asset_acquisition_cost,iaac,Asset,iaac_amount,"DECIMAL(19,2)",NO,0.00,,,ยอดต้นทุนเพิ่มเติมของรายการ
+info_asset_acquisition_cost,iaac,Asset,iaac_created_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6),,,วันเวลาสร้าง UTC
+info_asset_acquisition_cost,iaac,Asset,iaac_created_by,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้สร้าง
+info_asset_acquisition_cost,iaac,Asset,iaac_updated_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),,,วันเวลาแก้ไขล่าสุด UTC
+info_asset_acquisition_cost,iaac,Asset,iaac_updated_by,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้แก้ไขล่าสุด
+info_asset_acquisition_cost,iaac,Asset,iaac_row_version,INT UNSIGNED,NO,1,,,เลขเวอร์ชันสำหรับ optimistic locking
+info_asset_acquisition_document,iaad,Asset,iaad_id,BIGINT UNSIGNED,NO,AUTO_INCREMENT,PK,,รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK
+info_asset_acquisition_document,iaad,Asset,iaa_id,BIGINT UNSIGNED,NO,,,info_asset_acquisition.iaa_id,acquisition
+info_asset_acquisition_document,iaad,Asset,imdr_id,BIGINT UNSIGNED,NO,,,info_mis_document_reference.imdr_id,เอกสารอ้างอิง
+info_asset_acquisition_document,iaad,Asset,iaad_document_item_key,VARCHAR(150),NO,,,,รหัส item ต้นทาง ใช้ HEADER หากเป็นระดับเอกสาร
+info_asset_acquisition_document,iaad,Asset,po_imdr_id,BIGINT UNSIGNED,YES,,,info_mis_document_reference.imdr_id,PO scope สำหรับ Invoice/GR/Delivery; NULL สำหรับ Proposal/PR/PO
+info_asset_acquisition_document,iaad,Asset,iaad_po_item_key,VARCHAR(150),NO,,,,PO item ที่เกี่ยวข้อง ใช้ HEADER เมื่อยังไม่จัดสรร
+info_asset_acquisition_document,iaad,Asset,iaad_ordered_quantity,"DECIMAL(18,4)",YES,,,,จำนวนสั่งเฉพาะ link ของ PO item
+info_asset_acquisition_document,iaad,Asset,iaad_received_quantity,"DECIMAL(18,4)",YES,,,,จำนวนรับเฉพาะ link ของ GR item
+info_asset_acquisition_document,iaad,Asset,iaad_accepted_quantity,"DECIMAL(18,4)",YES,,,,จำนวนรับผ่านตรวจเฉพาะ GR item
+info_asset_acquisition_document,iaad,Asset,iaad_allocated_amount,"DECIMAL(19,2)",YES,,,,มูลค่าจัดสรรเฉพาะ PO scope ห้ามรวมยอดซ้ำจากเอกสารทุกชนิด
+info_asset_acquisition_document,iaad,Asset,iaad_purchasing_accepted,BOOLEAN,NO,0,,,Purchasing ยืนยันรับเฉพาะ GR
+info_asset_acquisition_document,iaad,Asset,iaad_owner_accepted,BOOLEAN,NO,0,,,Owner ยืนยันรับเฉพาะ GR
+info_asset_acquisition_document,iaad,Asset,iaad_accepted_at,DATETIME(6),YES,,,,เวลายืนยันรับ
+info_asset_acquisition_document,iaad,Asset,iaad_acceptance,"ENUM('PENDING','ACCEPTED','FAILED')",NO,'PENDING',,,ผล physical acceptance ที่ MIS ส่ง
+info_asset_acquisition_document,iaad,Asset,iaad_synced_at,DATETIME(6),NO,,,,เวลารับล่าสุด
+info_asset_acquisition_document,iaad,Asset,iaad_created_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6),,,วันเวลาสร้าง UTC
+info_asset_acquisition_document,iaad,Asset,iaad_created_by,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้สร้าง
+info_asset_acquisition_document,iaad,Asset,iaad_updated_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),,,วันเวลาแก้ไขล่าสุด UTC
+info_asset_acquisition_document,iaad,Asset,iaad_updated_by,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้แก้ไขล่าสุด
+info_asset_acquisition_document,iaad,Asset,iaad_row_version,INT UNSIGNED,NO,1,,,เลขเวอร์ชันสำหรับ optimistic locking
+info_asset_spare_usage,iasu,Asset,iasu_id,BIGINT UNSIGNED,NO,AUTO_INCREMENT,PK,,รหัสภายในถาวร ไม่ใช้เลขเอกสารเป็น PK
+info_asset_spare_usage,iasu,Asset,iasu_source,VARCHAR(80),NO,,,,ระบบต้นทาง
+info_asset_spare_usage,iasu,Asset,iasu_issue_key,VARCHAR(150),NO,,,,รหัสใบเบิกต้นทาง
+info_asset_spare_usage,iasu,Asset,iasu_issue_item_key,VARCHAR(150),NO,,,,รหัสรายการเบิกต้นทาง
+info_asset_spare_usage,iasu,Asset,imdr_id,BIGINT UNSIGNED,NO,,,info_mis_document_reference.imdr_id,เอกสารใบเบิกอ้างอิง
+info_asset_spare_usage,iasu,Asset,ma_id,BIGINT UNSIGNED,NO,,,mst_asset.ma_id,Asset ที่ใช้อะไหล่
+info_asset_spare_usage,iasu,Asset,mpt_id,BIGINT UNSIGNED,YES,,,mst_part.mpt_id,part อ้างอิงถ้ามี
+info_asset_spare_usage,iasu,Asset,iasu_part_no_snapshot,VARCHAR(150),NO,,,,เลข part ขณะเบิก
+info_asset_spare_usage,iasu,Asset,iasu_part_name_snapshot,VARCHAR(255),NO,,,,ชื่อ part ขณะเบิก
+info_asset_spare_usage,iasu,Asset,mu_id,BIGINT UNSIGNED,NO,,,mst_uom.mu_id,หน่วย
+info_asset_spare_usage,iasu,Asset,iasu_quantity,"DECIMAL(18,4)",NO,,,,จำนวนใช้สุทธิหลังคืนตาม MIS
+info_asset_spare_usage,iasu,Asset,iasu_total_cost,"DECIMAL(19,2)",NO,0.00,,,ต้นทุนใช้สุทธิจาก MIS ไม่ตีราคา stock เอง
+info_asset_spare_usage,iasu,Asset,iasu_issued_on,DATE,NO,,,,วันที่เบิก
+info_asset_spare_usage,iasu,Asset,iasu_status,"ENUM('COMPLETED','REVERSED')",NO,'COMPLETED',,,สถานะต้นทาง
+info_asset_spare_usage,iasu,Asset,iasu_external_version,VARCHAR(100),YES,,,,version ต้นทาง
+info_asset_spare_usage,iasu,Asset,iasu_synced_at,DATETIME(6),NO,,,,เวลารับล่าสุด
+info_asset_spare_usage,iasu,Asset,iasu_created_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6),,,วันเวลาสร้าง UTC
+info_asset_spare_usage,iasu,Asset,iasu_created_by,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้สร้าง
+info_asset_spare_usage,iasu,Asset,iasu_updated_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),,,วันเวลาแก้ไขล่าสุด UTC
+info_asset_spare_usage,iasu,Asset,iasu_updated_by,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้แก้ไขล่าสุด
+info_asset_spare_usage,iasu,Asset,iasu_row_version,INT UNSIGNED,NO,1,,,เลขเวอร์ชันสำหรับ optimistic locking
+sys_users,su,System,su_id,BIGINT UNSIGNED,NO,AUTO_INCREMENT,PK,,รหัสภายในถาวร
+sys_users,su,System,spg_id,BIGINT UNSIGNED,NO,,,sys_permission_group.spg_id,กลุ่มสิทธิ์/Role
+sys_users,su,System,su_username,VARCHAR(100),NO,,,,ชื่อเข้าสู่ระบบ
+sys_users,su,System,su_employee_code,VARCHAR(80),NO,,,,รหัสพนักงาน
+sys_users,su,System,su_password,VARCHAR(255),NO,,,,รหัสผ่านที่จัดเก็บเป็น password hash เท่านั้น ห้ามเก็บ plaintext
+sys_users,su,System,su_firstname,VARCHAR(120),NO,,,,ชื่อ
+sys_users,su,System,su_lastname,VARCHAR(120),NO,,,,นามสกุล
+sys_users,su,System,su_email,VARCHAR(255),NO,,,,อีเมล
+sys_users,su,System,sd_id,BIGINT UNSIGNED,NO,,,sys_department.sd_id,หน่วยงาน
+sys_users,su,System,su_sign_path,VARCHAR(500),YES,,,,object key ของไฟล์ลายเซ็น
+sys_users,su,System,su_status,BOOLEAN,NO,'1',,,สถานะผู้ใช้
+sys_users,su,System,su_created_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6),,,วันเวลาสร้าง UTC
+sys_users,su,System,su_created_by,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้บันทึก
+sys_users,su,System,su_updated_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),,,วันเวลาแก้ไข UTC
+sys_users,su,System,su_updated_by,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้บันทึก
+sys_submenu,ss,System,ss_id,BIGINT UNSIGNED,NO,AUTO_INCREMENT,PK,,รหัสภายในถาวร
+sys_submenu,ss,System,sm_id,BIGINT UNSIGNED,NO,,,sys_menu.sm_id,เมนูหลัก
+sys_submenu,ss,System,ss_name,VARCHAR(160),NO,,,,ชื่อเมนูย่อย
+sys_submenu,ss,System,ss_link,VARCHAR(255),NO,,,,route หรือ path
+sys_submenu,ss,System,ss_order,INT UNSIGNED,NO,0,,,ลำดับเมนูย่อย
+sys_submenu,ss,System,ss_status,BOOLEAN,NO,'1',,,สถานะเมนูย่อย
+sys_submenu,ss,System,ss_created_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6),,,วันเวลาสร้าง UTC
+sys_submenu,ss,System,ss_created_by,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้บันทึก
+sys_submenu,ss,System,ss_updated_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),,,วันเวลาแก้ไข UTC
+sys_submenu,ss,System,ss_updated_by,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้บันทึก
+sys_permission_group,spg,System,spg_id,BIGINT UNSIGNED,NO,AUTO_INCREMENT,PK,,รหัสภายในถาวร
+sys_permission_group,spg,System,spg_name,VARCHAR(120),NO,,,,ชื่อกลุ่มสิทธิ์/Role
+sys_permission_group,spg,System,spg_status,BOOLEAN,NO,'1',,,สถานะกลุ่มสิทธิ์
+sys_permission_group,spg,System,spg_created_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6),,,วันเวลาสร้าง UTC
+sys_permission_group,spg,System,spg_created_by,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้บันทึก
+sys_permission_group,spg,System,spg_updated_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),,,วันเวลาแก้ไข UTC
+sys_permission_group,spg,System,spg_updated_by,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้บันทึก
+sys_permission_detail,spd,System,spd_id,BIGINT UNSIGNED,NO,AUTO_INCREMENT,PK,,รหัสภายในถาวร
+sys_permission_detail,spd,System,spg_id,BIGINT UNSIGNED,NO,,,sys_permission_group.spg_id,กลุ่มสิทธิ์/Role
+sys_permission_detail,spd,System,ss_id,BIGINT UNSIGNED,NO,,,sys_submenu.ss_id,เมนูย่อยที่อนุญาต
+sys_permission_detail,spd,System,spd_order,INT UNSIGNED,NO,0,,,ลำดับสิทธิ์
+sys_permission_detail,spd,System,spd_status,BOOLEAN,NO,'1',,,อนุญาตเมนูย่อยนี้
+sys_permission_detail,spd,System,spd_created_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6),,,วันเวลาสร้าง UTC
+sys_permission_detail,spd,System,spd_created_by,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้บันทึก
+sys_permission_detail,spd,System,spd_updated_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),,,วันเวลาแก้ไข UTC
+sys_permission_detail,spd,System,spd_updated_by,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้บันทึก
+sys_department,sd,System,sd_id,BIGINT UNSIGNED,NO,AUTO_INCREMENT,PK,,รหัสภายในถาวร
+sys_department,sd,System,sd_plant_cd,VARCHAR(40),NO,,,,รหัส Plant ตาม master ภายนอก
+sys_department,sd,System,sd_code,VARCHAR(80),NO,,,,รหัสหน่วยงาน
+sys_department,sd,System,sd_name,VARCHAR(160),NO,,,,ชื่อหน่วยงาน
+sys_department,sd,System,sd_aname,VARCHAR(160),YES,,,,ชื่อหน่วยงานอีกภาษาหรือชื่อย่อ
+sys_department,sd,System,sd_email,VARCHAR(255),YES,,,,อีเมลหน่วยงาน
+sys_department,sd,System,sd_status,BOOLEAN,NO,'1',,,สถานะหน่วยงาน
+sys_department,sd,System,sd_created_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6),,,วันเวลาสร้าง UTC
+sys_department,sd,System,sd_created_by,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้บันทึก
+sys_department,sd,System,sd_updated_at,DATETIME(6),NO,CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),,,วันเวลาแก้ไข UTC
+sys_department,sd,System,sd_updated_by,BIGINT UNSIGNED,YES,,,sys_users.su_id,ผู้บันทึก

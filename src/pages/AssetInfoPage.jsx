@@ -1,3 +1,5 @@
+import { createAuditRecord } from '../utils/auditLogUtils.js'
+import { appendAuditRecords } from '../utils/auditLogStorage.js'
 import { getAssetOwnerLabel } from '../utils/assetOwnershipUtils.js'
 import { useRef, useState } from 'react'
 import { useAssetStore } from '../hooks/useAssetStore.js'
@@ -38,7 +40,9 @@ export default function AssetInfoPage({ assetId }) {
       const key = 'tbkk-asset-reported-issues-v1'
       const saved = JSON.parse(localStorage.getItem(key) || '[]')
       const records = Array.isArray(saved) ? saved : []
-      localStorage.setItem(key, JSON.stringify([...records, { assetId, description: issue.trim(), reportedAt: new Date().toISOString(), status: 'Reported' }]))
+      const report = { id: crypto.randomUUID(), assetId, description: issue.trim(), reportedAt: new Date().toISOString(), status: 'Reported' }
+      localStorage.setItem(key, JSON.stringify([...records, report]))
+      appendAuditRecords([createAuditRecord({ module: 'Assets', origin: 'asset-info', entityType: 'Issue report', reference: assetId, name: asset.name, before: null, after: report, actor: { id: 'visitor', name: 'Asset information visitor', role: 'Visitor' } })])
       setReported(true)
       setIssue('')
       setError('')

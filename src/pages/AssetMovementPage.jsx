@@ -1,3 +1,5 @@
+import { resolveTransferWorkflow, normalizeDepartment } from '../utils/departmentApproverUtils.js'
+import ActivationApprovalRoute from '../components/ActivationApprovalRoute.jsx'
 import { isCustomerAsset } from '../utils/assetOwnershipUtils.js'
 import { useMemo, useState } from 'react'
 import Icon from '../components/Icon.jsx'
@@ -5,11 +7,6 @@ import { Field, PageHeading } from '../components/common.jsx'
 import { ASSET_LINES, ASSET_LOCATIONS, BUILDINGS } from '../data/assetOptions.js'
 
 const REASONS = ['Relocation', 'Repair', 'Replacement', 'Project Use', 'Other']
-const TRANSFER_APPROVAL_STEPS = [
-  'Requester Manager Approval',
-  'Destination Department Leader Approval',
-  'Asset Team Acknowledgement',
-]
 
 function localDate() {
   const date = new Date()
@@ -51,7 +48,7 @@ function getSamplePhoto(asset) {
   return asset ? { name: `${asset.assetId}_current.jpg`, type: 'image/jpeg', isSample: true } : null
 }
 
-export default function AssetMovementPage({ assets, lifecycleEvents, initialAssetId = '', onSave, onMovements }) {
+export default function AssetMovementPage({ transferApprovalData, assets, lifecycleEvents, initialAssetId = '', onSave, onMovements }) {
   const activeAssets = useMemo(() => assets.filter((asset) => asset.status === 'Active' && !isCustomerAsset(asset)), [assets])
   const unavailableAssetIds = useMemo(() => new Set(lifecycleEvents
     .filter((event) => event.type === 'transfer' && event.status === 'Pending Approval')
@@ -67,6 +64,8 @@ export default function AssetMovementPage({ assets, lifecycleEvents, initialAsse
   const [serialNo, setSerialNo] = useState(() => initialAsset ? initialAsset.serialNo || `SN-${initialAsset.assetId}` : '')
   const [photo, setPhoto] = useState(() => getSamplePhoto(initialAsset))
   const [photoInputKey, setPhotoInputKey] = useState(0)
+  const [sourceDepartment, setSourceDepartment] = useState(() => normalizeDepartment(initialAsset?.department) ? initialAsset.department : '')
+  const [destinationDepartment, setDestinationDepartment] = useState('')
   const [destinationLine, setDestinationLine] = useState(() => getDefaultDestinationLine(initialAsset, assets))
   const [destinationLocation, setDestinationLocation] = useState(() => initialAsset?.location || '')
   const [destinationBuilding, setDestinationBuilding] = useState(() => initialAsset?.plant || '')
@@ -91,18 +90,27 @@ export default function AssetMovementPage({ assets, lifecycleEvents, initialAsse
     const searchable = [asset.assetId, asset.name, asset.model, asset.assetClass].join(' ').toLowerCase()
     return query.split(/[·\s]+/).filter(Boolean).every((term) => searchable.includes(term))
   })
+  const recordedDepartment = normalizeDepartment(selectedAsset?.department) ? selectedAsset.department : ''
+  const departmentOptions = [...new Set([...(transferApprovalData?.departmentApprovers || []).map((item) => item.department), ...(transferApprovalData?.responsibilityAssignments || []).map((item) => item.department), ...(transferApprovalData?.users || []).map((user) => user.department), ...assets.map((asset) => asset.department)].filter(Boolean))].sort()
   const from = selectedAsset ? {
+    department: recordedDepartment || sourceDepartment,
+    custodian: selectedAsset.custodian || '',
     plant: selectedAsset.plant || '',
     location: selectedAsset.location || '',
     line: selectedAsset.line && selectedAsset.line !== '—' ? selectedAsset.line : '',
   } : null
   const effectiveDestination = selectedAsset ? {
+    department: destinationDepartment,
     plant: destinationBuilding || selectedAsset.plant || '',
     location: destinationLocation.trim() || selectedAsset.location || '',
     line: destinationLine.trim(),
   } : null
 
+  const { workflow: approvalWorkflow, error: approvalWorkflowError } = resolveTransferWorkflow(transferApprovalData || { users: [] }, from, effectiveDestination)
+
   function populateFromAsset(asset) {
+    setSourceDepartment(normalizeDepartment(asset.department) ? asset.department : '')
+    setDestinationDepartment('')
     setSelectedAssetId(asset.assetId)
     setAssetSearch(movementLabel(asset))
     setDestinationBuilding(asset.plant || '')
@@ -136,6 +144,8 @@ export default function AssetMovementPage({ assets, lifecycleEvents, initialAsse
       setFormError('Select an active asset before continuing.')
       return
     }
+    if (!from?.department || !effectiveDestination?.department) { setFormError('Select the source and destination departments.'); return }
+    if (approvalWorkflowError) { setFormError(approvalWorkflowError); return }
     if (!photo) {
       setFormError('Attach a current asset photo before continuing.')
       return
@@ -183,13 +193,13 @@ export default function AssetMovementPage({ assets, lifecycleEvents, initialAsse
       otherReason: otherReason.trim(),
       conditionCheck: { physicalCondition, assetTag, accessories },
       remark: remark.trim(),
-      approvalSteps: TRANSFER_APPROVAL_STEPS,
+      approvalSteps: approvalWorkflow?.steps.map((step) => step.label) || [],
       currentApprovalStep: 0,
       approvalHistory: [],
       status: 'Pending Approval',
     }
-    onSave(transfer)
-    onMovements()
+    try { onSave(transfer); onMovements() }
+    catch (error) { setFormError(error.message) }
   }
 
   return (
@@ -246,8 +256,9 @@ export default function AssetMovementPage({ assets, lifecycleEvents, initialAsse
         <FieldSection icon="pin" iconClass="form-icon-location" title="Movement detail" description="Compare the current assignment with the destination production line.">
           <div className="movement-from-to">
             <section>
-              <div className="movement-from-to-heading"><strong>FROM <small>(Current)</small></strong><span>Auto-filled from Asset record</span></div>
+              <div className="movement-from-to-heading"><strong>FROM <small>(Current)</small></strong><span>{recordedDepartment ? 'Auto-filled from Asset record' : 'Select the source department if not recorded'}</span></div>
               <div className="movement-detail-grid">
+                <Field label="Source department" required>{recordedDepartment ? <input aria-label="Source department" value={selectedAsset.department} readOnly /> : <select aria-label="Source department" value={sourceDepartment} required onChange={(event) => { setSourceDepartment(event.target.value); setFormError('') }}><option value="">Select source department</option>{departmentOptions.map((department) => <option key={department} value={department}>{department}</option>)}</select>}</Field>
                 <Field label="Building"><input value={from?.plant || ''} placeholder="Current building" readOnly /></Field>
                 <Field label="Location"><input value={from?.location || ''} placeholder="Current location" readOnly /></Field>
                 <Field label="Line"><input value={from?.line || ''} placeholder="Current production line" readOnly /></Field>
@@ -256,6 +267,7 @@ export default function AssetMovementPage({ assets, lifecycleEvents, initialAsse
             <section className="movement-destination">
               <div className="movement-from-to-heading"><strong>TO <small>(Destination)</small></strong><span>New production assignment</span></div>
               <div className="movement-detail-grid">
+                <Field label="Destination department" required><select aria-label="Destination department" value={destinationDepartment} required onChange={(event) => { setDestinationDepartment(event.target.value); setFormError('') }}><option value="">Select destination department</option>{departmentOptions.map((department) => <option key={department} value={department}>{department}</option>)}</select></Field>
                 <Field label="Building"><select value={destinationBuilding} onChange={(event) => setDestinationBuilding(event.target.value)}><option value="">Select building</option>{buildingOptions.map((building) => <option key={building} value={building}>{building}</option>)}</select></Field>
                 <Field label="Location"><select value={destinationLocation} onChange={(event) => setDestinationLocation(event.target.value)}><option value="">Select location</option>{locationOptions.map((location) => <option key={location} value={location}>{location}</option>)}</select></Field>
                 <Field label="Line" required><select value={destinationLine} onChange={(event) => { setDestinationLine(event.target.value); setFormError('') }} required><option value="">Select destination line</option>{zoneOptions.map((zone) => <option key={zone} value={zone}>{zone}</option>)}</select></Field>
@@ -312,9 +324,9 @@ export default function AssetMovementPage({ assets, lifecycleEvents, initialAsse
           <p className="movement-review-copy">Check the Asset and production line before sending this request for approval.</p>
           <div className="movement-review-asset"><span>ASSET</span><strong>{selectedAsset?.name}</strong><small>{selectedAsset?.assetId} · {selectedAsset?.model || selectedAsset?.assetClass}</small></div>
           <div className="movement-success-route"><span>{displayValue(from?.line)}</span><Icon name="chevron" size={17} /><strong>{effectiveDestination?.line}</strong></div>
-          <dl className="movement-review-list">{serialNo.trim() ? <div><dt>Serial no.</dt><dd>{serialNo.trim()}</dd></div> : null}<div><dt>Request date</dt><dd>{requestDate}</dd></div><div><dt>Destination building</dt><dd>{displayValue(effectiveDestination?.plant)}</dd></div><div><dt>Destination location</dt><dd>{displayValue(effectiveDestination?.location)}</dd></div><div><dt>Reason</dt><dd>{reasons.join(', ')}{otherReason ? ` — ${otherReason}` : ''}</dd></div><div><dt>Condition</dt><dd>{physicalCondition} · Tag {assetTag.toLowerCase()} · Accessories {accessories.toLowerCase()}</dd></div><div><dt>Photo</dt><dd>{photo?.isSample ? `Sample file reference · ${photo.name}` : photo?.name}</dd></div></dl>
-          <div className="movement-review-workflow"><Icon name="info" size={14} /><span>Approval order: Requester Manager → Destination Department Leader → Asset Team Acknowledgement. The Asset record updates when complete.</span></div>
-          <div className="movement-actions"><button className="button button-secondary" type="button" onClick={() => setShowReview(false)}>Back to form</button><button className="button button-primary" type="button" onClick={submitRequest}><Icon name="check" size={15} />Confirm & submit</button></div>
+          <dl className="movement-review-list"><div><dt>Source department</dt><dd>{from?.department}</dd></div><div><dt>Destination department</dt><dd>{effectiveDestination?.department}</dd></div>{serialNo.trim() ? <div><dt>Serial no.</dt><dd>{serialNo.trim()}</dd></div> : null}<div><dt>Request date</dt><dd>{requestDate}</dd></div><div><dt>Destination building</dt><dd>{displayValue(effectiveDestination?.plant)}</dd></div><div><dt>Destination location</dt><dd>{displayValue(effectiveDestination?.location)}</dd></div><div><dt>Reason</dt><dd>{reasons.join(', ')}{otherReason ? ` — ${otherReason}` : ''}</dd></div><div><dt>Condition</dt><dd>{physicalCondition} · Tag {assetTag.toLowerCase()} · Accessories {accessories.toLowerCase()}</dd></div><div><dt>Photo</dt><dd>{photo?.isSample ? `Sample file reference · ${photo.name}` : photo?.name}</dd></div></dl>
+          <div className="movement-review-workflow"><Icon name="info" size={14} /><span>Asset Transfer → {approvalWorkflow?.name || 'No workflow assigned'}. The Asset record updates after the final approval.</span></div>{approvalWorkflow ? <ActivationApprovalRoute title="Transfer approval" steps={approvalWorkflow.steps} /> : null}{approvalWorkflowError || formError ? <p className="form-error" role="alert">{approvalWorkflowError || formError}</p> : null}
+          <div className="movement-actions"><button className="button button-secondary" type="button" onClick={() => setShowReview(false)}>Back to form</button><button className="button button-primary" type="button" disabled={!approvalWorkflow || Boolean(approvalWorkflowError)} onClick={submitRequest}><Icon name="check" size={15} />Confirm & submit</button></div>
         </section>
       </div> : null}
     </div>

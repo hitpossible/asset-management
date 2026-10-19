@@ -1,3 +1,4 @@
+import { getNextTemporaryAssetId } from './temporaryAssetUtils.js'
 import { isCustomerAsset } from './assetOwnershipUtils.js'
 
 export function getNextSubAssetId(parentAssetId, assetIds) {
@@ -16,7 +17,8 @@ export function createSubAssetDraft(request, assets) {
   }
   if (!request.name?.trim()) throw new Error('Enter a component name.')
   return {
-    assetId: getNextSubAssetId(parent.assetId, assets.map((asset) => asset.assetId)),
+    assetId: getNextTemporaryAssetId(assets),
+    temporaryReference: getNextTemporaryAssetId(assets),
     parentAssetId: parent.assetId,
     sourceAssetId: parent.assetId,
     ownershipType: 'company',

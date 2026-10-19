@@ -1,5 +1,5 @@
 import { getAssetOwnership, isCustomerAsset, getProposalEligibleAssets } from './assetOwnershipUtils.js'
-import { getNextSubAssetId } from './subAssetDraftUtils.js'
+import { getNextTemporaryAssetId } from './temporaryAssetUtils.js'
 export const WORK_TYPES = [
   { id: 'subAsset', label: 'Addition Sub-Asset' },
   { id: 'modification', label: 'Modification' },
@@ -31,13 +31,13 @@ export function getMainAsset(asset, assets) {
 }
 
 export function prepareProposalAssets(proposal, assets) {
-  const knownIds = new Set(assets.map((asset) => asset.assetId))
+  const knownAssets = [...assets]
   const createdAssets = []
   const updatedAssets = []
   const events = []
   const selectedDraftIds = new Set()
   const assetItems = proposal.assetItems.map((inputItem, index) => {
-    // A manually saved Sub Asset already has a reserved number. Process its
+    // A manually saved Sub Asset already has a temporary reference. Process its
     // purchasing work against the source, reusing that Draft when capitalized.
     const draft = assets.find((asset) => asset.assetId === inputItem.assetId && asset.draftOrigin === 'Create Sub Asset' && asset.status === 'Draft')
     if (draft && (isCustomerAsset(draft) || selectedDraftIds.has(draft.assetId))) throw new Error('Select each Company Sub Asset Draft only once.')
@@ -63,6 +63,8 @@ export function prepareProposalAssets(proposal, assets) {
     const total = getProposalItemTotal(item)
     const itemId = item.itemId || `${proposal.proposalId}-${index + 1}`
     if (item.assetMode !== 'existing') {
+      if (selectedDraftIds.has(source.assetId)) throw new Error('Select each Draft Asset only once in this Proposal.')
+      selectedDraftIds.add(source.assetId)
       if (!getProposalEligibleAssets([source], getAssetOwnership(source)).some((asset) => asset.status === 'Draft')) throw new Error('New Asset must be an available Draft.')
       return { ...item, itemId, costTreatment, ownershipType: getAssetOwnership(source), customerName: source.customerName || '' }
     }
@@ -73,11 +75,12 @@ export function prepareProposalAssets(proposal, assets) {
     let subAssetId = ''
     if (costTreatment === 'Capitalized' && !item.workOnExistingAsset) {
       if (draft && draft.parentAssetId !== mainAsset.assetId) throw new Error('The Sub Asset Draft must belong to the selected Main Asset.')
-      subAssetId = draft?.assetId || getNextSubAssetId(mainAsset.assetId, knownIds)
-      knownIds.add(subAssetId)
+      subAssetId = draft?.assetId || getNextTemporaryAssetId(knownAssets)
+      knownAssets.push({ assetId: subAssetId })
       const child = {
         ...(draft || {}),
         assetId: subAssetId,
+        temporaryReference: draft?.temporaryReference || subAssetId,
         ownershipType: 'company',
         customerName: '',
         parentAssetId: mainAsset.assetId,
@@ -98,7 +101,7 @@ export function prepareProposalAssets(proposal, assets) {
         acquisitionValue: total,
         workType: item.workType,
         proposalItemId: itemId,
-        status: 'Proposal Processing',
+        status: 'Draft',
         proposalNo: proposal.proposalId,
         proposalReferences: [{ reference: proposal.proposalId, projectCode: proposal.projectCode }],
         prNo: '', poNo: '', invoices: [], goodsReceipts: [],

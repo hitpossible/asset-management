@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
+import { readInvoiceAttachment } from '../utils/invoiceAttachmentUtils.js'
 import { Field } from '../components/common.jsx'
 import Icon from '../components/Icon.jsx'
 import { useMISPurchasingStore } from '../hooks/useMISPurchasingStore.js'
@@ -31,12 +32,14 @@ function InvoiceCard({ invoice, po, onRemove }) {
 }
 
 export default function VendorDeliveryPage() {
-  const { purchaseOrders, vendorInvoices, addVendorInvoices } = useMISPurchasingStore()
+  const { purchaseOrders, vendorInvoices, addVendorInvoices, storageFailed } = useMISPurchasingStore()
   const [query, setQuery] = useState(() => new URLSearchParams(window.location.search).get('po') || '')
   const [poNo, setPONo] = useState(() => [vendorDemoPO, ...purchaseOrders].find((order) => order.poNo.toLowerCase() === query.trim().toLowerCase())?.poNo || '')
   const [demoInvoices, setDemoInvoices] = useState([vendorDemoInvoice])
   const [pending, setPending] = useState([])
   const [scanFile, setScanFile] = useState(null)
+  const [scanBusy, setScanBusy] = useState(false)
+  const scanPending = useRef(false)
   const [scanFileKey, setScanFileKey] = useState(0)
   const [error, setError] = useState('')
   const [notice, setNotice] = useState('')
@@ -52,22 +55,32 @@ export default function VendorDeliveryPage() {
 
   function clearScan() { setScanFile(null); setScanFileKey((value) => value + 1) }
   function openPO(value) {
+    if (scanPending.current) return
     if (pending.length || scanFile) { setError('กรุณา Submit หรือลบ Invoice ในรอบนี้ก่อนเปลี่ยน PO'); return }
     const found = orders.find((order) => order.poNo.toLowerCase() === value.trim().toLowerCase())
     if (!found) { setError('ไม่พบเลข PO นี้ กรุณาตรวจสอบเอกสาร PO'); return }
     setPONo(found.poNo); setQuery(found.poNo); setStep(2); setError(''); setNotice('');
   }
-  function scanExample(part) {
+  async function scanExample(part) {
+    if (scanPending.current) return
     const invoice = sampleDocument(po, part, scanFile?.name)
     const issue = validateVendorInvoice(po, [...invoices, ...pending], invoice)
     if (issue) { setError(issue); return }
     if (scanFile && [...invoices, ...pending].some((row) => row.documentName === scanFile.name)) { setError('เอกสารนี้ถูกสแกนแล้ว กรุณาเลือกเอกสารอื่น'); return }
-    setPending((current) => [...current, invoice]); clearScan(); setError(''); setNotice('');
+    scanPending.current = true
+    setScanBusy(true)
+    try {
+      const attachment = scanFile ? await readInvoiceAttachment(scanFile) : null
+      setPending((current) => [...current, { ...invoice, ...(attachment ? { attachment } : {}) }])
+      clearScan(); setError(''); setNotice('')
+    } catch (error) { setError(error.message) }
+    finally { scanPending.current = false; setScanBusy(false) }
   }
   function removePending(reference) {
     setPending((current) => current.filter((invoice) => invoice.reference !== reference)); setError(''); setNotice('')
   }
   function submit() {
+    if (scanPending.current) return
     const issue = validateVendorBatch(po, invoices, pending)
     if (issue) { setError(issue); return }
     const roundId = crypto.randomUUID()
@@ -82,6 +95,7 @@ export default function VendorDeliveryPage() {
   const stepLabels = ['กรอกเลข PO', 'ข้อมูล PO', 'สแกน Invoice', 'ตรวจสอบและยืนยัน']
 
   return <div className="vendor-page">
+    {storageFailed ? <p className="asset-storage-notice" role="status">บันทึกได้เฉพาะรอบนี้: พื้นที่จัดเก็บของเบราว์เซอร์เต็มหรือไม่พร้อมใช้งาน ข้อมูล Delivery และไฟล์ Invoice จะหายเมื่อโหลดหน้าใหม่</p> : null}
     <header className="vendor-header"><div className="vendor-brand">TBKK</div><span>Vendor Receiving</span><span className="vendor-header-right">หน้าสำหรับผู้ส่งสินค้า</span></header>
     <main className="vendor-main">
       <ol className="vendor-steps" aria-label="ขั้นตอนแจ้งส่งสินค้า">{stepLabels.map((label, index) => <li key={label} className={step === index + 1 ? 'current' : step > index + 1 ? 'done' : ''}><span>{step > index + 1 ? <Icon name="check" size={15} /> : index + 1}</span><strong>{label}</strong></li>)}</ol>
@@ -105,9 +119,9 @@ export default function VendorDeliveryPage() {
         </> : null}
         {step === 3 && po ? <>
           <h1>สแกน Invoice</h1><p className="vendor-description">ถ่ายรูปเอกสารหรือเลือกไฟล์ Invoice ที่นำมาส่ง</p>
-          <div className="vendor-capture-area"><span className="vendor-document-illustration"><Icon name={pending.length ? 'circle-check' : 'file'} size={64} /></span><h2>{pending.length ? `สแกนแล้ว ${pending.length} ใบ` : 'เพิ่มเอกสาร Invoice'}</h2><p>{pending.length ? 'ตรวจเอกสารด้านล่าง หรือสแกนใบถัดไปได้' : 'ถ่ายรูปให้เห็นเอกสารครบทั้งใบและตัวอักษรชัดเจน'}</p><div className="vendor-upload-actions"><label className="vendor-upload-button primary"><Icon name="camera" size={20} />ถ่ายรูป Invoice<input key={`camera-${scanFileKey}`} type="file" accept="image/*" capture="environment" onChange={(event) => { setScanFile(event.target.files[0] || null); setError('') }} /></label><label className="vendor-upload-button"><Icon name="file" size={20} />เลือกไฟล์<input key={`file-${scanFileKey}`} type="file" accept="image/*,.pdf" onChange={(event) => { setScanFile(event.target.files[0] || null); setError('') }} /></label></div><small>รองรับรูปภาพและ PDF</small></div>
+          <div className="vendor-capture-area"><span className="vendor-document-illustration"><Icon name={pending.length ? 'circle-check' : 'file'} size={64} /></span><h2>{pending.length ? `สแกนแล้ว ${pending.length} ใบ` : 'เพิ่มเอกสาร Invoice'}</h2><p>{pending.length ? 'ตรวจเอกสารด้านล่าง หรือสแกนใบถัดไปได้' : 'ถ่ายรูปให้เห็นเอกสารครบทั้งใบและตัวอักษรชัดเจน'}</p><div className="vendor-upload-actions"><label className="vendor-upload-button primary"><Icon name="camera" size={20} />ถ่ายรูป Invoice<input key={`camera-${scanFileKey}`} type="file" accept="image/*" capture="environment" disabled={scanBusy} onChange={(event) => { setScanFile(event.target.files[0] || null); setError('') }} /></label><label className="vendor-upload-button"><Icon name="file" size={20} />เลือกไฟล์<input key={`file-${scanFileKey}`} type="file" accept="image/jpeg,image/png,image/webp,application/pdf" disabled={scanBusy} onChange={(event) => { setScanFile(event.target.files[0] || null); setError('') }} /></label></div><small>{scanBusy ? 'กำลังอ่านไฟล์ Invoice…' : 'รองรับ JPG, PNG, WebP และ PDF ขนาดไม่เกิน 5 MB'}</small></div>
           {scanFile ? <div className="vendor-selected-file"><Icon name="file" size={19} /><span>{scanFile.name}</span><button type="button" className="vendor-text-button" onClick={clearScan}>ลบเอกสารนี้</button></div> : null}
-          <details className="vendor-scan-demo" open={scanFile ? true : undefined}><summary><Icon name="info" size={16} />ทดลองอ่าน Invoice ตัวอย่าง<span>Mockup</span></summary><p>ยังไม่มี OCR จริง ข้อมูลที่อ่านใน mockup เป็นข้อมูลตัวอย่าง</p><button type="button" className="vendor-secondary" aria-label={`จำลองสแกนใบที่ ${nextSamplePart || ''}`} disabled={!nextSamplePart || !allowed} onClick={() => scanExample(nextSamplePart)}><Icon name="file" size={18} />{nextSamplePart ? 'จำลองสแกน Invoice' : 'สแกนเอกสารตัวอย่างครบแล้ว'}</button></details>
+          <details className="vendor-scan-demo" open={scanFile ? true : undefined}><summary><Icon name="info" size={16} />ทดลองอ่าน Invoice ตัวอย่าง<span>Mockup</span></summary><p>ยังไม่มี OCR จริง ข้อมูลที่อ่านใน mockup เป็นข้อมูลตัวอย่าง</p><button type="button" className="vendor-secondary" aria-label={`จำลองสแกนใบที่ ${nextSamplePart || ''}`} disabled={scanBusy || !nextSamplePart || !allowed} onClick={() => scanExample(nextSamplePart)}><Icon name="file" size={18} />{nextSamplePart ? 'จำลองสแกน Invoice' : 'สแกนเอกสารตัวอย่างครบแล้ว'}</button></details>
           <div className="vendor-invoice-list">{pending.map((invoice) => <InvoiceCard key={invoice.reference} invoice={invoice} po={po} onRemove={() => removePending(invoice.reference)} />)}</div>
           <p className="vendor-lock-note">ข้อมูลจาก Invoice อ่านได้อย่างเดียว · สแกนผิดให้ลบแล้วสแกนใหม่</p>
           <div className="vendor-bottom-actions"><button type="button" className="vendor-primary" disabled={!pending.length || !!scanFile} onClick={() => moveStep(4)}>ถัดไป: ตรวจสอบการส่ง<Icon name="chevron" size={20} /></button></div>

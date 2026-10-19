@@ -1,3 +1,5 @@
+import ActivationApprovalRoute from './ActivationApprovalRoute.jsx'
+import { formatPower } from '../utils/powerUtils.js'
 import { isCustomerAsset, getAssetOwnerLabel } from '../utils/assetOwnershipUtils.js'
 import AssetLabelDialog from './AssetLabelDialog.jsx'
 import DisposalSummary from './DisposalSummary.jsx'
@@ -92,21 +94,21 @@ function TransferApprovals({ event, onAdvanceTransfer }) {
   return <div className="asset-transfer-progress">
     <div className="asset-transfer-progress-heading"><strong>Transfer approvals</strong><span>{completed ? 'Complete' : `Step ${Math.min(activeStep + 1, steps.length)} of ${steps.length}`}</span></div>
     <ol className="asset-transfer-approval-icons">{steps.map((step, index) => {
-      const history = (event.approvalHistory || []).findLast((item) => item.stage === step)
+      const history = (event.approvalHistory || []).findLast((item) => event.approvalWorkflow?.steps[index]?.id && item.stageId ? item.stageId === event.approvalWorkflow.steps[index].id : item.stage === step)
       const done = index < activeStep || completed
       const current = index === activeStep && !completed
       const status = done ? (history?.action || 'Approved') : current ? 'Awaiting approval' : 'Upcoming'
       const date = history?.date ? new Date(history.date) : null
       const time = date && !Number.isNaN(date.getTime()) ? new Intl.DateTimeFormat('en-GB', { timeZone: 'Asia/Bangkok', day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }).format(date) + ' (ICT)' : 'Time not recorded'
       const tooltipId = `transfer-approval-${event.transactionNo}-${index}`
-      return <li key={step} className={done ? 'is-done' : current ? 'is-current' : ''}>
+      return <li key={event.approvalWorkflow?.steps[index]?.id || index} className={done ? 'is-done' : current ? 'is-current' : ''}>
         <button type="button" className="asset-approval-icon" aria-label={`${step}: ${status}`} aria-describedby={tooltipId}>
           <Icon name="user" size={18} /><span className="asset-approval-icon-status"><Icon name={done ? 'check' : 'clock'} size={9} /></span>
         </button>
         <div id={tooltipId} role="tooltip" className="asset-approval-icon-tooltip"><strong>{step}</strong><span>{status}</span>{done ? <><span>By: {history?.actor || 'Approver not recorded'}</span><span>{time}</span></> : null}</div>
       </li>
     })}</ol>
-    {canAdvance ? <button type="button" className="button button-secondary button-small" onClick={() => onAdvanceTransfer(event)}>{finalStep ? 'Acknowledge and complete transfer' : `Approve as ${steps[activeStep].replace(' Approval', '')}`}<Icon name="chevron" size={13} /></button> : null}
+    {canAdvance ? <button type="button" className="button button-secondary button-small" onClick={() => onAdvanceTransfer(event)}>{finalStep ? ['acknowledge', 'Acknowledge'].includes(event.approvalWorkflow?.steps[activeStep]?.actionType || event.approvalWorkflow?.steps[activeStep]?.action) ? 'Acknowledge and complete transfer' : event.approvalWorkflow ? 'Approve and complete transfer' : 'Acknowledge and complete transfer' : `${['acknowledge', 'Acknowledge'].includes(event.approvalWorkflow?.steps[activeStep]?.actionType || event.approvalWorkflow?.steps[activeStep]?.action) ? 'Acknowledge' : 'Approve'} as ${steps[activeStep].replace(' Approval', '')}`}<Icon name="chevron" size={13} /></button> : null}
   </div>
 }
 
@@ -137,7 +139,7 @@ function LifecycleEvent({ event, onAdvanceTransfer }) {
       <span className={`asset-lifecycle-event-mark event-${event.type}`}><Icon name={event.type === 'maintenance' ? 'wrench' : event.type === 'transfer' ? 'chevron' : 'box'} size={15} /></span>
       <div className="asset-lifecycle-event-body">
         {event.type === 'disposal' ? <DisposalSummary record={event} /> : null}
-        
+
 
         {event.type === 'subAsset' ? <div className="asset-lifecycle-event-detail"><span>Main Asset <strong>{event.mainAssetId || event.assetId}</strong></span><span>Work on <strong>{event.sourceAssetId || event.assetId}</strong></span><span>Sub Asset <strong>{event.subAsset?.name || event.title}</strong></span>{event.subAsset?.model ? <span>Model <strong>{event.subAsset.model}</strong></span> : null}</div> : null}
         {event.type === 'modification' || event.type === 'maintenance' ? <div className="asset-lifecycle-event-detail"><span>Description <strong>{event.description || '—'}</strong></span>{event.vendor || event.responsibleTeam ? <span>Vendor / team <strong>{event.vendor || event.responsibleTeam}</strong></span> : null}{event.result ? <span>Result <strong>{event.result}</strong></span> : null}</div> : null}
@@ -239,7 +241,7 @@ export default function AssetDetailDialog({ asset, assets = [], assetTypes = [],
           <div className="detail-header">
             <div className="asset-record-heading">
               <span className="asset-record-symbol"><Icon name={asset.assetClass?.startsWith('IT') ? 'file' : 'factory'} size={36} /></span>
-              <div className="asset-record-heading-copy"><span className="detail-eyebrow">Asset record</span><div className="asset-record-title-row"><h2 id="asset-detail-title">{asset.name}</h2><StatusBadge status={asset.status} /></div><span className="detail-id">{asset.assetId} · {asset.assetClass || 'Unclassified'}</span></div>
+              <div className="asset-record-heading-copy"><span className="detail-eyebrow">Asset record</span><div className="asset-record-title-row"><h2 id="asset-detail-title">{asset.name}</h2><StatusBadge status={asset.status} /></div><span className="detail-id">{asset.assetId.startsWith('TMP-') ? 'Draft reference: ' : ''}{asset.assetId} · {asset.assetClass || 'Unclassified'}</span>{asset.assetId.startsWith('TMP-') ? <small>Real Asset No. will be assigned after Proposal approval.</small> : asset.temporaryReference ? <small>Original Draft reference: {asset.temporaryReference}</small> : null}</div>
             </div>
             <button className="modal-close" aria-label="Close details" onClick={onClose}><Icon name="close" size={18} /></button>
           </div>
@@ -261,17 +263,20 @@ export default function AssetDetailDialog({ asset, assets = [], assetTypes = [],
                 <DetailValue label="Project Name" value={asset.projectName} />
                 <DetailValue label="Asset ownership" value={getAssetOwnerLabel(asset)} />
                 <DetailValue label="Asset class" value={asset.assetClass} />
+                <DetailValue label="RFQ No." value={asset.rfqNo} />
+                <DetailValue label="Part number" value={asset.partNo} />
                 <DetailValue label="Model" value={asset.model} />
                 <DetailValue label="Custodian" value={asset.custodian} />
                 <DetailValue label="Department" value={asset.department} />
                 <DetailValue label="Plant" value={asset.plant} />
                 <DetailValue label="Location" value={asset.location} />
                 <DetailValue label="Line" value={asset.line} />
-                <DetailValue label="Power" value={asset.power} />
-                <DetailValue label="Area" value={asset.area} />
+                <DetailValue label="Power" value={formatPower(asset.power, asset.powerUnit)} />
+                <DetailValue label="Area (m²)" value={asset.area} />
                 <DetailValue label="Target SOP" value={formatDate(asset.targetSop)} />
               </div>
-              {Array.isArray(asset.approvalHistory) && asset.approvalHistory.length ? <section className="mis-reference-panel"><h3>Approval history</h3><div className="table-scroll"><table className="asset-table"><thead><tr><th>Stage</th><th>Actor</th><th>Action</th><th>Date</th><th>Remark</th></tr></thead><tbody>{asset.approvalHistory.map((entry, index) => <tr key={index}><td>{entry.stage}</td><td>{entry.actor}</td><td>{entry.action}</td><td>{formatDate(entry.date)}</td><td>{entry.comment || '—'}</td></tr>)}</tbody></table></div></section> : null}
+              {asset.activationApproval?.steps?.length ? <ActivationApprovalRoute steps={asset.activationApproval.steps} state={asset.activationApproval.state} currentIndex={asset.activationApproval.currentStep} legacy={asset.activationApproval.legacyContinuation} /> : null}
+              {Array.isArray(asset.approvalHistory) && asset.approvalHistory.length ? <section className="mis-reference-panel"><h3>Approval history</h3><div className="table-scroll"><table className="asset-table"><thead><tr><th>Stage</th><th>Actor</th><th>Action</th><th>Date</th><th>Remark</th></tr></thead><tbody>{asset.approvalHistory.map((entry, index) => <tr key={index}><td>{entry.stage}</td><td>{entry.actor}{entry.assignedApprover ? <small>Assigned: {entry.assignedApprover}</small> : null}</td><td>{entry.action}</td><td>{formatDate(entry.date)}</td><td>{entry.comment || '—'}</td></tr>)}</tbody></table></div></section> : null}
               {asset.disposalRecord ? <DisposalSummary record={asset.disposalRecord} /> : null}
               {asset.notes ? <div className="detail-notes"><span>Notes</span><p>{asset.notes}</p></div> : null}
             </section> : null}
@@ -285,7 +290,7 @@ export default function AssetDetailDialog({ asset, assets = [], assetTypes = [],
           <div className="detail-footer">
             <button type="button" className="button button-secondary" onClick={() => setPreviewingLabel(true)}><Icon name="tag" size={18} />Preview Asset Label</button>
             <button className="button button-secondary" onClick={onClose}>Close</button>
-            {onEdit && asset.status === 'Draft' ? <button className="button button-primary" onClick={() => onEdit(asset)}><Icon name="edit" size={18} />Edit draft</button> : null}
+            {onEdit && asset.status === 'Draft' && !asset.proposalNo ? <button className="button button-primary" onClick={() => onEdit(asset)}><Icon name="edit" size={18} />Edit draft</button> : null}
           </div>
         </section>
       </div>

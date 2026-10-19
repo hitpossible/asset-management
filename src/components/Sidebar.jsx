@@ -73,7 +73,7 @@ export default function Sidebar({ page, assetCount, menuOpen, onNavigate, onClos
             <button className="nav-group-trigger" aria-expanded={administratorMenuOpen} aria-controls="administrator-submenu" onClick={() => setAdministratorMenuOpen((open) => !open)}>
               <Icon name="settings" size={19} /><span>Administrator</span><Icon name="down" size={13} className={administratorMenuOpen ? 'group-chevron-open' : 'group-chevron-closed'} />
             </button>
-            {administratorMenuOpen ? <div className="nav-submenu" id="administrator-submenu"><SidebarLink child item={{ page: 'master', label: 'Manage Asset Type', icon: 'settings' }} page={page} onNavigate={onNavigate} />{Object.entries(ADMIN_PAGES).map(([id, label]) => <SidebarLink child key={id} item={{ page: id, label }} page={page} onNavigate={onNavigate} />)}</div> : null}
+            {administratorMenuOpen ? <div className="nav-submenu" id="administrator-submenu"><SidebarLink child item={{ page: 'master', label: 'Manage Asset Type', icon: 'settings' }} page={page} onNavigate={onNavigate} /><SidebarLink child item={{ page: 'audit-log', label: 'Audit Log', icon: 'clock' }} page={page} onNavigate={onNavigate} />{Object.entries(ADMIN_PAGES).map(([id, label]) => <SidebarLink child key={id} item={{ page: id, label }} page={page} onNavigate={onNavigate} />)}</div> : null}
           </div>
         </nav>
         <div className="sidebar-bottom">

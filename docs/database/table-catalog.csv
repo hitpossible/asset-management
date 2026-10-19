@@ -1,0 +1,61 @@
+﻿table,prefix,module,description_th,storage_rule
+sys_menu,sm,System,เมนูหลักในแถบ navigation,mutable
+sys_setting,sst,System,ค่าตั้งระบบ ไม่ใช้เก็บ secrets,mutable
+sys_number_sequence,sns,System,ตัวนับเลขเอกสารและเลข Asset โดยล็อกแถวใน transaction,mutable
+sys_workflow,sw,System,นิยาม workflow แบบมี version หลังใช้งานให้สร้าง version ใหม่,mutable
+sys_workflow_step,sws,System,ลำดับและผู้รับผิดชอบของนิยาม workflow,mutable
+sys_workflow_assignment,swa,System,กำหนด workflow ปัจจุบันต่อประเภทงาน,mutable
+sys_responsibility,sres,System,ผู้รับผิดชอบหน่วยงานตามหน้าที่,mutable
+mst_plant,mp,Master,โรงงาน,mutable
+mst_location,ml,Master,สถานที่,mutable
+mst_line,mli,Master,สายการผลิต,mutable
+mst_cost_center,mcc,Master,ศูนย์ต้นทุน,mutable
+mst_project,mprj,Master,โครงการ,mutable
+mst_customer,mc,Master,ลูกค้าเจ้าของ Customer Asset,mutable
+mst_vendor,mv,Master,ผู้ขาย,mutable
+mst_asset_group,mag,Master,กลุ่ม Asset เช่น ME MD IT,mutable
+mst_asset_type,mat,Master,ประเภท Asset และอายุใช้งาน,mutable
+mst_account,mac,Master,รหัสบัญชี,mutable
+mst_cost_type,mct,Master,ชนิดต้นทุนเพิ่มเติม เช่น Installation Delivery Other,mutable
+mst_uom,mu,Master,หน่วยนับ,mutable
+mst_part,mpt,Master,อะไหล่และ part catalog,mutable
+info_document,idoc,Document,ทะเบียนเอกสารภายใน Asset และ sale references ไม่เก็บธุรกรรมจัดซื้อ,mutable
+info_file,ifile,Document,metadata ไฟล์ เก็บ body ใน object storage,mutable
+info_document_file,idf,Document,ไฟล์แนบเอกสาร รวมภาพ verification และ control sheet,mutable
+mst_asset,ma,Asset,ทะเบียน Main และ Sub Asset สองระดับ ID ไม่เปลี่ยนตามเลขเอกสาร,mutable
+info_asset_file,iaf,Asset,ไฟล์แนบ Asset,mutable
+info_receiving_validation,irv,Asset,ผลตรวจรับปัจจุบันจาก MIS ต่อ acquisition และ PO item ไม่สร้าง GR ภายใน,mutable
+mst_verification_check,mvc,Master,รายการตรวจตัว Asset เช่น identity class model custodian location completeness,mutable
+info_asset_verification,iav,Asset,verification ของ Asset แต่ละรอบ แยกจาก receiving,mutable
+info_verification_check,ivc,Asset,ผล checklist ต่อ revision,mutable
+info_approval_request,iar,Workflow,คำขออนุมัติแบบ snapshot ทุก attempt,mutable
+info_approval_step,ias,Workflow,ขั้นตอนจริงและ assignee ณ เวลาส่ง,mutable
+info_asset_depreciation,iad,Accounting,profile ค่าเสื่อมเฉพาะ Company Asset; snapshot อายุ ณ activation,mutable
+info_asset_transfer,iat,Lifecycle,ย้าย Asset ตาม approval workflow ไม่แก้ From ย้อนหลัง,mutable
+info_asset_work,iaw,Lifecycle,ประวัติงาน Existing Asset ที่เกิดจาก Proposal ของ MIS ไม่สร้างคำขอซื้อภายใน,mutable
+info_sale_proposal,isp,Disposal,Sale Proposal reference หลังอนุมัติ ไม่สร้าง sale workflow ใหม่,mutable
+info_tax_invoice,iti,Disposal,e-Tax reference แยกจาก purchasing Invoice,mutable
+info_sale_item,isi,Disposal,Asset ระบุในเอกสารขาย รองรับหลาย Asset ต่อ e-Tax,mutable
+info_asset_disposal,iads,Disposal,derecognition ต่อ Asset พร้อม financial snapshot ถาวร,mutable
+info_asset_issue,iais,Asset,รายงานปัญหา Asset แยกจาก MIS spare part issue,mutable
+info_notification,inot,System,แจ้งเตือนที่อ่านแล้วเปลี่ยนสถานะได้,mutable
+log_approval_action,laa,Log,การตัดสินใจ approval ภายใน Asset เท่านั้น ไม่สร้าง MIS approval instance,append-only
+log_asset_event,lae,Log,Timeline ธุรกิจ รวม MIS; แสดง Main รวม events ของลูกโดย query,append-only
+log_audit,la,Log,Audit เฉพาะ user-driven non-MIS ห้าม credentials/attachment body,append-only
+log_audit_change,lac,Log,ฟิลด์ before/after ของ audit เพิ่มอย่างเดียว,append-only
+log_receiving_validation,lrv,Log,ประวัติประเมิน receiving แต่ละครั้ง ไม่ใช่ Audit Log,append-only
+log_depreciation_period,ldp,Log,snapshot รายเดือนแบบ append-only รวม disposal removal และ correction version,append-only
+log_integration_message,lim,Log,ผลรับส่ง integration แต่ละ attempt append-only ไม่ใช่ payload credentials,append-only
+info_integration_inbox,iii,Integration,deduplication และสถานะ processing ของ event ต้นทาง,mutable
+info_integration_outbox,iio,Integration,outbox เขียนพร้อมธุรกรรม แล้วส่งภายหลัง,mutable
+info_mis_document_reference,imdr,Integration,สำเนาอ้างอิงเอกสาร MIS แบบอ่านอย่างเดียว อัปเดตโดย integration เท่านั้น,mutable
+info_rfq_reference,irfr,Integration,รายการ RFQ สำหรับ selector และเติม Model/Part โดยไม่สร้าง RFQ workflow,mutable
+info_asset_acquisition,iaa,Asset,ข้อมูล acquisition ต่อรายการ Proposal จาก MIS รวมกรณี Expense ที่ไม่มี Asset ใหม่,mutable
+info_asset_acquisition_cost,iaac,Asset,ต้นทุนเพิ่มเติมราย acquisition ที่รับจาก MIS ไม่ใช่ตารางสร้างต้นทุนจัดซื้อ,mutable
+info_asset_acquisition_document,iaad,Asset,เชื่อม acquisition กับเอกสาร MIS และ item scope รองรับหลาย PO/Invoice/GR,mutable
+info_asset_spare_usage,iasu,Asset,ประวัติใช้อะไหล่สำเร็จจาก MIS ไม่เก็บใบเบิก workflow หรือ stock balance,mutable
+sys_users,su,System,ผู้ใช้งาน แต่ละคนสังกัดหนึ่ง permission group และหนึ่ง department,mutable
+sys_submenu,ss,System,เมนูย่อยและ route ใต้เมนูหลัก,mutable
+sys_permission_group,spg,System,กลุ่มสิทธิ์ที่ทำหน้าที่เป็น Role สำหรับกำหนดสิทธิ์เข้าถึงเมนู,mutable
+sys_permission_detail,spd,System,รายละเอียดสิทธิ์เข้าถึง submenu ที่กำหนดให้แต่ละ permission group,mutable
+sys_department,sd,System,หน่วยงานตามรหัส plant และ department,mutable

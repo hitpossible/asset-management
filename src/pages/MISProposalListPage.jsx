@@ -1,6 +1,6 @@
 import { useMISList, MISListMetrics, MISListToolbar, MISListFooter } from '../components/MISListControls.jsx'
 import { useState } from 'react'
-import { WORK_TYPES } from '../utils/proposalAssetUtils.js'
+import { getProposalItemTotal, WORK_TYPES } from '../utils/proposalAssetUtils.js'
 import Icon from '../components/Icon.jsx'
 import StatusBadge from '../components/StatusBadge.jsx'
 import { PageHeading } from '../components/common.jsx'
@@ -26,7 +26,7 @@ export default function MISProposalListPage({ proposals, onCreate, onSetStatus }
       <PageHeading
         eyebrow="MIS · Functional / Proposal Service"
         title="Proposal list"
-        description="Review proposals created in the MIS simulation and inspect their linked asset costs."
+        description="Review proposals created in the MIS simulation and inspect their linked asset costs. Approval assigns real Asset numbers to Draft records."
         action={<button type="button" className="button button-primary" onClick={onCreate}><Icon name="plus" size={17} />Create Proposal</button>}
       />
 
@@ -91,6 +91,7 @@ function FragmentRow({ proposal, isExpanded, onToggle, onApprove }) {
               {proposal.assetItems.map((item, index) => (
                 <article className="mis-proposal-detail-asset" key={`${proposal.proposalId}-${item.assetId}`}>
                   <div className="mis-proposal-detail-asset-head"><span>{String(index + 1).padStart(2, '0')}</span><strong>{item.assetName || item.assetId}</strong><small>{item.assetId}</small><b>฿ {formatTHB(item.assetAmount)}</b></div>
+                  <p className="proposal-item-context">Budget Type: {item.budgetType === 'Capital expenditure' ? 'Investment' : item.budgetType || proposal.budgetType} · Asset total (including additional costs): ฿ {formatTHB(getProposalItemTotal(item))}</p>
                   {item.ownershipType === 'customer' ? <p className="proposal-item-context">Customer: {item.customerName} · No DP or lifecycle events</p> : null}
                   {item.assetMode === 'existing' ? <p className="proposal-item-context"><strong>{WORK_TYPES.find((type) => type.id === item.workType)?.label}</strong> · {item.costTreatment} · Main Asset {item.parentAssetId} · Work on {item.sourceAssetId || item.parentAssetId}{item.subAssetId ? ` · Sub Asset ${item.subAssetId}` : ' · No Sub Asset'}<br />{item.workName} — {item.description}</p> : null}
                   {item.costs?.length ? <ul>{item.costs.map((cost, costIndex) => <li key={`${cost.type}-${costIndex}`}><span>{cost.type}{cost.description ? ` · ${cost.description}` : ''}</span><strong>฿ {formatTHB(cost.amount)}</strong></li>)}</ul> : <p className="mis-proposal-no-costs">No additional costs</p>}

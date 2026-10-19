@@ -1,0 +1,415 @@
+erDiagram
+  sys_menu {
+    bigint sm_id PK
+  }
+  sys_setting {
+    bigint sst_id PK
+  }
+  sys_number_sequence {
+    bigint sns_id PK
+  }
+  sys_workflow {
+    bigint sw_id PK
+  }
+  sys_workflow_step {
+    bigint sws_id PK
+    bigint sw_id FK
+    bigint su_id FK
+    bigint spg_id FK
+  }
+  sys_workflow_assignment {
+    bigint swa_id PK
+    bigint sw_id FK
+  }
+  sys_responsibility {
+    bigint sres_id PK
+    bigint sd_id FK
+    bigint su_id FK
+  }
+  mst_plant {
+    bigint mp_id PK
+  }
+  mst_location {
+    bigint ml_id PK
+    bigint mp_id FK
+  }
+  mst_line {
+    bigint mli_id PK
+    bigint ml_id FK
+  }
+  mst_cost_center {
+    bigint mcc_id PK
+    bigint sd_id FK
+  }
+  mst_project {
+    bigint mprj_id PK
+    bigint sd_id FK
+  }
+  mst_customer {
+    bigint mc_id PK
+  }
+  mst_vendor {
+    bigint mv_id PK
+  }
+  mst_asset_group {
+    bigint mag_id PK
+  }
+  mst_asset_type {
+    bigint mat_id PK
+    bigint mag_id FK
+  }
+  mst_account {
+    bigint mac_id PK
+  }
+  mst_cost_type {
+    bigint mct_id PK
+  }
+  mst_uom {
+    bigint mu_id PK
+  }
+  mst_part {
+    bigint mpt_id PK
+    bigint mu_id FK
+  }
+  info_document {
+    bigint idoc_id PK
+  }
+  info_file {
+    bigint ifile_id PK
+  }
+  info_document_file {
+    bigint idf_id PK
+    bigint idoc_id FK
+    bigint ifile_id FK
+  }
+  mst_asset {
+    bigint ma_id PK
+    bigint mc_id FK
+    bigint parent_ma_id FK
+    bigint source_ma_id FK
+    bigint mat_id FK
+    bigint mprj_id FK
+    bigint irfr_id FK
+    bigint su_id FK
+    bigint sd_id FK
+    bigint mp_id FK
+    bigint ml_id FK
+    bigint mli_id FK
+    bigint mcc_id FK
+  }
+  info_asset_file {
+    bigint iaf_id PK
+    bigint ma_id FK
+    bigint ifile_id FK
+  }
+  info_receiving_validation {
+    bigint irv_id PK
+    bigint imdr_id FK
+    bigint iaa_id FK
+  }
+  mst_verification_check {
+    bigint mvc_id PK
+  }
+  info_asset_verification {
+    bigint iav_id PK
+    bigint idoc_id FK
+    bigint ma_id FK
+  }
+  info_verification_check {
+    bigint ivc_id PK
+    bigint iav_id FK
+    bigint mvc_id FK
+  }
+  info_approval_request {
+    bigint iar_id PK
+    bigint idoc_id FK
+    bigint sw_id FK
+    bigint su_id FK
+  }
+  info_approval_step {
+    bigint ias_id PK
+    bigint iar_id FK
+    bigint sws_id FK
+    bigint su_id FK
+    bigint spg_id FK
+  }
+  info_asset_depreciation {
+    bigint iad_id PK
+    bigint ma_id FK
+  }
+  info_asset_transfer {
+    bigint iat_id PK
+    bigint idoc_id FK
+    bigint ma_id FK
+    bigint from_su_id FK
+    bigint from_sd_id FK
+    bigint from_mp_id FK
+    bigint from_ml_id FK
+    bigint from_mli_id FK
+    bigint from_mcc_id FK
+    bigint to_su_id FK
+    bigint to_sd_id FK
+    bigint to_mp_id FK
+    bigint to_ml_id FK
+    bigint to_mli_id FK
+    bigint to_mcc_id FK
+  }
+  info_asset_work {
+    bigint iaw_id PK
+    bigint iaa_id FK
+    bigint source_ma_id FK
+    bigint result_ma_id FK
+    bigint mv_id FK
+  }
+  info_sale_proposal {
+    bigint isp_id PK
+    bigint idoc_id FK
+  }
+  info_tax_invoice {
+    bigint iti_id PK
+    bigint idoc_id FK
+    bigint isp_id FK
+  }
+  info_sale_item {
+    bigint isi_id PK
+    bigint isp_id FK
+    bigint iti_id FK
+    bigint ma_id FK
+  }
+  info_asset_disposal {
+    bigint iads_id PK
+    bigint idoc_id FK
+    bigint ma_id FK
+    bigint isi_id FK
+    bigint su_id FK
+  }
+  info_asset_issue {
+    bigint iais_id PK
+    bigint idoc_id FK
+    bigint ma_id FK
+    bigint su_id FK
+  }
+  info_notification {
+    bigint inot_id PK
+    bigint su_id FK
+    bigint idoc_id FK
+    bigint ma_id FK
+  }
+  log_approval_action {
+    bigint laa_id PK
+    bigint ias_id FK
+    bigint su_id FK
+  }
+  log_asset_event {
+    bigint lae_id PK
+    bigint ma_id FK
+    bigint main_ma_id FK
+    bigint idoc_id FK
+    bigint iaa_id FK
+    bigint su_id FK
+  }
+  log_audit {
+    bigint la_id PK
+    bigint su_id FK
+  }
+  log_audit_change {
+    bigint lac_id PK
+    bigint la_id FK
+  }
+  log_receiving_validation {
+    bigint lrv_id PK
+    bigint po_imdr_id FK
+    bigint iaa_id FK
+    bigint gr_imdr_id FK
+  }
+  log_depreciation_period {
+    bigint ldp_id PK
+    bigint ma_id FK
+    bigint supersedes_ldp_id FK
+    bigint iads_id FK
+    bigint su_id FK
+  }
+  log_integration_message {
+    bigint lim_id PK
+    bigint idoc_id FK
+  }
+  info_integration_inbox {
+    bigint iii_id PK
+  }
+  info_integration_outbox {
+    bigint iio_id PK
+    bigint idoc_id FK
+  }
+  info_mis_document_reference {
+    bigint imdr_id PK
+    bigint po_imdr_id FK
+    bigint mv_id FK
+    bigint ifile_id FK
+  }
+  info_rfq_reference {
+    bigint irfr_id PK
+  }
+  info_asset_acquisition {
+    bigint iaa_id PK
+    bigint imdr_id FK
+    bigint selected_ma_id FK
+    bigint ma_id FK
+    bigint mprj_id FK
+    bigint mac_id FK
+  }
+  info_asset_acquisition_cost {
+    bigint iaac_id PK
+    bigint iaa_id FK
+    bigint mct_id FK
+    bigint mac_id FK
+  }
+  info_asset_acquisition_document {
+    bigint iaad_id PK
+    bigint iaa_id FK
+    bigint imdr_id FK
+    bigint po_imdr_id FK
+  }
+  info_asset_spare_usage {
+    bigint iasu_id PK
+    bigint imdr_id FK
+    bigint ma_id FK
+    bigint mpt_id FK
+    bigint mu_id FK
+  }
+  sys_users {
+    bigint su_id PK
+    bigint spg_id FK
+    bigint sd_id FK
+  }
+  sys_submenu {
+    bigint ss_id PK
+    bigint sm_id FK
+  }
+  sys_permission_group {
+    bigint spg_id PK
+  }
+  sys_permission_detail {
+    bigint spd_id PK
+    bigint spg_id FK
+    bigint ss_id FK
+  }
+  sys_department {
+    bigint sd_id PK
+  }
+  sys_workflow ||--o{ sys_workflow_step : "sw_id"
+  sys_users |o--o{ sys_workflow_step : "su_id"
+  sys_permission_group |o--o{ sys_workflow_step : "spg_id"
+  sys_workflow ||--o{ sys_workflow_assignment : "sw_id"
+  sys_department ||--o{ sys_responsibility : "sd_id"
+  sys_users ||--o{ sys_responsibility : "su_id"
+  mst_plant ||--o{ mst_location : "mp_id"
+  mst_location ||--o{ mst_line : "ml_id"
+  sys_department |o--o{ mst_cost_center : "sd_id"
+  sys_department |o--o{ mst_project : "sd_id"
+  mst_asset_group ||--o{ mst_asset_type : "mag_id"
+  mst_uom ||--o{ mst_part : "mu_id"
+  info_document ||--o{ info_document_file : "idoc_id"
+  info_file ||--o{ info_document_file : "ifile_id"
+  mst_customer |o--o{ mst_asset : "mc_id"
+  mst_asset |o--o{ mst_asset : "parent_ma_id"
+  mst_asset |o--o{ mst_asset : "source_ma_id"
+  mst_asset_type ||--o{ mst_asset : "mat_id"
+  mst_project |o--o{ mst_asset : "mprj_id"
+  info_rfq_reference |o--o{ mst_asset : "irfr_id"
+  sys_users |o--o{ mst_asset : "su_id"
+  sys_department |o--o{ mst_asset : "sd_id"
+  mst_plant |o--o{ mst_asset : "mp_id"
+  mst_location |o--o{ mst_asset : "ml_id"
+  mst_line |o--o{ mst_asset : "mli_id"
+  mst_cost_center |o--o{ mst_asset : "mcc_id"
+  mst_asset ||--o{ info_asset_file : "ma_id"
+  info_file ||--o{ info_asset_file : "ifile_id"
+  info_mis_document_reference ||--o{ info_receiving_validation : "imdr_id"
+  info_asset_acquisition ||--o{ info_receiving_validation : "iaa_id"
+  info_document ||--o{ info_asset_verification : "idoc_id"
+  mst_asset ||--o{ info_asset_verification : "ma_id"
+  info_asset_verification ||--o{ info_verification_check : "iav_id"
+  mst_verification_check ||--o{ info_verification_check : "mvc_id"
+  info_document ||--o{ info_approval_request : "idoc_id"
+  sys_workflow ||--o{ info_approval_request : "sw_id"
+  sys_users ||--o{ info_approval_request : "su_id"
+  info_approval_request ||--o{ info_approval_step : "iar_id"
+  sys_workflow_step ||--o{ info_approval_step : "sws_id"
+  sys_users |o--o{ info_approval_step : "su_id"
+  sys_permission_group |o--o{ info_approval_step : "spg_id"
+  mst_asset ||--o{ info_asset_depreciation : "ma_id"
+  info_document ||--o{ info_asset_transfer : "idoc_id"
+  mst_asset ||--o{ info_asset_transfer : "ma_id"
+  sys_users |o--o{ info_asset_transfer : "from_su_id"
+  sys_department |o--o{ info_asset_transfer : "from_sd_id"
+  mst_plant |o--o{ info_asset_transfer : "from_mp_id"
+  mst_location |o--o{ info_asset_transfer : "from_ml_id"
+  mst_line |o--o{ info_asset_transfer : "from_mli_id"
+  mst_cost_center |o--o{ info_asset_transfer : "from_mcc_id"
+  sys_users |o--o{ info_asset_transfer : "to_su_id"
+  sys_department |o--o{ info_asset_transfer : "to_sd_id"
+  mst_plant |o--o{ info_asset_transfer : "to_mp_id"
+  mst_location |o--o{ info_asset_transfer : "to_ml_id"
+  mst_line |o--o{ info_asset_transfer : "to_mli_id"
+  mst_cost_center |o--o{ info_asset_transfer : "to_mcc_id"
+  info_asset_acquisition ||--o{ info_asset_work : "iaa_id"
+  mst_asset ||--o{ info_asset_work : "source_ma_id"
+  mst_asset |o--o{ info_asset_work : "result_ma_id"
+  mst_vendor |o--o{ info_asset_work : "mv_id"
+  info_document ||--o{ info_sale_proposal : "idoc_id"
+  info_document ||--o{ info_tax_invoice : "idoc_id"
+  info_sale_proposal ||--o{ info_tax_invoice : "isp_id"
+  info_sale_proposal ||--o{ info_sale_item : "isp_id"
+  info_tax_invoice |o--o{ info_sale_item : "iti_id"
+  mst_asset ||--o{ info_sale_item : "ma_id"
+  info_document ||--o{ info_asset_disposal : "idoc_id"
+  mst_asset ||--o{ info_asset_disposal : "ma_id"
+  info_sale_item ||--o{ info_asset_disposal : "isi_id"
+  sys_users ||--o{ info_asset_disposal : "su_id"
+  info_document ||--o{ info_asset_issue : "idoc_id"
+  mst_asset ||--o{ info_asset_issue : "ma_id"
+  sys_users ||--o{ info_asset_issue : "su_id"
+  sys_users ||--o{ info_notification : "su_id"
+  info_document |o--o{ info_notification : "idoc_id"
+  mst_asset |o--o{ info_notification : "ma_id"
+  info_approval_step ||--o{ log_approval_action : "ias_id"
+  sys_users ||--o{ log_approval_action : "su_id"
+  mst_asset ||--o{ log_asset_event : "ma_id"
+  mst_asset ||--o{ log_asset_event : "main_ma_id"
+  info_document |o--o{ log_asset_event : "idoc_id"
+  info_asset_acquisition |o--o{ log_asset_event : "iaa_id"
+  sys_users |o--o{ log_asset_event : "su_id"
+  sys_users |o--o{ log_audit : "su_id"
+  log_audit ||--o{ log_audit_change : "la_id"
+  info_mis_document_reference ||--o{ log_receiving_validation : "po_imdr_id"
+  info_asset_acquisition ||--o{ log_receiving_validation : "iaa_id"
+  info_mis_document_reference |o--o{ log_receiving_validation : "gr_imdr_id"
+  mst_asset ||--o{ log_depreciation_period : "ma_id"
+  log_depreciation_period |o--o{ log_depreciation_period : "supersedes_ldp_id"
+  info_asset_disposal |o--o{ log_depreciation_period : "iads_id"
+  sys_users |o--o{ log_depreciation_period : "su_id"
+  info_document |o--o{ log_integration_message : "idoc_id"
+  info_document |o--o{ info_integration_outbox : "idoc_id"
+  info_mis_document_reference |o--o{ info_mis_document_reference : "po_imdr_id"
+  mst_vendor |o--o{ info_mis_document_reference : "mv_id"
+  info_file |o--o{ info_mis_document_reference : "ifile_id"
+  info_mis_document_reference ||--o{ info_asset_acquisition : "imdr_id"
+  mst_asset ||--o{ info_asset_acquisition : "selected_ma_id"
+  mst_asset |o--o{ info_asset_acquisition : "ma_id"
+  mst_project ||--o{ info_asset_acquisition : "mprj_id"
+  mst_account |o--o{ info_asset_acquisition : "mac_id"
+  info_asset_acquisition ||--o{ info_asset_acquisition_cost : "iaa_id"
+  mst_cost_type ||--o{ info_asset_acquisition_cost : "mct_id"
+  mst_account |o--o{ info_asset_acquisition_cost : "mac_id"
+  info_asset_acquisition ||--o{ info_asset_acquisition_document : "iaa_id"
+  info_mis_document_reference ||--o{ info_asset_acquisition_document : "imdr_id"
+  info_mis_document_reference |o--o{ info_asset_acquisition_document : "po_imdr_id"
+  info_mis_document_reference ||--o{ info_asset_spare_usage : "imdr_id"
+  mst_asset ||--o{ info_asset_spare_usage : "ma_id"
+  mst_part |o--o{ info_asset_spare_usage : "mpt_id"
+  mst_uom ||--o{ info_asset_spare_usage : "mu_id"
+  sys_permission_group ||--o{ sys_users : "spg_id"
+  sys_department ||--o{ sys_users : "sd_id"
+  sys_menu ||--o{ sys_submenu : "sm_id"
+  sys_permission_group ||--o{ sys_permission_detail : "spg_id"
+  sys_submenu ||--o{ sys_permission_detail : "ss_id"
