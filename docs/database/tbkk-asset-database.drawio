@@ -1990,7 +1990,7 @@
     </mxGraphModel>
   </diagram>
   <diagram id="master" name="02 Master and Asset Register">
-    <mxGraphModel dx="3535" dy="1828" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2110" pageHeight="2995" math="0" shadow="0">
+    <mxGraphModel dx="1704" dy="881" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2110" pageHeight="2995" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -2204,7 +2204,7 @@
             <mxGeometry height="34" width="50" as="geometry" />
           </mxCell>
         </object>
-        <object label="mp_id" tooltip="mp_id&#xa;โรงงาน&#xa;Type: BIGINT UNSIGNED&#xa;Nullable: False&#xa;Default: None&#xa;References: mst_plant.mp_id&#xa;Unique keys: []" id="field__mst_location__plant_id__name">
+        <object label="mb_id" tooltip="mp_id&#xa;โรงงาน&#xa;Type: BIGINT UNSIGNED&#xa;Nullable: False&#xa;Default: None&#xa;References: mst_plant.mp_id&#xa;Unique keys: []" id="field__mst_location__plant_id__name">
           <mxCell parent="field__mst_location__plant_id" style="text;html=0;align=left;verticalAlign=middle;spacingLeft=10;fontSize=16;fontFamily=Helvetica;fontColor=#000000;connectable=0;fontStyle=0;" vertex="1">
             <mxGeometry height="34" width="370" x="50" as="geometry" />
           </mxCell>
@@ -4110,7 +4110,7 @@
             <mxGeometry height="34" width="50" as="geometry" />
           </mxCell>
         </object>
-        <object label="mp_id" tooltip="mp_id&#xa;โรงงาน&#xa;Type: BIGINT UNSIGNED&#xa;Nullable: True&#xa;Default: None&#xa;References: mst_plant.mp_id&#xa;Unique keys: []" id="field__mst_asset__plant_id__name">
+        <object label="mb_id" tooltip="mp_id&#xa;โรงงาน&#xa;Type: BIGINT UNSIGNED&#xa;Nullable: True&#xa;Default: None&#xa;References: mst_plant.mp_id&#xa;Unique keys: []" id="field__mst_asset__plant_id__name">
           <mxCell parent="field__mst_asset__plant_id" style="text;html=0;align=left;verticalAlign=middle;spacingLeft=10;fontSize=16;fontFamily=Helvetica;fontColor=#000000;connectable=0;fontStyle=0;" vertex="1">
             <mxGeometry height="34" width="370" x="50" as="geometry" />
           </mxCell>
@@ -5936,7 +5936,7 @@
     </mxGraphModel>
   </diagram>
   <diagram id="lifecycle" name="06 Lifecycle and Accounting">
-    <mxGraphModel grid="1" page="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" pageScale="1" pageWidth="2110" pageHeight="2164" math="0" shadow="0">
+    <mxGraphModel dx="2438" dy="1260" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2110" pageHeight="2164" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -6136,21 +6136,6 @@
         </object>
         <object label="iad_updated_by" tooltip="iad_updated_by&#xa;ผู้แก้ไขล่าสุด&#xa;Type: BIGINT UNSIGNED&#xa;Nullable: True&#xa;Default: None&#xa;References: sys_users.su_id&#xa;Unique keys: []" id="field__info_asset_depreciation__updated_by__name">
           <mxCell parent="field__info_asset_depreciation__updated_by" style="text;html=0;align=left;verticalAlign=middle;spacingLeft=10;fontSize=16;fontFamily=Helvetica;fontColor=#000000;connectable=0;fontStyle=0;" vertex="1">
-            <mxGeometry height="34" width="370" x="50" as="geometry" />
-          </mxCell>
-        </object>
-        <object label="" table="info_asset_depreciation" column="iad_row_version" canonical="true" tooltip="iad_row_version&#xa;เลขเวอร์ชันสำหรับ optimistic locking&#xa;Type: INT UNSIGNED&#xa;Nullable: False&#xa;Default: 1&#xa;References: -&#xa;Unique keys: []" id="field__info_asset_depreciation__row_version">
-          <mxCell parent="table__info_asset_depreciation" style="rounded=0;html=0;fillColor=none;strokeColor=none;connectable=1;" vertex="1">
-            <mxGeometry height="34" width="420" y="450" as="geometry" />
-          </mxCell>
-        </object>
-        <object label="" tooltip="iad_row_version&#xa;เลขเวอร์ชันสำหรับ optimistic locking&#xa;Type: INT UNSIGNED&#xa;Nullable: False&#xa;Default: 1&#xa;References: -&#xa;Unique keys: []" id="field__info_asset_depreciation__row_version__key">
-          <mxCell parent="field__info_asset_depreciation__row_version" style="text;html=0;align=center;verticalAlign=middle;fontSize=16;fontFamily=Helvetica;fontColor=#000000;connectable=0;fontStyle=0;" vertex="1">
-            <mxGeometry height="34" width="50" as="geometry" />
-          </mxCell>
-        </object>
-        <object label="iad_row_version" tooltip="iad_row_version&#xa;เลขเวอร์ชันสำหรับ optimistic locking&#xa;Type: INT UNSIGNED&#xa;Nullable: False&#xa;Default: 1&#xa;References: -&#xa;Unique keys: []" id="field__info_asset_depreciation__row_version__name">
-          <mxCell parent="field__info_asset_depreciation__row_version" style="text;html=0;align=left;verticalAlign=middle;spacingLeft=10;fontSize=16;fontFamily=Helvetica;fontColor=#000000;connectable=0;fontStyle=0;" vertex="1">
             <mxGeometry height="34" width="370" x="50" as="geometry" />
           </mxCell>
         </object>
